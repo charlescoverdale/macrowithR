@@ -328,33 +328,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Our World in Data (OWID) maintains a comprehensive, open-access dataset of CO2 and greenhouse gas emissions, drawn from the Global Carbon Project, the Climate Analysis Indicators Tool, and national inventories. The data are published as CSV files on GitHub, making them straightforward to load directly into R. This is one of the best-maintained open datasets in climate economics — it covers every country from 1750 to the present, with annual frequency, and includes both production-based and consumption-based emissions.</p>
 <p>The dataset contains dozens of variables: total CO2, per-capita CO2, emissions by fuel type (coal, oil, gas, cement, flaring), cumulative emissions, consumption-based emissions (adjusted for trade), and CO2 intensity of GDP. For macro analysis, the most useful columns are <code>country</code>, <code>year</code>, <code>co2</code> (total annual CO2 in million tonnes), <code>co2_per_capita</code> (tonnes per person), and <code>co2_per_gdp</code> (kilograms per dollar of GDP).</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-✔ dplyr     1.2.0     ✔ readr     2.2.0
-✔ forcats   1.0.1     ✔ stringr   1.6.0
-✔ ggplot2   4.0.2     ✔ tibble    3.3.1
-✔ lubridate 1.9.5     ✔ tidyr     1.3.2
-✔ purrr     1.2.1     
-── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-✖ dplyr::filter() masks stats::filter()
-✖ dplyr::lag()    masks stats::lag()
-ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Download CO2 data from Our World in Data (GitHub-hosted CSV)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="st">"../R/theme_macro.R"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Download CO2 data from Our World in Data (GitHub-hosted CSV)</span></span>
 <span><span class="va">owid_url</span> <span class="op">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/owid/co2-data/master/owid-co2-data.csv"</span></span>
-<span><span class="va">co2_raw</span> <span class="op">&lt;-</span> <span class="fu">read_csv</span><span class="op">(</span><span class="va">owid_url</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Rows: 50411 Columns: 79
-── Column specification ────────────────────────────────────────────────────────
-Delimiter: ","
-chr  (2): country, iso_code
-dbl (77): year, population, gdp, cement_co2, cement_co2_per_capita, co2, co2...
-
-ℹ Use `spec()` to retrieve the full column specification for this data.
-ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Define the G7 countries</span></span>
+<span><span class="va">co2_raw</span> <span class="op">&lt;-</span> <span class="fu">read_csv</span><span class="op">(</span><span class="va">owid_url</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Define the G7 countries</span></span>
 <span><span class="va">g7</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"United Kingdom"</span>, <span class="st">"United States"</span>, <span class="st">"Germany"</span>,</span>
 <span>        <span class="st">"France"</span>, <span class="st">"Japan"</span>, <span class="st">"Italy"</span>, <span class="st">"Canada"</span><span class="op">)</span></span>
 <span></span>
@@ -376,14 +357,14 @@ $ population     &lt;dbl&gt; 27789437, 28157154, 28500066, 28830635, 29147383, 2
 </div>
 <p>Let us plot total emissions for the G7 since 1990. This is the standard way to visualise decarbonisation trajectories — absolute emissions are what matter for the atmosphere, regardless of how many people live in each country.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">co2_g7</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">year</span>, y <span class="op">=</span> <span class="va">co2</span>, colour <span class="op">=</span> <span class="va">country</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">co2_g7</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">year</span>, y <span class="op">=</span> <span class="va">co2</span>, colour <span class="op">=</span> <span class="va">country</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_line</span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">labs</span><span class="op">(</span></span>
 <span>    title <span class="op">=</span> <span class="st">"G7 CO2 emissions since 1990"</span>,</span>
 <span>    x <span class="op">=</span> <span class="cn">NULL</span>, y <span class="op">=</span> <span class="st">"CO2 (million tonnes)"</span>,</span>
 <span>    colour <span class="op">=</span> <span class="cn">NULL</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_macro</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
@@ -395,14 +376,14 @@ $ population     &lt;dbl&gt; 27789437, 28157154, 28500066, 28830635, 29147383, 2
 <p>The United States dominates in absolute terms but has reduced emissions since the mid-2000s, largely through the switch from coal to natural gas in electricity generation. Japan’s emissions rose after Fukushima (2011) as nuclear plants were shut down and replaced with fossil fuels. The most striking trajectory belongs to the United Kingdom, which has roughly halved its territorial emissions since 1990 — the fastest decarbonisation of any major economy.</p>
 <p>Per-capita emissions tell a different story. They adjust for population size and give a fairer comparison of individual carbon footprints across countries.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">co2_g7</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">year</span>, y <span class="op">=</span> <span class="va">co2_per_capita</span>, colour <span class="op">=</span> <span class="va">country</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">co2_g7</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">year</span>, y <span class="op">=</span> <span class="va">co2_per_capita</span>, colour <span class="op">=</span> <span class="va">country</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_line</span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">labs</span><span class="op">(</span></span>
 <span>    title <span class="op">=</span> <span class="st">"G7 per-capita CO2 emissions"</span>,</span>
 <span>    x <span class="op">=</span> <span class="cn">NULL</span>, y <span class="op">=</span> <span class="st">"CO2 per capita (tonnes)"</span>,</span>
 <span>    colour <span class="op">=</span> <span class="cn">NULL</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_macro</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
@@ -414,7 +395,7 @@ $ population     &lt;dbl&gt; 27789437, 28157154, 28500066, 28830635, 29147383, 2
 <p>The United States and Canada have by far the highest per-capita emissions — roughly double those of European G7 members. This reflects larger homes, longer driving distances, and historically cheaper energy. The UK’s per-capita emissions have fallen below France’s coal-phase-out trajectory, approaching levels not seen since the Victorian era. France’s relatively low per-capita figure reflects its heavy reliance on nuclear power, which produces negligible direct CO2.</p>
 <p>We can quantify the percentage reduction for each country since 1990, which is the Kyoto Protocol baseline year:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">latest_year</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">co2_g7</span><span class="op">$</span><span class="va">year</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">latest_year</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">co2_g7</span><span class="op">$</span><span class="va">year</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">co2_change</span> <span class="op">&lt;-</span> <span class="va">co2_g7</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">year</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1990</span>, <span class="va">latest_year</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -450,7 +431,7 @@ $ population     &lt;dbl&gt; 27789437, 28157154, 28500066, 28830635, 29147383, 2
 <p>The EU ETS has had a turbulent price history. In Phase I (2005–2007), over-allocation of free permits caused the price to collapse to near zero. Phase II (2008–2012) coincided with the financial crisis, which crushed industrial output and therefore demand for permits — the price fell below €5. Phase III (2013–2020) introduced auctioning and the Market Stability Reserve (MSR), which began absorbing surplus allowances from 2019. This tightening, combined with the European Green Deal’s ambition, sent prices soaring. By 2023, EUA prices exceeded €100 per tonne for the first time — a level that begins to make carbon capture and green hydrogen economically competitive.</p>
 <p>Ember, a climate think tank, publishes daily EU ETS carbon price data. We can also obtain monthly average carbon prices from Eurostat or the ICE exchange. Here we download the data and plot the price history:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://readr.tidyverse.org">readr</a></span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://readr.tidyverse.org">readr</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Ember publishes carbon price data — download from their data portal</span></span>
 <span><span class="co"># Alternative: use Eurostat's env_ac_ainah_r2 or similar dataset</span></span>
@@ -467,7 +448,7 @@ $ population     &lt;dbl&gt; 27789437, 28157154, 28500066, 28830635, 29147383, 2
 </div>
 <p>Plotting the EU carbon price alongside euro area industrial production reveals an important relationship. When industrial output falls — as it did sharply in 2008–2009 and during the COVID-19 pandemic — demand for emissions permits drops and the carbon price weakens. Conversely, the post-pandemic recovery saw both industrial production and carbon prices rise sharply.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">readecb</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">readecb</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Euro area industrial production index</span></span>
@@ -490,7 +471,7 @@ $ population     &lt;dbl&gt; 27789437, 28157154, 28500066, 28830635, 29147383, 2
 <span><span class="co">#     x = NULL, y = "Standard deviations from mean",</span></span>
 <span><span class="co">#     colour = NULL</span></span>
 <span><span class="co">#   ) +</span></span>
-<span><span class="co">#   theme_minimal()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span><span class="co">#   theme_macro()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>This co-movement has important policy implications. A carbon price that collapses during recessions provides less incentive to decarbonise precisely when investment decisions are being deferred. The Market Stability Reserve was designed to address this by withdrawing permits from the market when the surplus exceeds a threshold, putting a soft floor under the price. Whether this mechanism is sufficient to maintain a credible long-term price signal remains an active debate.</p>
 <p>The correlation between carbon prices and industrial activity also matters for fiscal policy. Several EU member states now earn significant revenue from ETS auctions — Germany alone raised over €18 billion in 2023. This revenue is pro-cyclical: it rises in booms and falls in recessions, much like corporate tax receipts.</p>
@@ -506,7 +487,7 @@ $ population     &lt;dbl&gt; 27789437, 28157154, 28500066, 28830635, 29147383, 2
 </ul>
 <p>Each scenario projects a full set of macro variables: GDP, inflation, interest rates, carbon prices, energy prices, agricultural productivity, and sectoral output. The scenarios are available through the NGFS Scenario Explorer, an interactive web tool hosted by the International Institute for Applied Systems Analysis (IIASA):</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># NGFS scenarios are available from the IIASA Scenario Explorer:</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># NGFS scenarios are available from the IIASA Scenario Explorer:</span></span>
 <span><span class="co"># https://data.ece.iiasa.ac.at/ngfs/</span></span>
 <span></span>
 <span><span class="co"># The scenarios can be downloaded as CSV files after registration.</span></span>
@@ -531,7 +512,7 @@ $ population     &lt;dbl&gt; 27789437, 28157154, 28500066, 28830635, 29147383, 2
 <p>Central banks use these scenarios not as forecasts but as “what if” exercises. The Bank of England’s Climate Biennial Exploratory Scenario (CBES), published in 2022, asked UK banks and insurers to assess their exposures under three NGFS scenarios. The exercise revealed that UK banks’ credit losses could be 30 per cent higher under a disorderly transition than under an orderly one — not because of physical climate damage, but because of the economic disruption caused by a sudden policy shift.</p>
 <p>For a macro analyst, the key insight from the NGFS framework is that climate risk is not just about temperature — it is about the policy path. An orderly, predictable transition is far less costly than a delayed, panicked one. This argues strongly for early, credible climate policy, which gives firms and investors a clear signal to reallocate capital.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># A stylised comparison of carbon price paths across NGFS scenarios</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># A stylised comparison of carbon price paths across NGFS scenarios</span></span>
 <span><span class="va">scenarios</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span></span>
 <span>  year <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fl">2025</span><span class="op">:</span><span class="fl">2050</span>, <span class="fl">4</span><span class="op">)</span>,</span>
 <span>  scenario <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span></span>
@@ -548,12 +529,13 @@ $ population     &lt;dbl&gt; 27789437, 28157154, 28500066, 28830635, 29147383, 2
 <span></span>
 <span><span class="fu">ggplot</span><span class="op">(</span><span class="va">scenarios</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">year</span>, y <span class="op">=</span> <span class="va">carbon_price</span>, colour <span class="op">=</span> <span class="va">scenario</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_line</span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_colour_macro</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">labs</span><span class="op">(</span></span>
 <span>    title <span class="op">=</span> <span class="st">"Stylised NGFS carbon price paths"</span>,</span>
 <span>    x <span class="op">=</span> <span class="cn">NULL</span>, y <span class="op">=</span> <span class="st">"Carbon price ($/tCO2)"</span>,</span>
 <span>    colour <span class="op">=</span> <span class="st">"Scenario"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span>  <span class="fu">theme_macro</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure"><p><img src="13-climate-macro_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
@@ -568,7 +550,7 @@ $ population     &lt;dbl&gt; 27789437, 28157154, 28500066, 28830635, 29147383, 2
 <p>The empirical literature on climate and GDP has grown rapidly since the seminal work of Dell, Jones, and Olken (2012) and Burke, Hsiang, and Miguel (2015). The central finding is that higher temperatures reduce economic growth, with the effect concentrated in already-hot countries. A commonly cited estimate is that each 1°C increase in average temperature reduces GDP growth by about 1–1.5 percentage points for countries with mean temperatures above 15°C.</p>
 <p>We can replicate a simplified version of this analysis using publicly available data. We need two ingredients: temperature anomalies by country (from NASA GISTEMP, Berkeley Earth, or the World Bank’s Climate Knowledge Portal) and GDP growth by country (from the World Bank).</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://vincentarelbundock.github.io/WDI/">WDI</a></span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://vincentarelbundock.github.io/WDI/">WDI</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Download GDP growth and GDP per capita for all countries</span></span>
 <span><span class="va">gdp_growth</span> <span class="op">&lt;-</span> <span class="fu">WDI</span><span class="op">(</span></span>
@@ -598,7 +580,7 @@ $ population     &lt;dbl&gt; 27789437, 28157154, 28500066, 28830635, 29147383, 2
 </div>
 <p>Temperature anomaly data can be downloaded from Berkeley Earth, which provides country-level annual average temperatures:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Berkeley Earth publishes country-level temperature data:</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Berkeley Earth publishes country-level temperature data:</span></span>
 <span><span class="co"># https://berkeleyearth.org/data/</span></span>
 <span></span>
 <span><span class="co"># For a simpler approach, use latitude as a proxy for temperature</span></span>
@@ -627,10 +609,7 @@ $ population     &lt;dbl&gt; 27789437, 28157154, 28500066, 28830635, 29147383, 2
 <span>    x <span class="op">=</span> <span class="st">"Absolute latitude (degrees from equator)"</span>,</span>
 <span>    y <span class="op">=</span> <span class="st">"Mean GDP growth (%)"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
-</div>
+<span>  <span class="fu">theme_macro</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure"><p><img src="13-climate-macro_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
@@ -640,7 +619,7 @@ $ population     &lt;dbl&gt; 27789437, 28157154, 28500066, 28830635, 29147383, 2
 </div>
 <p>This simple cross-section is suggestive but far from conclusive — latitude correlates with many things besides temperature (colonial history, institutional quality, disease burden). A more rigorous approach uses panel data with country and year fixed effects, regressing GDP growth on temperature deviations from the country’s own historical mean. This within-country variation is more plausibly exogenous.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># A panel approach (requires temperature data merged in)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># A panel approach (requires temperature data merged in)</span></span>
 <span><span class="co"># Suppose we have a panel: country, year, growth, temp_anomaly</span></span>
 <span></span>
 <span><span class="co"># library(fixest)</span></span>
@@ -662,7 +641,7 @@ $ population     &lt;dbl&gt; 27789437, 28157154, 28500066, 28830635, 29147383, 2
 <p>For a fixed-income analyst, transition risk manifests as credit risk. Consider a portfolio of corporate bonds issued by energy companies. Under an orderly transition, these companies face gradually rising carbon costs that erode margins over a decade, but have time to diversify. Under a disorderly transition, a sudden carbon price spike could push highly leveraged fossil fuel producers into default.</p>
 <p>We can construct a simple numerical example. Suppose we have a portfolio of bonds from three types of energy companies:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tibble.tidyverse.org/">tibble</a></span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tibble.tidyverse.org/">tibble</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Stylised portfolio of energy company bonds</span></span>
 <span><span class="va">portfolio</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span></span>
@@ -708,7 +687,7 @@ $ population     &lt;dbl&gt; 27789437, 28157154, 28500066, 28830635, 29147383, 2
 <p>This exercise, while simplified, captures the core logic of climate stress testing. The Bank of England’s CBES asked UK banks to perform exactly this kind of analysis for their entire loan books — assessing how each borrower’s creditworthiness would change under different carbon price paths. The results showed that banks with concentrated exposures to fossil fuel-intensive sectors faced materially higher credit losses under transition scenarios.</p>
 <p>The stranded assets problem extends beyond energy. Any company with high direct or indirect emissions faces transition risk — airlines, cement manufacturers, steel producers, shipping companies. A well-diversified investment portfolio needs to consider not just current emissions but the trajectory: companies that are credibly reducing their emissions intensity are better positioned than those that are not, regardless of their current level.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Visualise the carbon cost burden across scenarios</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Visualise the carbon cost burden across scenarios</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># portfolio_costs &lt;- portfolio |&gt;</span></span>
@@ -725,7 +704,7 @@ $ population     &lt;dbl&gt; 27789437, 28157154, 28500066, 28830635, 29147383, 2
 <span><span class="co">#     x = NULL, y = "Carbon cost (% of revenue)",</span></span>
 <span><span class="co">#     fill = "Scenario"</span></span>
 <span><span class="co">#   ) +</span></span>
-<span><span class="co">#   theme_minimal()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span><span class="co">#   theme_macro()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section><section id="exercises" class="level2" data-number="13.6"><h2 data-number="13.6" class="anchored" data-anchor-id="exercises">
 <span class="header-section-number">13.6</span> Exercises</h2>
@@ -1201,391 +1180,393 @@ $ population     &lt;dbl&gt; 27789437, 28157154, 28500066, 28830635, 29147383, 2
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co">  eval: true</span></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="fu"># Climate and the Macroeconomy {#sec-climate}</span></span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>Climate change is increasingly central to macroeconomic policy. Central banks run climate stress tests, governments set carbon budgets, and transition risk is repricing assets across every sector. Yet most macroeconomics textbooks still treat the environment as an externality to be dealt with in a microeconomics course. This chapter brings climate into the macro toolkit — with data, models, and R code.</span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>The intersection of climate and macroeconomics runs in both directions. Climate change affects the macroeconomy through physical risks (extreme weather, agricultural disruption, labour productivity losses) and transition risks (stranded assets, carbon pricing, regulatory change). Conversely, macroeconomic variables — GDP growth, energy prices, industrial structure — are the primary drivers of emissions. Understanding these feedback loops is essential for any modern macro analyst.</span>
-<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="fu">## Emissions data in R</span></span>
-<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>Our World in Data (OWID) maintains a comprehensive, open-access dataset of CO2 and greenhouse gas emissions, drawn from the Global Carbon Project, the Climate Analysis Indicators Tool, and national inventories. The data are published as CSV files on GitHub, making them straightforward to load directly into R. This is one of the best-maintained open datasets in climate economics — it covers every country from 1750 to the present, with annual frequency, and includes both production-based and consumption-based emissions.</span>
-<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>The dataset contains dozens of variables: total CO2, per-capita CO2, emissions by fuel type (coal, oil, gas, cement, flaring), cumulative emissions, consumption-based emissions (adjusted for trade), and CO2 intensity of GDP. For macro analysis, the most useful columns are <span class="in">`country`</span>, <span class="in">`year`</span>, <span class="in">`co2`</span> (total annual CO2 in million tonnes), <span class="in">`co2_per_capita`</span> (tonnes per person), and <span class="in">`co2_per_gdp`</span> (kilograms per dollar of GDP).</span>
-<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Download CO2 data from Our World in Data (GitHub-hosted CSV)</span></span>
-<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a>owid_url <span class="ot">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/owid/co2-data/master/owid-co2-data.csv"</span></span>
-<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a>co2_raw <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(owid_url)</span>
-<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the G7 countries</span></span>
-<span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a>g7 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"United Kingdom"</span>, <span class="st">"United States"</span>, <span class="st">"Germany"</span>,</span>
-<span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a>        <span class="st">"France"</span>, <span class="st">"Japan"</span>, <span class="st">"Italy"</span>, <span class="st">"Canada"</span>)</span>
-<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-31"><a href="#cb23-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter to G7, 1990 onwards</span></span>
-<span id="cb23-32"><a href="#cb23-32" aria-hidden="true" tabindex="-1"></a>co2_g7 <span class="ot">&lt;-</span> co2_raw <span class="sc">|&gt;</span></span>
-<span id="cb23-33"><a href="#cb23-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(country <span class="sc">%in%</span> g7, year <span class="sc">&gt;=</span> <span class="dv">1990</span>) <span class="sc">|&gt;</span></span>
-<span id="cb23-34"><a href="#cb23-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(country, year, co2, co2_per_capita, population)</span>
-<span id="cb23-35"><a href="#cb23-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-36"><a href="#cb23-36" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(co2_g7)</span>
-<span id="cb23-37"><a href="#cb23-37" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb23-38"><a href="#cb23-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-39"><a href="#cb23-39" aria-hidden="true" tabindex="-1"></a>Let us plot total emissions for the G7 since 1990. This is the standard way to visualise decarbonisation trajectories — absolute emissions are what matter for the atmosphere, regardless of how many people live in each country.</span>
-<span id="cb23-40"><a href="#cb23-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-43"><a href="#cb23-43" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-44"><a href="#cb23-44" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(co2_g7, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> co2, <span class="at">colour =</span> country)) <span class="sc">+</span></span>
-<span id="cb23-45"><a href="#cb23-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
-<span id="cb23-46"><a href="#cb23-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb23-47"><a href="#cb23-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"G7 CO2 emissions since 1990"</span>,</span>
-<span id="cb23-48"><a href="#cb23-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"CO2 (million tonnes)"</span>,</span>
-<span id="cb23-49"><a href="#cb23-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="cn">NULL</span></span>
-<span id="cb23-50"><a href="#cb23-50" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb23-51"><a href="#cb23-51" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb23-52"><a href="#cb23-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span>
-<span id="cb23-53"><a href="#cb23-53" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb23-54"><a href="#cb23-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-55"><a href="#cb23-55" aria-hidden="true" tabindex="-1"></a>The United States dominates in absolute terms but has reduced emissions since the mid-2000s, largely through the switch from coal to natural gas in electricity generation. Japan's emissions rose after Fukushima (2011) as nuclear plants were shut down and replaced with fossil fuels. The most striking trajectory belongs to the United Kingdom, which has roughly halved its territorial emissions since 1990 — the fastest decarbonisation of any major economy.</span>
-<span id="cb23-56"><a href="#cb23-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-57"><a href="#cb23-57" aria-hidden="true" tabindex="-1"></a>Per-capita emissions tell a different story. They adjust for population size and give a fairer comparison of individual carbon footprints across countries.</span>
-<span id="cb23-58"><a href="#cb23-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-61"><a href="#cb23-61" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-62"><a href="#cb23-62" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(co2_g7, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> co2_per_capita, <span class="at">colour =</span> country)) <span class="sc">+</span></span>
-<span id="cb23-63"><a href="#cb23-63" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
-<span id="cb23-64"><a href="#cb23-64" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb23-65"><a href="#cb23-65" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"G7 per-capita CO2 emissions"</span>,</span>
-<span id="cb23-66"><a href="#cb23-66" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"CO2 per capita (tonnes)"</span>,</span>
-<span id="cb23-67"><a href="#cb23-67" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="cn">NULL</span></span>
-<span id="cb23-68"><a href="#cb23-68" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb23-69"><a href="#cb23-69" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb23-70"><a href="#cb23-70" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span>
-<span id="cb23-71"><a href="#cb23-71" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb23-72"><a href="#cb23-72" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-73"><a href="#cb23-73" aria-hidden="true" tabindex="-1"></a>The United States and Canada have by far the highest per-capita emissions — roughly double those of European G7 members. This reflects larger homes, longer driving distances, and historically cheaper energy. The UK's per-capita emissions have fallen below France's coal-phase-out trajectory, approaching levels not seen since the Victorian era. France's relatively low per-capita figure reflects its heavy reliance on nuclear power, which produces negligible direct CO2.</span>
-<span id="cb23-74"><a href="#cb23-74" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-75"><a href="#cb23-75" aria-hidden="true" tabindex="-1"></a>We can quantify the percentage reduction for each country since 1990, which is the Kyoto Protocol baseline year:</span>
-<span id="cb23-76"><a href="#cb23-76" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-79"><a href="#cb23-79" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-80"><a href="#cb23-80" aria-hidden="true" tabindex="-1"></a>latest_year <span class="ot">&lt;-</span> <span class="fu">max</span>(co2_g7<span class="sc">$</span>year, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb23-81"><a href="#cb23-81" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-82"><a href="#cb23-82" aria-hidden="true" tabindex="-1"></a>co2_change <span class="ot">&lt;-</span> co2_g7 <span class="sc">|&gt;</span></span>
-<span id="cb23-83"><a href="#cb23-83" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1990</span>, latest_year)) <span class="sc">|&gt;</span></span>
-<span id="cb23-84"><a href="#cb23-84" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(country, year, co2) <span class="sc">|&gt;</span></span>
-<span id="cb23-85"><a href="#cb23-85" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> year, <span class="at">values_from =</span> co2,</span>
-<span id="cb23-86"><a href="#cb23-86" aria-hidden="true" tabindex="-1"></a>              <span class="at">names_prefix =</span> <span class="st">"y"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb23-87"><a href="#cb23-87" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">initial =</span> y1990) <span class="sc">|&gt;</span></span>
-<span id="cb23-88"><a href="#cb23-88" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb23-89"><a href="#cb23-89" aria-hidden="true" tabindex="-1"></a>    <span class="at">latest =</span> <span class="fu">pick</span>(<span class="fu">last_col</span>()) <span class="sc">|&gt;</span> <span class="fu">pull</span>(),</span>
-<span id="cb23-90"><a href="#cb23-90" aria-hidden="true" tabindex="-1"></a>    <span class="at">pct_change =</span> (latest <span class="sc">-</span> initial) <span class="sc">/</span> initial <span class="sc">*</span> <span class="dv">100</span></span>
-<span id="cb23-91"><a href="#cb23-91" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb23-92"><a href="#cb23-92" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(pct_change) <span class="sc">|&gt;</span></span>
-<span id="cb23-93"><a href="#cb23-93" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(country, initial, latest, pct_change)</span>
-<span id="cb23-94"><a href="#cb23-94" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-95"><a href="#cb23-95" aria-hidden="true" tabindex="-1"></a>co2_change</span>
-<span id="cb23-96"><a href="#cb23-96" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb23-97"><a href="#cb23-97" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-98"><a href="#cb23-98" aria-hidden="true" tabindex="-1"></a>The UK typically leads this table with a reduction of around 45–50 per cent, driven primarily by the near-complete phase-out of coal from electricity generation. Germany has also made significant reductions, particularly after reunification closed inefficient East German industry, and more recently through its Energiewende renewable energy programme. Canada and Japan have made the least progress among G7 members.</span>
-<span id="cb23-99"><a href="#cb23-99" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-100"><a href="#cb23-100" aria-hidden="true" tabindex="-1"></a><span class="fu">## Carbon pricing and the EU ETS</span></span>
-<span id="cb23-101"><a href="#cb23-101" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-102"><a href="#cb23-102" aria-hidden="true" tabindex="-1"></a>The EU Emissions Trading System (EU ETS) is the world's largest carbon market. Launched in 2005, it operates on a cap-and-trade principle: the EU sets a declining cap on total emissions from covered sectors (power generation, heavy industry, aviation within Europe), issues allowances up to that cap, and lets firms trade them. A firm that reduces emissions below its allocation can sell surplus allowances; a firm that exceeds its allocation must buy more. The price of an EU Allowance (EUA) is therefore a market-determined carbon price — the marginal cost of emitting one tonne of CO2.</span>
-<span id="cb23-103"><a href="#cb23-103" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-104"><a href="#cb23-104" aria-hidden="true" tabindex="-1"></a>The EU ETS has had a turbulent price history. In Phase I (2005–2007), over-allocation of free permits caused the price to collapse to near zero. Phase II (2008–2012) coincided with the financial crisis, which crushed industrial output and therefore demand for permits — the price fell below €5. Phase III (2013–2020) introduced auctioning and the Market Stability Reserve (MSR), which began absorbing surplus allowances from 2019. This tightening, combined with the European Green Deal's ambition, sent prices soaring. By 2023, EUA prices exceeded €100 per tonne for the first time — a level that begins to make carbon capture and green hydrogen economically competitive.</span>
-<span id="cb23-105"><a href="#cb23-105" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-106"><a href="#cb23-106" aria-hidden="true" tabindex="-1"></a>Ember, a climate think tank, publishes daily EU ETS carbon price data. We can also obtain monthly average carbon prices from Eurostat or the ICE exchange. Here we download the data and plot the price history:</span>
-<span id="cb23-107"><a href="#cb23-107" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-110"><a href="#cb23-110" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-111"><a href="#cb23-111" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
-<span id="cb23-112"><a href="#cb23-112" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-113"><a href="#cb23-113" aria-hidden="true" tabindex="-1"></a><span class="co"># Ember publishes carbon price data — download from their data portal</span></span>
-<span id="cb23-114"><a href="#cb23-114" aria-hidden="true" tabindex="-1"></a><span class="co"># Alternative: use Eurostat's env_ac_ainah_r2 or similar dataset</span></span>
-<span id="cb23-115"><a href="#cb23-115" aria-hidden="true" tabindex="-1"></a><span class="co"># Here we construct a simple illustration from publicly available data</span></span>
-<span id="cb23-116"><a href="#cb23-116" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-117"><a href="#cb23-117" aria-hidden="true" tabindex="-1"></a><span class="co"># For a reproducible approach, Ember's GitHub or data catalogue can be used:</span></span>
-<span id="cb23-118"><a href="#cb23-118" aria-hidden="true" tabindex="-1"></a><span class="co"># https://ember-climate.org/data/data-tools/carbon-price-viewer/</span></span>
-<span id="cb23-119"><a href="#cb23-119" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-120"><a href="#cb23-120" aria-hidden="true" tabindex="-1"></a><span class="co"># If using a local CSV downloaded from Ember:</span></span>
-<span id="cb23-121"><a href="#cb23-121" aria-hidden="true" tabindex="-1"></a><span class="co"># carbon_price &lt;- read_csv("data/eu-ets-carbon-price.csv")</span></span>
-<span id="cb23-122"><a href="#cb23-122" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-123"><a href="#cb23-123" aria-hidden="true" tabindex="-1"></a><span class="co"># Alternatively, the OECD Environmental Policy Stringency index from readoecd</span></span>
-<span id="cb23-124"><a href="#cb23-124" aria-hidden="true" tabindex="-1"></a><span class="co"># provides a cross-country perspective on carbon pricing ambition.</span></span>
-<span id="cb23-125"><a href="#cb23-125" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb23-126"><a href="#cb23-126" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-127"><a href="#cb23-127" aria-hidden="true" tabindex="-1"></a>Plotting the EU carbon price alongside euro area industrial production reveals an important relationship. When industrial output falls — as it did sharply in 2008–2009 and during the COVID-19 pandemic — demand for emissions permits drops and the carbon price weakens. Conversely, the post-pandemic recovery saw both industrial production and carbon prices rise sharply.</span>
-<span id="cb23-128"><a href="#cb23-128" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-131"><a href="#cb23-131" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-132"><a href="#cb23-132" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb23-133"><a href="#cb23-133" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-134"><a href="#cb23-134" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readecb)</span>
-<span id="cb23-135"><a href="#cb23-135" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb23-136"><a href="#cb23-136" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-137"><a href="#cb23-137" aria-hidden="true" tabindex="-1"></a><span class="co"># Euro area industrial production index</span></span>
-<span id="cb23-138"><a href="#cb23-138" aria-hidden="true" tabindex="-1"></a>ip <span class="ot">&lt;-</span> <span class="fu">ecb_get</span>(<span class="st">"STS"</span>, <span class="st">"M.I8.Y.PROD.NS0020.4.000"</span>)</span>
-<span id="cb23-139"><a href="#cb23-139" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-140"><a href="#cb23-140" aria-hidden="true" tabindex="-1"></a><span class="co"># Suppose we have carbon price data loaded as carbon_price</span></span>
-<span id="cb23-141"><a href="#cb23-141" aria-hidden="true" tabindex="-1"></a><span class="co"># with columns: date, price_eur</span></span>
-<span id="cb23-142"><a href="#cb23-142" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-143"><a href="#cb23-143" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge the two series on month</span></span>
-<span id="cb23-144"><a href="#cb23-144" aria-hidden="true" tabindex="-1"></a><span class="co"># combined &lt;- ip |&gt;</span></span>
-<span id="cb23-145"><a href="#cb23-145" aria-hidden="true" tabindex="-1"></a><span class="co">#   mutate(month = floor_date(date, "month")) |&gt;</span></span>
-<span id="cb23-146"><a href="#cb23-146" aria-hidden="true" tabindex="-1"></a><span class="co">#   inner_join(carbon_price, by = "month")</span></span>
-<span id="cb23-147"><a href="#cb23-147" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-148"><a href="#cb23-148" aria-hidden="true" tabindex="-1"></a><span class="co"># ggplot(combined, aes(x = date)) +</span></span>
-<span id="cb23-149"><a href="#cb23-149" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_line(aes(y = scale(value), colour = "Industrial production")) +</span></span>
-<span id="cb23-150"><a href="#cb23-150" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_line(aes(y = scale(price_eur), colour = "EU ETS carbon price")) +</span></span>
-<span id="cb23-151"><a href="#cb23-151" aria-hidden="true" tabindex="-1"></a><span class="co">#   labs(</span></span>
-<span id="cb23-152"><a href="#cb23-152" aria-hidden="true" tabindex="-1"></a><span class="co">#     title = "EU carbon price and euro area industrial production",</span></span>
-<span id="cb23-153"><a href="#cb23-153" aria-hidden="true" tabindex="-1"></a><span class="co">#     subtitle = "Standardised series",</span></span>
-<span id="cb23-154"><a href="#cb23-154" aria-hidden="true" tabindex="-1"></a><span class="co">#     x = NULL, y = "Standard deviations from mean",</span></span>
-<span id="cb23-155"><a href="#cb23-155" aria-hidden="true" tabindex="-1"></a><span class="co">#     colour = NULL</span></span>
-<span id="cb23-156"><a href="#cb23-156" aria-hidden="true" tabindex="-1"></a><span class="co">#   ) +</span></span>
-<span id="cb23-157"><a href="#cb23-157" aria-hidden="true" tabindex="-1"></a><span class="co">#   theme_minimal()</span></span>
-<span id="cb23-158"><a href="#cb23-158" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb23-159"><a href="#cb23-159" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-160"><a href="#cb23-160" aria-hidden="true" tabindex="-1"></a>This co-movement has important policy implications. A carbon price that collapses during recessions provides less incentive to decarbonise precisely when investment decisions are being deferred. The Market Stability Reserve was designed to address this by withdrawing permits from the market when the surplus exceeds a threshold, putting a soft floor under the price. Whether this mechanism is sufficient to maintain a credible long-term price signal remains an active debate.</span>
-<span id="cb23-161"><a href="#cb23-161" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-162"><a href="#cb23-162" aria-hidden="true" tabindex="-1"></a>The correlation between carbon prices and industrial activity also matters for fiscal policy. Several EU member states now earn significant revenue from ETS auctions — Germany alone raised over €18 billion in 2023. This revenue is pro-cyclical: it rises in booms and falls in recessions, much like corporate tax receipts.</span>
-<span id="cb23-163"><a href="#cb23-163" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-164"><a href="#cb23-164" aria-hidden="true" tabindex="-1"></a><span class="fu">## NGFS climate scenarios</span></span>
-<span id="cb23-165"><a href="#cb23-165" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-166"><a href="#cb23-166" aria-hidden="true" tabindex="-1"></a>The Network for Greening the Financial System (NGFS) is a coalition of over 130 central banks and financial supervisors. Since 2020, it has published a set of climate scenarios that have become the standard framework for climate stress testing in the financial sector. The Bank of England, ECB, Federal Reserve, and most major central banks use NGFS scenarios — or close variants — in their climate exercises.</span>
-<span id="cb23-167"><a href="#cb23-167" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-168"><a href="#cb23-168" aria-hidden="true" tabindex="-1"></a>The NGFS framework defines four broad scenario families, organised along two dimensions: whether the transition to net zero is orderly or disorderly, and whether climate targets are met or missed.</span>
-<span id="cb23-169"><a href="#cb23-169" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-170"><a href="#cb23-170" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Orderly transition (Net Zero 2050)**: Climate policies are introduced early and gradually tightened. Carbon prices rise steadily to $200+ per tonne by 2050. GDP impact is modest — perhaps 1–3 per cent lower than baseline by 2050 — because firms and households have time to adjust. Inflation is slightly higher during the transition due to carbon costs, but manageable.</span>
-<span id="cb23-171"><a href="#cb23-171" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-172"><a href="#cb23-172" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Disorderly transition (Delayed Transition)**: Policies are delayed until 2030, then tightened sharply to still meet the 2°C target. Carbon prices spike — potentially exceeding $500 per tonne in some models. The sudden adjustment causes a recession: GDP falls by 3–5 per cent relative to baseline, and inflation spikes as energy costs surge. This is the "climate Minsky moment" that Mark Carney warned about.</span>
-<span id="cb23-173"><a href="#cb23-173" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-174"><a href="#cb23-174" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Hot house world (Current Policies)**: No additional climate policies are enacted. Physical damages escalate: by 2100, global GDP could be 10–25 per cent lower than in an orderly transition scenario. The damage is concentrated in tropical and developing economies but affects global supply chains, commodity prices, and migration patterns.</span>
-<span id="cb23-175"><a href="#cb23-175" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-176"><a href="#cb23-176" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Too little, too late (NDCs — Nationally Determined Contributions)**: Countries implement their current pledges but go no further. Warming reaches 2.5–3°C by 2100. This combines moderate transition costs with significant physical damages — arguably the worst of both worlds.</span>
-<span id="cb23-177"><a href="#cb23-177" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-178"><a href="#cb23-178" aria-hidden="true" tabindex="-1"></a>Each scenario projects a full set of macro variables: GDP, inflation, interest rates, carbon prices, energy prices, agricultural productivity, and sectoral output. The scenarios are available through the NGFS Scenario Explorer, an interactive web tool hosted by the International Institute for Applied Systems Analysis (IIASA):</span>
-<span id="cb23-179"><a href="#cb23-179" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-182"><a href="#cb23-182" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-183"><a href="#cb23-183" aria-hidden="true" tabindex="-1"></a><span class="co"># NGFS scenarios are available from the IIASA Scenario Explorer:</span></span>
-<span id="cb23-184"><a href="#cb23-184" aria-hidden="true" tabindex="-1"></a><span class="co"># https://data.ece.iiasa.ac.at/ngfs/</span></span>
-<span id="cb23-185"><a href="#cb23-185" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-186"><a href="#cb23-186" aria-hidden="true" tabindex="-1"></a><span class="co"># The scenarios can be downloaded as CSV files after registration.</span></span>
-<span id="cb23-187"><a href="#cb23-187" aria-hidden="true" tabindex="-1"></a><span class="co"># Each scenario provides projections for:</span></span>
-<span id="cb23-188"><a href="#cb23-188" aria-hidden="true" tabindex="-1"></a><span class="co"># - GDP (by country/region)</span></span>
-<span id="cb23-189"><a href="#cb23-189" aria-hidden="true" tabindex="-1"></a><span class="co"># - Carbon price ($/tCO2)</span></span>
-<span id="cb23-190"><a href="#cb23-190" aria-hidden="true" tabindex="-1"></a><span class="co"># - Primary energy mix (coal, oil, gas, renewables, nuclear)</span></span>
-<span id="cb23-191"><a href="#cb23-191" aria-hidden="true" tabindex="-1"></a><span class="co"># - Emissions (CO2, CH4, N2O)</span></span>
-<span id="cb23-192"><a href="#cb23-192" aria-hidden="true" tabindex="-1"></a><span class="co"># - Temperature change</span></span>
-<span id="cb23-193"><a href="#cb23-193" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-194"><a href="#cb23-194" aria-hidden="true" tabindex="-1"></a><span class="co"># Example: loading a downloaded NGFS scenario file</span></span>
-<span id="cb23-195"><a href="#cb23-195" aria-hidden="true" tabindex="-1"></a><span class="co"># ngfs &lt;- read_csv("data/ngfs-scenarios.csv")</span></span>
-<span id="cb23-196"><a href="#cb23-196" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-197"><a href="#cb23-197" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter to a specific scenario and variable</span></span>
-<span id="cb23-198"><a href="#cb23-198" aria-hidden="true" tabindex="-1"></a><span class="co"># ngfs_gdp &lt;- ngfs |&gt;</span></span>
-<span id="cb23-199"><a href="#cb23-199" aria-hidden="true" tabindex="-1"></a><span class="co">#   filter(</span></span>
-<span id="cb23-200"><a href="#cb23-200" aria-hidden="true" tabindex="-1"></a><span class="co">#     scenario == "Net Zero 2050",</span></span>
-<span id="cb23-201"><a href="#cb23-201" aria-hidden="true" tabindex="-1"></a><span class="co">#     variable == "GDP|PPP",</span></span>
-<span id="cb23-202"><a href="#cb23-202" aria-hidden="true" tabindex="-1"></a><span class="co">#     region == "World"</span></span>
-<span id="cb23-203"><a href="#cb23-203" aria-hidden="true" tabindex="-1"></a><span class="co">#   )</span></span>
-<span id="cb23-204"><a href="#cb23-204" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb23-205"><a href="#cb23-205" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-206"><a href="#cb23-206" aria-hidden="true" tabindex="-1"></a>Central banks use these scenarios not as forecasts but as "what if" exercises. The Bank of England's Climate Biennial Exploratory Scenario (CBES), published in 2022, asked UK banks and insurers to assess their exposures under three NGFS scenarios. The exercise revealed that UK banks' credit losses could be 30 per cent higher under a disorderly transition than under an orderly one — not because of physical climate damage, but because of the economic disruption caused by a sudden policy shift.</span>
-<span id="cb23-207"><a href="#cb23-207" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-208"><a href="#cb23-208" aria-hidden="true" tabindex="-1"></a>For a macro analyst, the key insight from the NGFS framework is that climate risk is not just about temperature — it is about the policy path. An orderly, predictable transition is far less costly than a delayed, panicked one. This argues strongly for early, credible climate policy, which gives firms and investors a clear signal to reallocate capital.</span>
-<span id="cb23-209"><a href="#cb23-209" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-212"><a href="#cb23-212" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-213"><a href="#cb23-213" aria-hidden="true" tabindex="-1"></a><span class="co"># A stylised comparison of carbon price paths across NGFS scenarios</span></span>
-<span id="cb23-214"><a href="#cb23-214" aria-hidden="true" tabindex="-1"></a>scenarios <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb23-215"><a href="#cb23-215" aria-hidden="true" tabindex="-1"></a>  <span class="at">year =</span> <span class="fu">rep</span>(<span class="dv">2025</span><span class="sc">:</span><span class="dv">2050</span>, <span class="dv">4</span>),</span>
-<span id="cb23-216"><a href="#cb23-216" aria-hidden="true" tabindex="-1"></a>  <span class="at">scenario =</span> <span class="fu">rep</span>(</span>
-<span id="cb23-217"><a href="#cb23-217" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">"Orderly"</span>, <span class="st">"Disorderly"</span>, <span class="st">"Hot house"</span>, <span class="st">"NDCs"</span>),</span>
-<span id="cb23-218"><a href="#cb23-218" aria-hidden="true" tabindex="-1"></a>    <span class="at">each =</span> <span class="dv">26</span></span>
-<span id="cb23-219"><a href="#cb23-219" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb23-220"><a href="#cb23-220" aria-hidden="true" tabindex="-1"></a>  <span class="at">carbon_price =</span> <span class="fu">c</span>(</span>
-<span id="cb23-221"><a href="#cb23-221" aria-hidden="true" tabindex="-1"></a>    <span class="fu">seq</span>(<span class="dv">50</span>, <span class="dv">250</span>, <span class="at">length.out =</span> <span class="dv">26</span>),       <span class="co"># Orderly: gradual rise</span></span>
-<span id="cb23-222"><a href="#cb23-222" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">30</span>, <span class="dv">6</span>), <span class="fu">seq</span>(<span class="dv">30</span>, <span class="dv">600</span>, <span class="at">length.out =</span> <span class="dv">20</span>)),  <span class="co"># Disorderly: spike after 2030</span></span>
-<span id="cb23-223"><a href="#cb23-223" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rep</span>(<span class="dv">10</span>, <span class="dv">26</span>),                          <span class="co"># Hot house: no carbon price</span></span>
-<span id="cb23-224"><a href="#cb23-224" aria-hidden="true" tabindex="-1"></a>    <span class="fu">seq</span>(<span class="dv">30</span>, <span class="dv">80</span>, <span class="at">length.out =</span> <span class="dv">26</span>)          <span class="co"># NDCs: modest increase</span></span>
-<span id="cb23-225"><a href="#cb23-225" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb23-226"><a href="#cb23-226" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb23-227"><a href="#cb23-227" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-228"><a href="#cb23-228" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(scenarios, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> carbon_price, <span class="at">colour =</span> scenario)) <span class="sc">+</span></span>
-<span id="cb23-229"><a href="#cb23-229" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb23-230"><a href="#cb23-230" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb23-231"><a href="#cb23-231" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Stylised NGFS carbon price paths"</span>,</span>
-<span id="cb23-232"><a href="#cb23-232" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Carbon price ($/tCO2)"</span>,</span>
-<span id="cb23-233"><a href="#cb23-233" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="st">"Scenario"</span></span>
-<span id="cb23-234"><a href="#cb23-234" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb23-235"><a href="#cb23-235" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb23-236"><a href="#cb23-236" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb23-237"><a href="#cb23-237" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-238"><a href="#cb23-238" aria-hidden="true" tabindex="-1"></a>The disorderly scenario is the one that keeps central bankers awake. A carbon price that jumps from $30 to $600 per tonne in a decade would be the largest relative price shock since the 1970s oil crisis — but sustained over a longer period and affecting a broader set of industries.</span>
-<span id="cb23-239"><a href="#cb23-239" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-240"><a href="#cb23-240" aria-hidden="true" tabindex="-1"></a><span class="fu">## Climate-adjusted macro projections</span></span>
-<span id="cb23-241"><a href="#cb23-241" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-242"><a href="#cb23-242" aria-hidden="true" tabindex="-1"></a>Climate change affects macroeconomic variables through multiple channels. Agricultural output declines as temperatures rise and weather patterns become more volatile — the relationship between temperature and crop yields is well-documented and strongly nonlinear, with damage accelerating above certain thresholds. Labour productivity falls as heat stress increases, particularly for outdoor workers in construction, agriculture, and logistics. Infrastructure is damaged by flooding, storms, and sea-level rise, requiring diversion of investment from productive capital to replacement and adaptation. And climate-induced migration reshapes labour markets and housing demand across regions.</span>
-<span id="cb23-243"><a href="#cb23-243" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-244"><a href="#cb23-244" aria-hidden="true" tabindex="-1"></a>The empirical literature on climate and GDP has grown rapidly since the seminal work of Dell, Jones, and Olken (2012) and Burke, Hsiang, and Miguel (2015). The central finding is that higher temperatures reduce economic growth, with the effect concentrated in already-hot countries. A commonly cited estimate is that each 1°C increase in average temperature reduces GDP growth by about 1–1.5 percentage points for countries with mean temperatures above 15°C.</span>
-<span id="cb23-245"><a href="#cb23-245" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-246"><a href="#cb23-246" aria-hidden="true" tabindex="-1"></a>We can replicate a simplified version of this analysis using publicly available data. We need two ingredients: temperature anomalies by country (from NASA GISTEMP, Berkeley Earth, or the World Bank's Climate Knowledge Portal) and GDP growth by country (from the World Bank).</span>
-<span id="cb23-247"><a href="#cb23-247" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-250"><a href="#cb23-250" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-251"><a href="#cb23-251" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(WDI)</span>
-<span id="cb23-252"><a href="#cb23-252" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-253"><a href="#cb23-253" aria-hidden="true" tabindex="-1"></a><span class="co"># Download GDP growth and GDP per capita for all countries</span></span>
-<span id="cb23-254"><a href="#cb23-254" aria-hidden="true" tabindex="-1"></a>gdp_growth <span class="ot">&lt;-</span> <span class="fu">WDI</span>(</span>
-<span id="cb23-255"><a href="#cb23-255" aria-hidden="true" tabindex="-1"></a>  <span class="at">indicator =</span> <span class="fu">c</span>(</span>
-<span id="cb23-256"><a href="#cb23-256" aria-hidden="true" tabindex="-1"></a>    <span class="at">growth =</span> <span class="st">"NY.GDP.MKTP.KD.ZG"</span>,</span>
-<span id="cb23-257"><a href="#cb23-257" aria-hidden="true" tabindex="-1"></a>    <span class="at">gdp_pc =</span> <span class="st">"NY.GDP.PCAP.KD"</span></span>
-<span id="cb23-258"><a href="#cb23-258" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb23-259"><a href="#cb23-259" aria-hidden="true" tabindex="-1"></a>  <span class="at">start =</span> <span class="dv">1990</span>, <span class="at">end =</span> <span class="dv">2020</span>,</span>
-<span id="cb23-260"><a href="#cb23-260" aria-hidden="true" tabindex="-1"></a>  <span class="at">extra =</span> <span class="cn">TRUE</span></span>
-<span id="cb23-261"><a href="#cb23-261" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb23-262"><a href="#cb23-262" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-263"><a href="#cb23-263" aria-hidden="true" tabindex="-1"></a><span class="co"># Clean: keep only countries (not aggregates)</span></span>
-<span id="cb23-264"><a href="#cb23-264" aria-hidden="true" tabindex="-1"></a>gdp_growth <span class="ot">&lt;-</span> gdp_growth <span class="sc">|&gt;</span></span>
-<span id="cb23-265"><a href="#cb23-265" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(region <span class="sc">!=</span> <span class="st">"Aggregates"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb23-266"><a href="#cb23-266" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(iso3c, country, year, growth, gdp_pc, latitude, longitude)</span>
-<span id="cb23-267"><a href="#cb23-267" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-268"><a href="#cb23-268" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(gdp_growth)</span>
-<span id="cb23-269"><a href="#cb23-269" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb23-270"><a href="#cb23-270" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-271"><a href="#cb23-271" aria-hidden="true" tabindex="-1"></a>Temperature anomaly data can be downloaded from Berkeley Earth, which provides country-level annual average temperatures:</span>
-<span id="cb23-272"><a href="#cb23-272" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-275"><a href="#cb23-275" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-276"><a href="#cb23-276" aria-hidden="true" tabindex="-1"></a><span class="co"># Berkeley Earth publishes country-level temperature data:</span></span>
-<span id="cb23-277"><a href="#cb23-277" aria-hidden="true" tabindex="-1"></a><span class="co"># https://berkeleyearth.org/data/</span></span>
-<span id="cb23-278"><a href="#cb23-278" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-279"><a href="#cb23-279" aria-hidden="true" tabindex="-1"></a><span class="co"># For a simpler approach, use latitude as a proxy for temperature</span></span>
-<span id="cb23-280"><a href="#cb23-280" aria-hidden="true" tabindex="-1"></a><span class="co"># (countries closer to the equator are hotter on average)</span></span>
-<span id="cb23-281"><a href="#cb23-281" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-282"><a href="#cb23-282" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate: GDP growth vs absolute latitude</span></span>
-<span id="cb23-283"><a href="#cb23-283" aria-hidden="true" tabindex="-1"></a>gdp_growth <span class="ot">&lt;-</span> gdp_growth <span class="sc">|&gt;</span></span>
-<span id="cb23-284"><a href="#cb23-284" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">abs_latitude =</span> <span class="fu">abs</span>(<span class="fu">as.numeric</span>(latitude)))</span>
-<span id="cb23-285"><a href="#cb23-285" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-286"><a href="#cb23-286" aria-hidden="true" tabindex="-1"></a><span class="co"># Average growth by country</span></span>
-<span id="cb23-287"><a href="#cb23-287" aria-hidden="true" tabindex="-1"></a>country_avg <span class="ot">&lt;-</span> gdp_growth <span class="sc">|&gt;</span></span>
-<span id="cb23-288"><a href="#cb23-288" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(iso3c, country, abs_latitude) <span class="sc">|&gt;</span></span>
-<span id="cb23-289"><a href="#cb23-289" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb23-290"><a href="#cb23-290" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_growth =</span> <span class="fu">mean</span>(growth, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb23-291"><a href="#cb23-291" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_gdp_pc =</span> <span class="fu">mean</span>(gdp_pc, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb23-292"><a href="#cb23-292" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
-<span id="cb23-293"><a href="#cb23-293" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb23-294"><a href="#cb23-294" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(abs_latitude), <span class="sc">!</span><span class="fu">is.na</span>(mean_growth))</span>
-<span id="cb23-295"><a href="#cb23-295" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-296"><a href="#cb23-296" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(country_avg, <span class="fu">aes</span>(<span class="at">x =</span> abs_latitude, <span class="at">y =</span> mean_growth)) <span class="sc">+</span></span>
-<span id="cb23-297"><a href="#cb23-297" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
-<span id="cb23-298"><a href="#cb23-298" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
-<span id="cb23-299"><a href="#cb23-299" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb23-300"><a href="#cb23-300" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"GDP growth and latitude"</span>,</span>
-<span id="cb23-301"><a href="#cb23-301" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Average annual growth 1990-2020"</span>,</span>
-<span id="cb23-302"><a href="#cb23-302" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Absolute latitude (degrees from equator)"</span>,</span>
-<span id="cb23-303"><a href="#cb23-303" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Mean GDP growth (%)"</span></span>
-<span id="cb23-304"><a href="#cb23-304" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb23-305"><a href="#cb23-305" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb23-306"><a href="#cb23-306" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb23-307"><a href="#cb23-307" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-308"><a href="#cb23-308" aria-hidden="true" tabindex="-1"></a>This simple cross-section is suggestive but far from conclusive — latitude correlates with many things besides temperature (colonial history, institutional quality, disease burden). A more rigorous approach uses panel data with country and year fixed effects, regressing GDP growth on temperature deviations from the country's own historical mean. This within-country variation is more plausibly exogenous.</span>
-<span id="cb23-309"><a href="#cb23-309" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-312"><a href="#cb23-312" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-313"><a href="#cb23-313" aria-hidden="true" tabindex="-1"></a><span class="co"># A panel approach (requires temperature data merged in)</span></span>
-<span id="cb23-314"><a href="#cb23-314" aria-hidden="true" tabindex="-1"></a><span class="co"># Suppose we have a panel: country, year, growth, temp_anomaly</span></span>
-<span id="cb23-315"><a href="#cb23-315" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-316"><a href="#cb23-316" aria-hidden="true" tabindex="-1"></a><span class="co"># library(fixest)</span></span>
-<span id="cb23-317"><a href="#cb23-317" aria-hidden="true" tabindex="-1"></a><span class="co"># model &lt;- feols(</span></span>
-<span id="cb23-318"><a href="#cb23-318" aria-hidden="true" tabindex="-1"></a><span class="co">#   growth ~ temp_anomaly | iso3c + year,</span></span>
-<span id="cb23-319"><a href="#cb23-319" aria-hidden="true" tabindex="-1"></a><span class="co">#   data = panel_data</span></span>
-<span id="cb23-320"><a href="#cb23-320" aria-hidden="true" tabindex="-1"></a><span class="co"># )</span></span>
-<span id="cb23-321"><a href="#cb23-321" aria-hidden="true" tabindex="-1"></a><span class="co"># summary(model)</span></span>
-<span id="cb23-322"><a href="#cb23-322" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-323"><a href="#cb23-323" aria-hidden="true" tabindex="-1"></a><span class="co"># The coefficient on temp_anomaly tells us:</span></span>
-<span id="cb23-324"><a href="#cb23-324" aria-hidden="true" tabindex="-1"></a><span class="co"># a 1°C positive temperature anomaly is associated with</span></span>
-<span id="cb23-325"><a href="#cb23-325" aria-hidden="true" tabindex="-1"></a><span class="co"># approximately X percentage points lower GDP growth</span></span>
-<span id="cb23-326"><a href="#cb23-326" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb23-327"><a href="#cb23-327" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-328"><a href="#cb23-328" aria-hidden="true" tabindex="-1"></a>The implications for long-run projections are sobering. If global temperatures rise by 2–3°C by 2100, the cumulative GDP loss for tropical countries could reach 20–30 per cent relative to a no-warming counterfactual. Even temperate countries face significant costs through supply chain disruption, commodity price volatility, and climate-induced migration. These estimates are central to the social cost of carbon — the dollar value of damage caused by emitting one additional tonne of CO2 — which the US government currently estimates at around $50–$200 per tonne, depending on the discount rate.</span>
-<span id="cb23-329"><a href="#cb23-329" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-330"><a href="#cb23-330" aria-hidden="true" tabindex="-1"></a><span class="fu">## Stranded assets and transition risk</span></span>
-<span id="cb23-331"><a href="#cb23-331" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-332"><a href="#cb23-332" aria-hidden="true" tabindex="-1"></a>The concept of stranded assets was popularised by the Carbon Tracker Initiative in 2011. The argument is straightforward: if the world is to limit warming to 1.5–2°C, the majority of known fossil fuel reserves — coal, oil, and natural gas — must remain in the ground. The reserves are "stranded" because they cannot be profitably extracted under a carbon-constrained future. This implies that companies whose valuations depend on those reserves are overvalued — a "carbon bubble."</span>
-<span id="cb23-333"><a href="#cb23-333" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-334"><a href="#cb23-334" aria-hidden="true" tabindex="-1"></a>The numbers are striking. The IPCC's remaining carbon budget for a 50 per cent chance of limiting warming to 1.5°C is approximately 500 gigatonnes of CO2 from 2020. Global proven fossil fuel reserves, if fully combusted, would release roughly 3,500 gigatonnes. This means approximately 85 per cent of reserves must stay underground. For coal, the figure is over 95 per cent.</span>
-<span id="cb23-335"><a href="#cb23-335" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-336"><a href="#cb23-336" aria-hidden="true" tabindex="-1"></a>For a fixed-income analyst, transition risk manifests as credit risk. Consider a portfolio of corporate bonds issued by energy companies. Under an orderly transition, these companies face gradually rising carbon costs that erode margins over a decade, but have time to diversify. Under a disorderly transition, a sudden carbon price spike could push highly leveraged fossil fuel producers into default.</span>
-<span id="cb23-337"><a href="#cb23-337" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-338"><a href="#cb23-338" aria-hidden="true" tabindex="-1"></a>We can construct a simple numerical example. Suppose we have a portfolio of bonds from three types of energy companies:</span>
-<span id="cb23-339"><a href="#cb23-339" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-342"><a href="#cb23-342" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-343"><a href="#cb23-343" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tibble)</span>
-<span id="cb23-344"><a href="#cb23-344" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-345"><a href="#cb23-345" aria-hidden="true" tabindex="-1"></a><span class="co"># Stylised portfolio of energy company bonds</span></span>
-<span id="cb23-346"><a href="#cb23-346" aria-hidden="true" tabindex="-1"></a>portfolio <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb23-347"><a href="#cb23-347" aria-hidden="true" tabindex="-1"></a>  <span class="at">company =</span> <span class="fu">c</span>(<span class="st">"Coal Corp"</span>, <span class="st">"Oil Major"</span>, <span class="st">"Renewables Inc"</span>),</span>
-<span id="cb23-348"><a href="#cb23-348" aria-hidden="true" tabindex="-1"></a>  <span class="at">face_value =</span> <span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">150</span>),  <span class="co"># £ millions</span></span>
-<span id="cb23-349"><a href="#cb23-349" aria-hidden="true" tabindex="-1"></a>  <span class="at">coupon =</span> <span class="fu">c</span>(<span class="fl">0.06</span>, <span class="fl">0.04</span>, <span class="fl">0.03</span>),</span>
-<span id="cb23-350"><a href="#cb23-350" aria-hidden="true" tabindex="-1"></a>  <span class="at">maturity =</span> <span class="fu">c</span>(<span class="dv">2035</span>, <span class="dv">2040</span>, <span class="dv">2045</span>),</span>
-<span id="cb23-351"><a href="#cb23-351" aria-hidden="true" tabindex="-1"></a>  <span class="at">emissions_intensity =</span> <span class="fu">c</span>(<span class="fl">1.2</span>, <span class="fl">0.5</span>, <span class="fl">0.02</span>),  <span class="co"># tCO2 per £000 revenue</span></span>
-<span id="cb23-352"><a href="#cb23-352" aria-hidden="true" tabindex="-1"></a>  <span class="at">revenue =</span> <span class="fu">c</span>(<span class="dv">500</span>, <span class="dv">2000</span>, <span class="dv">800</span>)  <span class="co"># £ millions</span></span>
-<span id="cb23-353"><a href="#cb23-353" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb23-354"><a href="#cb23-354" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-355"><a href="#cb23-355" aria-hidden="true" tabindex="-1"></a><span class="co"># Annual carbon cost under different scenarios</span></span>
-<span id="cb23-356"><a href="#cb23-356" aria-hidden="true" tabindex="-1"></a>scenarios <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb23-357"><a href="#cb23-357" aria-hidden="true" tabindex="-1"></a>  <span class="at">scenario =</span> <span class="fu">c</span>(<span class="st">"Orderly"</span>, <span class="st">"Disorderly"</span>, <span class="st">"Hot house"</span>),</span>
-<span id="cb23-358"><a href="#cb23-358" aria-hidden="true" tabindex="-1"></a>  <span class="at">carbon_price_2030 =</span> <span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">300</span>, <span class="dv">10</span>),  <span class="co"># £/tCO2</span></span>
-<span id="cb23-359"><a href="#cb23-359" aria-hidden="true" tabindex="-1"></a>  <span class="at">carbon_price_2040 =</span> <span class="fu">c</span>(<span class="dv">200</span>, <span class="dv">400</span>, <span class="dv">15</span>)</span>
-<span id="cb23-360"><a href="#cb23-360" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb23-361"><a href="#cb23-361" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-362"><a href="#cb23-362" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate carbon costs as a share of revenue</span></span>
-<span id="cb23-363"><a href="#cb23-363" aria-hidden="true" tabindex="-1"></a>portfolio <span class="sc">|&gt;</span></span>
-<span id="cb23-364"><a href="#cb23-364" aria-hidden="true" tabindex="-1"></a>  <span class="fu">crossing</span>(scenarios) <span class="sc">|&gt;</span></span>
-<span id="cb23-365"><a href="#cb23-365" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb23-366"><a href="#cb23-366" aria-hidden="true" tabindex="-1"></a>    <span class="at">carbon_cost_2030 =</span> emissions_intensity <span class="sc">*</span> revenue <span class="sc">*</span> carbon_price_2030 <span class="sc">/</span> <span class="dv">1000</span>,</span>
-<span id="cb23-367"><a href="#cb23-367" aria-hidden="true" tabindex="-1"></a>    <span class="at">carbon_cost_pct =</span> carbon_cost_2030 <span class="sc">/</span> revenue <span class="sc">*</span> <span class="dv">100</span></span>
-<span id="cb23-368"><a href="#cb23-368" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb23-369"><a href="#cb23-369" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(company, scenario, carbon_cost_2030, carbon_cost_pct)</span>
-<span id="cb23-370"><a href="#cb23-370" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb23-371"><a href="#cb23-371" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-372"><a href="#cb23-372" aria-hidden="true" tabindex="-1"></a>Under the orderly scenario, Coal Corp faces a carbon cost equal to 12 per cent of its revenue by 2030 — likely enough to render it unprofitable unless it can pass costs through to customers (difficult when competing against renewables). Under the disorderly scenario, the carbon cost triples, almost certainly triggering default on its bonds. Oil Major faces smaller but still material costs. Renewables Inc is essentially unaffected.</span>
-<span id="cb23-373"><a href="#cb23-373" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-374"><a href="#cb23-374" aria-hidden="true" tabindex="-1"></a>This exercise, while simplified, captures the core logic of climate stress testing. The Bank of England's CBES asked UK banks to perform exactly this kind of analysis for their entire loan books — assessing how each borrower's creditworthiness would change under different carbon price paths. The results showed that banks with concentrated exposures to fossil fuel-intensive sectors faced materially higher credit losses under transition scenarios.</span>
-<span id="cb23-375"><a href="#cb23-375" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-376"><a href="#cb23-376" aria-hidden="true" tabindex="-1"></a>The stranded assets problem extends beyond energy. Any company with high direct or indirect emissions faces transition risk — airlines, cement manufacturers, steel producers, shipping companies. A well-diversified investment portfolio needs to consider not just current emissions but the trajectory: companies that are credibly reducing their emissions intensity are better positioned than those that are not, regardless of their current level.</span>
-<span id="cb23-377"><a href="#cb23-377" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-380"><a href="#cb23-380" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-381"><a href="#cb23-381" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualise the carbon cost burden across scenarios</span></span>
-<span id="cb23-382"><a href="#cb23-382" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb23-383"><a href="#cb23-383" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-384"><a href="#cb23-384" aria-hidden="true" tabindex="-1"></a><span class="co"># portfolio_costs &lt;- portfolio |&gt;</span></span>
-<span id="cb23-385"><a href="#cb23-385" aria-hidden="true" tabindex="-1"></a><span class="co">#   crossing(scenarios) |&gt;</span></span>
-<span id="cb23-386"><a href="#cb23-386" aria-hidden="true" tabindex="-1"></a><span class="co">#   mutate(</span></span>
-<span id="cb23-387"><a href="#cb23-387" aria-hidden="true" tabindex="-1"></a><span class="co">#     carbon_cost_2030 = emissions_intensity * revenue * carbon_price_2030 / 1000,</span></span>
-<span id="cb23-388"><a href="#cb23-388" aria-hidden="true" tabindex="-1"></a><span class="co">#     carbon_cost_pct = carbon_cost_2030 / revenue * 100</span></span>
-<span id="cb23-389"><a href="#cb23-389" aria-hidden="true" tabindex="-1"></a><span class="co">#   )</span></span>
-<span id="cb23-390"><a href="#cb23-390" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
-<span id="cb23-391"><a href="#cb23-391" aria-hidden="true" tabindex="-1"></a><span class="co"># ggplot(portfolio_costs, aes(x = company, y = carbon_cost_pct, fill = scenario)) +</span></span>
-<span id="cb23-392"><a href="#cb23-392" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_col(position = "dodge") +</span></span>
-<span id="cb23-393"><a href="#cb23-393" aria-hidden="true" tabindex="-1"></a><span class="co">#   labs(</span></span>
-<span id="cb23-394"><a href="#cb23-394" aria-hidden="true" tabindex="-1"></a><span class="co">#     title = "Carbon costs as share of revenue (2030)",</span></span>
-<span id="cb23-395"><a href="#cb23-395" aria-hidden="true" tabindex="-1"></a><span class="co">#     x = NULL, y = "Carbon cost (% of revenue)",</span></span>
-<span id="cb23-396"><a href="#cb23-396" aria-hidden="true" tabindex="-1"></a><span class="co">#     fill = "Scenario"</span></span>
-<span id="cb23-397"><a href="#cb23-397" aria-hidden="true" tabindex="-1"></a><span class="co">#   ) +</span></span>
-<span id="cb23-398"><a href="#cb23-398" aria-hidden="true" tabindex="-1"></a><span class="co">#   theme_minimal()</span></span>
-<span id="cb23-399"><a href="#cb23-399" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb23-400"><a href="#cb23-400" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-401"><a href="#cb23-401" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises</span></span>
-<span id="cb23-402"><a href="#cb23-402" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-403"><a href="#cb23-403" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Download global CO2 emissions data from Our World in Data. Plot total and per-capita emissions for the G7 since 1990. Which country has reduced emissions the most in absolute terms? Which has reduced per-capita emissions the most? Are these the same country?</span>
-<span id="cb23-404"><a href="#cb23-404" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-405"><a href="#cb23-405" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>The UK's emissions reductions are partly due to deindustrialisation — emissions have been "offshored" to countries that manufacture goods consumed in the UK. Using the OWID dataset, compare the UK's production-based emissions (<span class="in">`co2`</span>) with its consumption-based emissions (<span class="in">`consumption_co2`</span>). How large is the gap? Has it narrowed or widened since 1990?</span>
-<span id="cb23-406"><a href="#cb23-406" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-407"><a href="#cb23-407" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Using the stylised NGFS carbon price paths from this chapter, calculate the net present value of carbon costs for a coal-fired power plant that emits 4 million tonnes of CO2 per year and operates until 2040. Use a discount rate of 5 per cent. Under which scenario is the plant economically unviable?</span>
-<span id="cb23-408"><a href="#cb23-408" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-409"><a href="#cb23-409" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Describe how a central bank would use NGFS scenarios to stress test a portfolio of corporate bonds. What macro variables would you need? How would you map carbon prices to credit risk? What are the limitations of this approach?</span>
-<span id="cb23-410"><a href="#cb23-410" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-411"><a href="#cb23-411" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Download GDP growth data from the World Bank and plot average growth (1990–2020) against absolute latitude for all countries. Is there a statistically significant relationship? What confounding variables might explain the correlation?</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co">  eval: true</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="fu"># Climate and the Macroeconomy {#sec-climate}</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>Climate change is increasingly central to macroeconomic policy. Central banks run climate stress tests, governments set carbon budgets, and transition risk is repricing assets across every sector. Yet most macroeconomics textbooks still treat the environment as an externality to be dealt with in a microeconomics course. This chapter brings climate into the macro toolkit — with data, models, and R code.</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>The intersection of climate and macroeconomics runs in both directions. Climate change affects the macroeconomy through physical risks (extreme weather, agricultural disruption, labour productivity losses) and transition risks (stranded assets, carbon pricing, regulatory change). Conversely, macroeconomic variables — GDP growth, energy prices, industrial structure — are the primary drivers of emissions. Understanding these feedback loops is essential for any modern macro analyst.</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="fu">## Emissions data in R</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>Our World in Data (OWID) maintains a comprehensive, open-access dataset of CO2 and greenhouse gas emissions, drawn from the Global Carbon Project, the Climate Analysis Indicators Tool, and national inventories. The data are published as CSV files on GitHub, making them straightforward to load directly into R. This is one of the best-maintained open datasets in climate economics — it covers every country from 1750 to the present, with annual frequency, and includes both production-based and consumption-based emissions.</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>The dataset contains dozens of variables: total CO2, per-capita CO2, emissions by fuel type (coal, oil, gas, cement, flaring), cumulative emissions, consumption-based emissions (adjusted for trade), and CO2 intensity of GDP. For macro analysis, the most useful columns are <span class="in">`country`</span>, <span class="in">`year`</span>, <span class="in">`co2`</span> (total annual CO2 in million tonnes), <span class="in">`co2_per_capita`</span> (tonnes per person), and <span class="in">`co2_per_gdp`</span> (kilograms per dollar of GDP).</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"../R/theme_macro.R"</span>)</span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Download CO2 data from Our World in Data (GitHub-hosted CSV)</span></span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>owid_url <span class="ot">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/owid/co2-data/master/owid-co2-data.csv"</span></span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>co2_raw <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(owid_url)</span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the G7 countries</span></span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a>g7 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"United Kingdom"</span>, <span class="st">"United States"</span>, <span class="st">"Germany"</span>,</span>
+<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a>        <span class="st">"France"</span>, <span class="st">"Japan"</span>, <span class="st">"Italy"</span>, <span class="st">"Canada"</span>)</span>
+<span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter to G7, 1990 onwards</span></span>
+<span id="cb18-33"><a href="#cb18-33" aria-hidden="true" tabindex="-1"></a>co2_g7 <span class="ot">&lt;-</span> co2_raw <span class="sc">|&gt;</span></span>
+<span id="cb18-34"><a href="#cb18-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(country <span class="sc">%in%</span> g7, year <span class="sc">&gt;=</span> <span class="dv">1990</span>) <span class="sc">|&gt;</span></span>
+<span id="cb18-35"><a href="#cb18-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(country, year, co2, co2_per_capita, population)</span>
+<span id="cb18-36"><a href="#cb18-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-37"><a href="#cb18-37" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(co2_g7)</span>
+<span id="cb18-38"><a href="#cb18-38" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-39"><a href="#cb18-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-40"><a href="#cb18-40" aria-hidden="true" tabindex="-1"></a>Let us plot total emissions for the G7 since 1990. This is the standard way to visualise decarbonisation trajectories — absolute emissions are what matter for the atmosphere, regardless of how many people live in each country.</span>
+<span id="cb18-41"><a href="#cb18-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-44"><a href="#cb18-44" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb18-45"><a href="#cb18-45" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(co2_g7, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> co2, <span class="at">colour =</span> country)) <span class="sc">+</span></span>
+<span id="cb18-46"><a href="#cb18-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb18-47"><a href="#cb18-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb18-48"><a href="#cb18-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"G7 CO2 emissions since 1990"</span>,</span>
+<span id="cb18-49"><a href="#cb18-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"CO2 (million tonnes)"</span>,</span>
+<span id="cb18-50"><a href="#cb18-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="cn">NULL</span></span>
+<span id="cb18-51"><a href="#cb18-51" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb18-52"><a href="#cb18-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_macro</span>() <span class="sc">+</span></span>
+<span id="cb18-53"><a href="#cb18-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span>
+<span id="cb18-54"><a href="#cb18-54" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-55"><a href="#cb18-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-56"><a href="#cb18-56" aria-hidden="true" tabindex="-1"></a>The United States dominates in absolute terms but has reduced emissions since the mid-2000s, largely through the switch from coal to natural gas in electricity generation. Japan's emissions rose after Fukushima (2011) as nuclear plants were shut down and replaced with fossil fuels. The most striking trajectory belongs to the United Kingdom, which has roughly halved its territorial emissions since 1990 — the fastest decarbonisation of any major economy.</span>
+<span id="cb18-57"><a href="#cb18-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-58"><a href="#cb18-58" aria-hidden="true" tabindex="-1"></a>Per-capita emissions tell a different story. They adjust for population size and give a fairer comparison of individual carbon footprints across countries.</span>
+<span id="cb18-59"><a href="#cb18-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-62"><a href="#cb18-62" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb18-63"><a href="#cb18-63" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(co2_g7, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> co2_per_capita, <span class="at">colour =</span> country)) <span class="sc">+</span></span>
+<span id="cb18-64"><a href="#cb18-64" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb18-65"><a href="#cb18-65" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb18-66"><a href="#cb18-66" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"G7 per-capita CO2 emissions"</span>,</span>
+<span id="cb18-67"><a href="#cb18-67" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"CO2 per capita (tonnes)"</span>,</span>
+<span id="cb18-68"><a href="#cb18-68" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="cn">NULL</span></span>
+<span id="cb18-69"><a href="#cb18-69" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb18-70"><a href="#cb18-70" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_macro</span>() <span class="sc">+</span></span>
+<span id="cb18-71"><a href="#cb18-71" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span>
+<span id="cb18-72"><a href="#cb18-72" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-73"><a href="#cb18-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-74"><a href="#cb18-74" aria-hidden="true" tabindex="-1"></a>The United States and Canada have by far the highest per-capita emissions — roughly double those of European G7 members. This reflects larger homes, longer driving distances, and historically cheaper energy. The UK's per-capita emissions have fallen below France's coal-phase-out trajectory, approaching levels not seen since the Victorian era. France's relatively low per-capita figure reflects its heavy reliance on nuclear power, which produces negligible direct CO2.</span>
+<span id="cb18-75"><a href="#cb18-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-76"><a href="#cb18-76" aria-hidden="true" tabindex="-1"></a>We can quantify the percentage reduction for each country since 1990, which is the Kyoto Protocol baseline year:</span>
+<span id="cb18-77"><a href="#cb18-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-80"><a href="#cb18-80" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb18-81"><a href="#cb18-81" aria-hidden="true" tabindex="-1"></a>latest_year <span class="ot">&lt;-</span> <span class="fu">max</span>(co2_g7<span class="sc">$</span>year, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb18-82"><a href="#cb18-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-83"><a href="#cb18-83" aria-hidden="true" tabindex="-1"></a>co2_change <span class="ot">&lt;-</span> co2_g7 <span class="sc">|&gt;</span></span>
+<span id="cb18-84"><a href="#cb18-84" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1990</span>, latest_year)) <span class="sc">|&gt;</span></span>
+<span id="cb18-85"><a href="#cb18-85" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(country, year, co2) <span class="sc">|&gt;</span></span>
+<span id="cb18-86"><a href="#cb18-86" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> year, <span class="at">values_from =</span> co2,</span>
+<span id="cb18-87"><a href="#cb18-87" aria-hidden="true" tabindex="-1"></a>              <span class="at">names_prefix =</span> <span class="st">"y"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb18-88"><a href="#cb18-88" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">initial =</span> y1990) <span class="sc">|&gt;</span></span>
+<span id="cb18-89"><a href="#cb18-89" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb18-90"><a href="#cb18-90" aria-hidden="true" tabindex="-1"></a>    <span class="at">latest =</span> <span class="fu">pick</span>(<span class="fu">last_col</span>()) <span class="sc">|&gt;</span> <span class="fu">pull</span>(),</span>
+<span id="cb18-91"><a href="#cb18-91" aria-hidden="true" tabindex="-1"></a>    <span class="at">pct_change =</span> (latest <span class="sc">-</span> initial) <span class="sc">/</span> initial <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb18-92"><a href="#cb18-92" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb18-93"><a href="#cb18-93" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(pct_change) <span class="sc">|&gt;</span></span>
+<span id="cb18-94"><a href="#cb18-94" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(country, initial, latest, pct_change)</span>
+<span id="cb18-95"><a href="#cb18-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-96"><a href="#cb18-96" aria-hidden="true" tabindex="-1"></a>co2_change</span>
+<span id="cb18-97"><a href="#cb18-97" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-98"><a href="#cb18-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-99"><a href="#cb18-99" aria-hidden="true" tabindex="-1"></a>The UK typically leads this table with a reduction of around 45–50 per cent, driven primarily by the near-complete phase-out of coal from electricity generation. Germany has also made significant reductions, particularly after reunification closed inefficient East German industry, and more recently through its Energiewende renewable energy programme. Canada and Japan have made the least progress among G7 members.</span>
+<span id="cb18-100"><a href="#cb18-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-101"><a href="#cb18-101" aria-hidden="true" tabindex="-1"></a><span class="fu">## Carbon pricing and the EU ETS</span></span>
+<span id="cb18-102"><a href="#cb18-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-103"><a href="#cb18-103" aria-hidden="true" tabindex="-1"></a>The EU Emissions Trading System (EU ETS) is the world's largest carbon market. Launched in 2005, it operates on a cap-and-trade principle: the EU sets a declining cap on total emissions from covered sectors (power generation, heavy industry, aviation within Europe), issues allowances up to that cap, and lets firms trade them. A firm that reduces emissions below its allocation can sell surplus allowances; a firm that exceeds its allocation must buy more. The price of an EU Allowance (EUA) is therefore a market-determined carbon price — the marginal cost of emitting one tonne of CO2.</span>
+<span id="cb18-104"><a href="#cb18-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-105"><a href="#cb18-105" aria-hidden="true" tabindex="-1"></a>The EU ETS has had a turbulent price history. In Phase I (2005–2007), over-allocation of free permits caused the price to collapse to near zero. Phase II (2008–2012) coincided with the financial crisis, which crushed industrial output and therefore demand for permits — the price fell below €5. Phase III (2013–2020) introduced auctioning and the Market Stability Reserve (MSR), which began absorbing surplus allowances from 2019. This tightening, combined with the European Green Deal's ambition, sent prices soaring. By 2023, EUA prices exceeded €100 per tonne for the first time — a level that begins to make carbon capture and green hydrogen economically competitive.</span>
+<span id="cb18-106"><a href="#cb18-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-107"><a href="#cb18-107" aria-hidden="true" tabindex="-1"></a>Ember, a climate think tank, publishes daily EU ETS carbon price data. We can also obtain monthly average carbon prices from Eurostat or the ICE exchange. Here we download the data and plot the price history:</span>
+<span id="cb18-108"><a href="#cb18-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-111"><a href="#cb18-111" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb18-112"><a href="#cb18-112" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb18-113"><a href="#cb18-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-114"><a href="#cb18-114" aria-hidden="true" tabindex="-1"></a><span class="co"># Ember publishes carbon price data — download from their data portal</span></span>
+<span id="cb18-115"><a href="#cb18-115" aria-hidden="true" tabindex="-1"></a><span class="co"># Alternative: use Eurostat's env_ac_ainah_r2 or similar dataset</span></span>
+<span id="cb18-116"><a href="#cb18-116" aria-hidden="true" tabindex="-1"></a><span class="co"># Here we construct a simple illustration from publicly available data</span></span>
+<span id="cb18-117"><a href="#cb18-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-118"><a href="#cb18-118" aria-hidden="true" tabindex="-1"></a><span class="co"># For a reproducible approach, Ember's GitHub or data catalogue can be used:</span></span>
+<span id="cb18-119"><a href="#cb18-119" aria-hidden="true" tabindex="-1"></a><span class="co"># https://ember-climate.org/data/data-tools/carbon-price-viewer/</span></span>
+<span id="cb18-120"><a href="#cb18-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-121"><a href="#cb18-121" aria-hidden="true" tabindex="-1"></a><span class="co"># If using a local CSV downloaded from Ember:</span></span>
+<span id="cb18-122"><a href="#cb18-122" aria-hidden="true" tabindex="-1"></a><span class="co"># carbon_price &lt;- read_csv("data/eu-ets-carbon-price.csv")</span></span>
+<span id="cb18-123"><a href="#cb18-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-124"><a href="#cb18-124" aria-hidden="true" tabindex="-1"></a><span class="co"># Alternatively, the OECD Environmental Policy Stringency index from readoecd</span></span>
+<span id="cb18-125"><a href="#cb18-125" aria-hidden="true" tabindex="-1"></a><span class="co"># provides a cross-country perspective on carbon pricing ambition.</span></span>
+<span id="cb18-126"><a href="#cb18-126" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-127"><a href="#cb18-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-128"><a href="#cb18-128" aria-hidden="true" tabindex="-1"></a>Plotting the EU carbon price alongside euro area industrial production reveals an important relationship. When industrial output falls — as it did sharply in 2008–2009 and during the COVID-19 pandemic — demand for emissions permits drops and the carbon price weakens. Conversely, the post-pandemic recovery saw both industrial production and carbon prices rise sharply.</span>
+<span id="cb18-129"><a href="#cb18-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-132"><a href="#cb18-132" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb18-133"><a href="#cb18-133" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb18-134"><a href="#cb18-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-135"><a href="#cb18-135" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readecb)</span>
+<span id="cb18-136"><a href="#cb18-136" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb18-137"><a href="#cb18-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-138"><a href="#cb18-138" aria-hidden="true" tabindex="-1"></a><span class="co"># Euro area industrial production index</span></span>
+<span id="cb18-139"><a href="#cb18-139" aria-hidden="true" tabindex="-1"></a>ip <span class="ot">&lt;-</span> <span class="fu">ecb_get</span>(<span class="st">"STS"</span>, <span class="st">"M.I8.Y.PROD.NS0020.4.000"</span>)</span>
+<span id="cb18-140"><a href="#cb18-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-141"><a href="#cb18-141" aria-hidden="true" tabindex="-1"></a><span class="co"># Suppose we have carbon price data loaded as carbon_price</span></span>
+<span id="cb18-142"><a href="#cb18-142" aria-hidden="true" tabindex="-1"></a><span class="co"># with columns: date, price_eur</span></span>
+<span id="cb18-143"><a href="#cb18-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-144"><a href="#cb18-144" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge the two series on month</span></span>
+<span id="cb18-145"><a href="#cb18-145" aria-hidden="true" tabindex="-1"></a><span class="co"># combined &lt;- ip |&gt;</span></span>
+<span id="cb18-146"><a href="#cb18-146" aria-hidden="true" tabindex="-1"></a><span class="co">#   mutate(month = floor_date(date, "month")) |&gt;</span></span>
+<span id="cb18-147"><a href="#cb18-147" aria-hidden="true" tabindex="-1"></a><span class="co">#   inner_join(carbon_price, by = "month")</span></span>
+<span id="cb18-148"><a href="#cb18-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-149"><a href="#cb18-149" aria-hidden="true" tabindex="-1"></a><span class="co"># ggplot(combined, aes(x = date)) +</span></span>
+<span id="cb18-150"><a href="#cb18-150" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_line(aes(y = scale(value), colour = "Industrial production")) +</span></span>
+<span id="cb18-151"><a href="#cb18-151" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_line(aes(y = scale(price_eur), colour = "EU ETS carbon price")) +</span></span>
+<span id="cb18-152"><a href="#cb18-152" aria-hidden="true" tabindex="-1"></a><span class="co">#   labs(</span></span>
+<span id="cb18-153"><a href="#cb18-153" aria-hidden="true" tabindex="-1"></a><span class="co">#     title = "EU carbon price and euro area industrial production",</span></span>
+<span id="cb18-154"><a href="#cb18-154" aria-hidden="true" tabindex="-1"></a><span class="co">#     subtitle = "Standardised series",</span></span>
+<span id="cb18-155"><a href="#cb18-155" aria-hidden="true" tabindex="-1"></a><span class="co">#     x = NULL, y = "Standard deviations from mean",</span></span>
+<span id="cb18-156"><a href="#cb18-156" aria-hidden="true" tabindex="-1"></a><span class="co">#     colour = NULL</span></span>
+<span id="cb18-157"><a href="#cb18-157" aria-hidden="true" tabindex="-1"></a><span class="co">#   ) +</span></span>
+<span id="cb18-158"><a href="#cb18-158" aria-hidden="true" tabindex="-1"></a><span class="co">#   theme_macro()</span></span>
+<span id="cb18-159"><a href="#cb18-159" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-160"><a href="#cb18-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-161"><a href="#cb18-161" aria-hidden="true" tabindex="-1"></a>This co-movement has important policy implications. A carbon price that collapses during recessions provides less incentive to decarbonise precisely when investment decisions are being deferred. The Market Stability Reserve was designed to address this by withdrawing permits from the market when the surplus exceeds a threshold, putting a soft floor under the price. Whether this mechanism is sufficient to maintain a credible long-term price signal remains an active debate.</span>
+<span id="cb18-162"><a href="#cb18-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-163"><a href="#cb18-163" aria-hidden="true" tabindex="-1"></a>The correlation between carbon prices and industrial activity also matters for fiscal policy. Several EU member states now earn significant revenue from ETS auctions — Germany alone raised over €18 billion in 2023. This revenue is pro-cyclical: it rises in booms and falls in recessions, much like corporate tax receipts.</span>
+<span id="cb18-164"><a href="#cb18-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-165"><a href="#cb18-165" aria-hidden="true" tabindex="-1"></a><span class="fu">## NGFS climate scenarios</span></span>
+<span id="cb18-166"><a href="#cb18-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-167"><a href="#cb18-167" aria-hidden="true" tabindex="-1"></a>The Network for Greening the Financial System (NGFS) is a coalition of over 130 central banks and financial supervisors. Since 2020, it has published a set of climate scenarios that have become the standard framework for climate stress testing in the financial sector. The Bank of England, ECB, Federal Reserve, and most major central banks use NGFS scenarios — or close variants — in their climate exercises.</span>
+<span id="cb18-168"><a href="#cb18-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-169"><a href="#cb18-169" aria-hidden="true" tabindex="-1"></a>The NGFS framework defines four broad scenario families, organised along two dimensions: whether the transition to net zero is orderly or disorderly, and whether climate targets are met or missed.</span>
+<span id="cb18-170"><a href="#cb18-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-171"><a href="#cb18-171" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Orderly transition (Net Zero 2050)**: Climate policies are introduced early and gradually tightened. Carbon prices rise steadily to $200+ per tonne by 2050. GDP impact is modest — perhaps 1–3 per cent lower than baseline by 2050 — because firms and households have time to adjust. Inflation is slightly higher during the transition due to carbon costs, but manageable.</span>
+<span id="cb18-172"><a href="#cb18-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-173"><a href="#cb18-173" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Disorderly transition (Delayed Transition)**: Policies are delayed until 2030, then tightened sharply to still meet the 2°C target. Carbon prices spike — potentially exceeding $500 per tonne in some models. The sudden adjustment causes a recession: GDP falls by 3–5 per cent relative to baseline, and inflation spikes as energy costs surge. This is the "climate Minsky moment" that Mark Carney warned about.</span>
+<span id="cb18-174"><a href="#cb18-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-175"><a href="#cb18-175" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Hot house world (Current Policies)**: No additional climate policies are enacted. Physical damages escalate: by 2100, global GDP could be 10–25 per cent lower than in an orderly transition scenario. The damage is concentrated in tropical and developing economies but affects global supply chains, commodity prices, and migration patterns.</span>
+<span id="cb18-176"><a href="#cb18-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-177"><a href="#cb18-177" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Too little, too late (NDCs — Nationally Determined Contributions)**: Countries implement their current pledges but go no further. Warming reaches 2.5–3°C by 2100. This combines moderate transition costs with significant physical damages — arguably the worst of both worlds.</span>
+<span id="cb18-178"><a href="#cb18-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-179"><a href="#cb18-179" aria-hidden="true" tabindex="-1"></a>Each scenario projects a full set of macro variables: GDP, inflation, interest rates, carbon prices, energy prices, agricultural productivity, and sectoral output. The scenarios are available through the NGFS Scenario Explorer, an interactive web tool hosted by the International Institute for Applied Systems Analysis (IIASA):</span>
+<span id="cb18-180"><a href="#cb18-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-183"><a href="#cb18-183" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb18-184"><a href="#cb18-184" aria-hidden="true" tabindex="-1"></a><span class="co"># NGFS scenarios are available from the IIASA Scenario Explorer:</span></span>
+<span id="cb18-185"><a href="#cb18-185" aria-hidden="true" tabindex="-1"></a><span class="co"># https://data.ece.iiasa.ac.at/ngfs/</span></span>
+<span id="cb18-186"><a href="#cb18-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-187"><a href="#cb18-187" aria-hidden="true" tabindex="-1"></a><span class="co"># The scenarios can be downloaded as CSV files after registration.</span></span>
+<span id="cb18-188"><a href="#cb18-188" aria-hidden="true" tabindex="-1"></a><span class="co"># Each scenario provides projections for:</span></span>
+<span id="cb18-189"><a href="#cb18-189" aria-hidden="true" tabindex="-1"></a><span class="co"># - GDP (by country/region)</span></span>
+<span id="cb18-190"><a href="#cb18-190" aria-hidden="true" tabindex="-1"></a><span class="co"># - Carbon price ($/tCO2)</span></span>
+<span id="cb18-191"><a href="#cb18-191" aria-hidden="true" tabindex="-1"></a><span class="co"># - Primary energy mix (coal, oil, gas, renewables, nuclear)</span></span>
+<span id="cb18-192"><a href="#cb18-192" aria-hidden="true" tabindex="-1"></a><span class="co"># - Emissions (CO2, CH4, N2O)</span></span>
+<span id="cb18-193"><a href="#cb18-193" aria-hidden="true" tabindex="-1"></a><span class="co"># - Temperature change</span></span>
+<span id="cb18-194"><a href="#cb18-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-195"><a href="#cb18-195" aria-hidden="true" tabindex="-1"></a><span class="co"># Example: loading a downloaded NGFS scenario file</span></span>
+<span id="cb18-196"><a href="#cb18-196" aria-hidden="true" tabindex="-1"></a><span class="co"># ngfs &lt;- read_csv("data/ngfs-scenarios.csv")</span></span>
+<span id="cb18-197"><a href="#cb18-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-198"><a href="#cb18-198" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter to a specific scenario and variable</span></span>
+<span id="cb18-199"><a href="#cb18-199" aria-hidden="true" tabindex="-1"></a><span class="co"># ngfs_gdp &lt;- ngfs |&gt;</span></span>
+<span id="cb18-200"><a href="#cb18-200" aria-hidden="true" tabindex="-1"></a><span class="co">#   filter(</span></span>
+<span id="cb18-201"><a href="#cb18-201" aria-hidden="true" tabindex="-1"></a><span class="co">#     scenario == "Net Zero 2050",</span></span>
+<span id="cb18-202"><a href="#cb18-202" aria-hidden="true" tabindex="-1"></a><span class="co">#     variable == "GDP|PPP",</span></span>
+<span id="cb18-203"><a href="#cb18-203" aria-hidden="true" tabindex="-1"></a><span class="co">#     region == "World"</span></span>
+<span id="cb18-204"><a href="#cb18-204" aria-hidden="true" tabindex="-1"></a><span class="co">#   )</span></span>
+<span id="cb18-205"><a href="#cb18-205" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-206"><a href="#cb18-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-207"><a href="#cb18-207" aria-hidden="true" tabindex="-1"></a>Central banks use these scenarios not as forecasts but as "what if" exercises. The Bank of England's Climate Biennial Exploratory Scenario (CBES), published in 2022, asked UK banks and insurers to assess their exposures under three NGFS scenarios. The exercise revealed that UK banks' credit losses could be 30 per cent higher under a disorderly transition than under an orderly one — not because of physical climate damage, but because of the economic disruption caused by a sudden policy shift.</span>
+<span id="cb18-208"><a href="#cb18-208" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-209"><a href="#cb18-209" aria-hidden="true" tabindex="-1"></a>For a macro analyst, the key insight from the NGFS framework is that climate risk is not just about temperature — it is about the policy path. An orderly, predictable transition is far less costly than a delayed, panicked one. This argues strongly for early, credible climate policy, which gives firms and investors a clear signal to reallocate capital.</span>
+<span id="cb18-210"><a href="#cb18-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-213"><a href="#cb18-213" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb18-214"><a href="#cb18-214" aria-hidden="true" tabindex="-1"></a><span class="co"># A stylised comparison of carbon price paths across NGFS scenarios</span></span>
+<span id="cb18-215"><a href="#cb18-215" aria-hidden="true" tabindex="-1"></a>scenarios <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb18-216"><a href="#cb18-216" aria-hidden="true" tabindex="-1"></a>  <span class="at">year =</span> <span class="fu">rep</span>(<span class="dv">2025</span><span class="sc">:</span><span class="dv">2050</span>, <span class="dv">4</span>),</span>
+<span id="cb18-217"><a href="#cb18-217" aria-hidden="true" tabindex="-1"></a>  <span class="at">scenario =</span> <span class="fu">rep</span>(</span>
+<span id="cb18-218"><a href="#cb18-218" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">"Orderly"</span>, <span class="st">"Disorderly"</span>, <span class="st">"Hot house"</span>, <span class="st">"NDCs"</span>),</span>
+<span id="cb18-219"><a href="#cb18-219" aria-hidden="true" tabindex="-1"></a>    <span class="at">each =</span> <span class="dv">26</span></span>
+<span id="cb18-220"><a href="#cb18-220" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb18-221"><a href="#cb18-221" aria-hidden="true" tabindex="-1"></a>  <span class="at">carbon_price =</span> <span class="fu">c</span>(</span>
+<span id="cb18-222"><a href="#cb18-222" aria-hidden="true" tabindex="-1"></a>    <span class="fu">seq</span>(<span class="dv">50</span>, <span class="dv">250</span>, <span class="at">length.out =</span> <span class="dv">26</span>),       <span class="co"># Orderly: gradual rise</span></span>
+<span id="cb18-223"><a href="#cb18-223" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">30</span>, <span class="dv">6</span>), <span class="fu">seq</span>(<span class="dv">30</span>, <span class="dv">600</span>, <span class="at">length.out =</span> <span class="dv">20</span>)),  <span class="co"># Disorderly: spike after 2030</span></span>
+<span id="cb18-224"><a href="#cb18-224" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rep</span>(<span class="dv">10</span>, <span class="dv">26</span>),                          <span class="co"># Hot house: no carbon price</span></span>
+<span id="cb18-225"><a href="#cb18-225" aria-hidden="true" tabindex="-1"></a>    <span class="fu">seq</span>(<span class="dv">30</span>, <span class="dv">80</span>, <span class="at">length.out =</span> <span class="dv">26</span>)          <span class="co"># NDCs: modest increase</span></span>
+<span id="cb18-226"><a href="#cb18-226" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb18-227"><a href="#cb18-227" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb18-228"><a href="#cb18-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-229"><a href="#cb18-229" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(scenarios, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> carbon_price, <span class="at">colour =</span> scenario)) <span class="sc">+</span></span>
+<span id="cb18-230"><a href="#cb18-230" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb18-231"><a href="#cb18-231" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_macro</span>() <span class="sc">+</span></span>
+<span id="cb18-232"><a href="#cb18-232" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb18-233"><a href="#cb18-233" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Stylised NGFS carbon price paths"</span>,</span>
+<span id="cb18-234"><a href="#cb18-234" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Carbon price ($/tCO2)"</span>,</span>
+<span id="cb18-235"><a href="#cb18-235" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="st">"Scenario"</span></span>
+<span id="cb18-236"><a href="#cb18-236" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb18-237"><a href="#cb18-237" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_macro</span>()</span>
+<span id="cb18-238"><a href="#cb18-238" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-239"><a href="#cb18-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-240"><a href="#cb18-240" aria-hidden="true" tabindex="-1"></a>The disorderly scenario is the one that keeps central bankers awake. A carbon price that jumps from $30 to $600 per tonne in a decade would be the largest relative price shock since the 1970s oil crisis — but sustained over a longer period and affecting a broader set of industries.</span>
+<span id="cb18-241"><a href="#cb18-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-242"><a href="#cb18-242" aria-hidden="true" tabindex="-1"></a><span class="fu">## Climate-adjusted macro projections</span></span>
+<span id="cb18-243"><a href="#cb18-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-244"><a href="#cb18-244" aria-hidden="true" tabindex="-1"></a>Climate change affects macroeconomic variables through multiple channels. Agricultural output declines as temperatures rise and weather patterns become more volatile — the relationship between temperature and crop yields is well-documented and strongly nonlinear, with damage accelerating above certain thresholds. Labour productivity falls as heat stress increases, particularly for outdoor workers in construction, agriculture, and logistics. Infrastructure is damaged by flooding, storms, and sea-level rise, requiring diversion of investment from productive capital to replacement and adaptation. And climate-induced migration reshapes labour markets and housing demand across regions.</span>
+<span id="cb18-245"><a href="#cb18-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-246"><a href="#cb18-246" aria-hidden="true" tabindex="-1"></a>The empirical literature on climate and GDP has grown rapidly since the seminal work of Dell, Jones, and Olken (2012) and Burke, Hsiang, and Miguel (2015). The central finding is that higher temperatures reduce economic growth, with the effect concentrated in already-hot countries. A commonly cited estimate is that each 1°C increase in average temperature reduces GDP growth by about 1–1.5 percentage points for countries with mean temperatures above 15°C.</span>
+<span id="cb18-247"><a href="#cb18-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-248"><a href="#cb18-248" aria-hidden="true" tabindex="-1"></a>We can replicate a simplified version of this analysis using publicly available data. We need two ingredients: temperature anomalies by country (from NASA GISTEMP, Berkeley Earth, or the World Bank's Climate Knowledge Portal) and GDP growth by country (from the World Bank).</span>
+<span id="cb18-249"><a href="#cb18-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-252"><a href="#cb18-252" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb18-253"><a href="#cb18-253" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(WDI)</span>
+<span id="cb18-254"><a href="#cb18-254" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-255"><a href="#cb18-255" aria-hidden="true" tabindex="-1"></a><span class="co"># Download GDP growth and GDP per capita for all countries</span></span>
+<span id="cb18-256"><a href="#cb18-256" aria-hidden="true" tabindex="-1"></a>gdp_growth <span class="ot">&lt;-</span> <span class="fu">WDI</span>(</span>
+<span id="cb18-257"><a href="#cb18-257" aria-hidden="true" tabindex="-1"></a>  <span class="at">indicator =</span> <span class="fu">c</span>(</span>
+<span id="cb18-258"><a href="#cb18-258" aria-hidden="true" tabindex="-1"></a>    <span class="at">growth =</span> <span class="st">"NY.GDP.MKTP.KD.ZG"</span>,</span>
+<span id="cb18-259"><a href="#cb18-259" aria-hidden="true" tabindex="-1"></a>    <span class="at">gdp_pc =</span> <span class="st">"NY.GDP.PCAP.KD"</span></span>
+<span id="cb18-260"><a href="#cb18-260" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb18-261"><a href="#cb18-261" aria-hidden="true" tabindex="-1"></a>  <span class="at">start =</span> <span class="dv">1990</span>, <span class="at">end =</span> <span class="dv">2020</span>,</span>
+<span id="cb18-262"><a href="#cb18-262" aria-hidden="true" tabindex="-1"></a>  <span class="at">extra =</span> <span class="cn">TRUE</span></span>
+<span id="cb18-263"><a href="#cb18-263" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb18-264"><a href="#cb18-264" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-265"><a href="#cb18-265" aria-hidden="true" tabindex="-1"></a><span class="co"># Clean: keep only countries (not aggregates)</span></span>
+<span id="cb18-266"><a href="#cb18-266" aria-hidden="true" tabindex="-1"></a>gdp_growth <span class="ot">&lt;-</span> gdp_growth <span class="sc">|&gt;</span></span>
+<span id="cb18-267"><a href="#cb18-267" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(region <span class="sc">!=</span> <span class="st">"Aggregates"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb18-268"><a href="#cb18-268" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(iso3c, country, year, growth, gdp_pc, latitude, longitude)</span>
+<span id="cb18-269"><a href="#cb18-269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-270"><a href="#cb18-270" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(gdp_growth)</span>
+<span id="cb18-271"><a href="#cb18-271" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-272"><a href="#cb18-272" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-273"><a href="#cb18-273" aria-hidden="true" tabindex="-1"></a>Temperature anomaly data can be downloaded from Berkeley Earth, which provides country-level annual average temperatures:</span>
+<span id="cb18-274"><a href="#cb18-274" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-277"><a href="#cb18-277" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb18-278"><a href="#cb18-278" aria-hidden="true" tabindex="-1"></a><span class="co"># Berkeley Earth publishes country-level temperature data:</span></span>
+<span id="cb18-279"><a href="#cb18-279" aria-hidden="true" tabindex="-1"></a><span class="co"># https://berkeleyearth.org/data/</span></span>
+<span id="cb18-280"><a href="#cb18-280" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-281"><a href="#cb18-281" aria-hidden="true" tabindex="-1"></a><span class="co"># For a simpler approach, use latitude as a proxy for temperature</span></span>
+<span id="cb18-282"><a href="#cb18-282" aria-hidden="true" tabindex="-1"></a><span class="co"># (countries closer to the equator are hotter on average)</span></span>
+<span id="cb18-283"><a href="#cb18-283" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-284"><a href="#cb18-284" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate: GDP growth vs absolute latitude</span></span>
+<span id="cb18-285"><a href="#cb18-285" aria-hidden="true" tabindex="-1"></a>gdp_growth <span class="ot">&lt;-</span> gdp_growth <span class="sc">|&gt;</span></span>
+<span id="cb18-286"><a href="#cb18-286" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">abs_latitude =</span> <span class="fu">abs</span>(<span class="fu">as.numeric</span>(latitude)))</span>
+<span id="cb18-287"><a href="#cb18-287" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-288"><a href="#cb18-288" aria-hidden="true" tabindex="-1"></a><span class="co"># Average growth by country</span></span>
+<span id="cb18-289"><a href="#cb18-289" aria-hidden="true" tabindex="-1"></a>country_avg <span class="ot">&lt;-</span> gdp_growth <span class="sc">|&gt;</span></span>
+<span id="cb18-290"><a href="#cb18-290" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(iso3c, country, abs_latitude) <span class="sc">|&gt;</span></span>
+<span id="cb18-291"><a href="#cb18-291" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb18-292"><a href="#cb18-292" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_growth =</span> <span class="fu">mean</span>(growth, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb18-293"><a href="#cb18-293" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_gdp_pc =</span> <span class="fu">mean</span>(gdp_pc, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb18-294"><a href="#cb18-294" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb18-295"><a href="#cb18-295" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb18-296"><a href="#cb18-296" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(abs_latitude), <span class="sc">!</span><span class="fu">is.na</span>(mean_growth))</span>
+<span id="cb18-297"><a href="#cb18-297" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-298"><a href="#cb18-298" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(country_avg, <span class="fu">aes</span>(<span class="at">x =</span> abs_latitude, <span class="at">y =</span> mean_growth)) <span class="sc">+</span></span>
+<span id="cb18-299"><a href="#cb18-299" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb18-300"><a href="#cb18-300" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb18-301"><a href="#cb18-301" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb18-302"><a href="#cb18-302" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"GDP growth and latitude"</span>,</span>
+<span id="cb18-303"><a href="#cb18-303" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Average annual growth 1990-2020"</span>,</span>
+<span id="cb18-304"><a href="#cb18-304" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Absolute latitude (degrees from equator)"</span>,</span>
+<span id="cb18-305"><a href="#cb18-305" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Mean GDP growth (%)"</span></span>
+<span id="cb18-306"><a href="#cb18-306" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb18-307"><a href="#cb18-307" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_macro</span>()</span>
+<span id="cb18-308"><a href="#cb18-308" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-309"><a href="#cb18-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-310"><a href="#cb18-310" aria-hidden="true" tabindex="-1"></a>This simple cross-section is suggestive but far from conclusive — latitude correlates with many things besides temperature (colonial history, institutional quality, disease burden). A more rigorous approach uses panel data with country and year fixed effects, regressing GDP growth on temperature deviations from the country's own historical mean. This within-country variation is more plausibly exogenous.</span>
+<span id="cb18-311"><a href="#cb18-311" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-314"><a href="#cb18-314" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb18-315"><a href="#cb18-315" aria-hidden="true" tabindex="-1"></a><span class="co"># A panel approach (requires temperature data merged in)</span></span>
+<span id="cb18-316"><a href="#cb18-316" aria-hidden="true" tabindex="-1"></a><span class="co"># Suppose we have a panel: country, year, growth, temp_anomaly</span></span>
+<span id="cb18-317"><a href="#cb18-317" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-318"><a href="#cb18-318" aria-hidden="true" tabindex="-1"></a><span class="co"># library(fixest)</span></span>
+<span id="cb18-319"><a href="#cb18-319" aria-hidden="true" tabindex="-1"></a><span class="co"># model &lt;- feols(</span></span>
+<span id="cb18-320"><a href="#cb18-320" aria-hidden="true" tabindex="-1"></a><span class="co">#   growth ~ temp_anomaly | iso3c + year,</span></span>
+<span id="cb18-321"><a href="#cb18-321" aria-hidden="true" tabindex="-1"></a><span class="co">#   data = panel_data</span></span>
+<span id="cb18-322"><a href="#cb18-322" aria-hidden="true" tabindex="-1"></a><span class="co"># )</span></span>
+<span id="cb18-323"><a href="#cb18-323" aria-hidden="true" tabindex="-1"></a><span class="co"># summary(model)</span></span>
+<span id="cb18-324"><a href="#cb18-324" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-325"><a href="#cb18-325" aria-hidden="true" tabindex="-1"></a><span class="co"># The coefficient on temp_anomaly tells us:</span></span>
+<span id="cb18-326"><a href="#cb18-326" aria-hidden="true" tabindex="-1"></a><span class="co"># a 1°C positive temperature anomaly is associated with</span></span>
+<span id="cb18-327"><a href="#cb18-327" aria-hidden="true" tabindex="-1"></a><span class="co"># approximately X percentage points lower GDP growth</span></span>
+<span id="cb18-328"><a href="#cb18-328" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-329"><a href="#cb18-329" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-330"><a href="#cb18-330" aria-hidden="true" tabindex="-1"></a>The implications for long-run projections are sobering. If global temperatures rise by 2–3°C by 2100, the cumulative GDP loss for tropical countries could reach 20–30 per cent relative to a no-warming counterfactual. Even temperate countries face significant costs through supply chain disruption, commodity price volatility, and climate-induced migration. These estimates are central to the social cost of carbon — the dollar value of damage caused by emitting one additional tonne of CO2 — which the US government currently estimates at around $50–$200 per tonne, depending on the discount rate.</span>
+<span id="cb18-331"><a href="#cb18-331" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-332"><a href="#cb18-332" aria-hidden="true" tabindex="-1"></a><span class="fu">## Stranded assets and transition risk</span></span>
+<span id="cb18-333"><a href="#cb18-333" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-334"><a href="#cb18-334" aria-hidden="true" tabindex="-1"></a>The concept of stranded assets was popularised by the Carbon Tracker Initiative in 2011. The argument is straightforward: if the world is to limit warming to 1.5–2°C, the majority of known fossil fuel reserves — coal, oil, and natural gas — must remain in the ground. The reserves are "stranded" because they cannot be profitably extracted under a carbon-constrained future. This implies that companies whose valuations depend on those reserves are overvalued — a "carbon bubble."</span>
+<span id="cb18-335"><a href="#cb18-335" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-336"><a href="#cb18-336" aria-hidden="true" tabindex="-1"></a>The numbers are striking. The IPCC's remaining carbon budget for a 50 per cent chance of limiting warming to 1.5°C is approximately 500 gigatonnes of CO2 from 2020. Global proven fossil fuel reserves, if fully combusted, would release roughly 3,500 gigatonnes. This means approximately 85 per cent of reserves must stay underground. For coal, the figure is over 95 per cent.</span>
+<span id="cb18-337"><a href="#cb18-337" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-338"><a href="#cb18-338" aria-hidden="true" tabindex="-1"></a>For a fixed-income analyst, transition risk manifests as credit risk. Consider a portfolio of corporate bonds issued by energy companies. Under an orderly transition, these companies face gradually rising carbon costs that erode margins over a decade, but have time to diversify. Under a disorderly transition, a sudden carbon price spike could push highly leveraged fossil fuel producers into default.</span>
+<span id="cb18-339"><a href="#cb18-339" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-340"><a href="#cb18-340" aria-hidden="true" tabindex="-1"></a>We can construct a simple numerical example. Suppose we have a portfolio of bonds from three types of energy companies:</span>
+<span id="cb18-341"><a href="#cb18-341" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-344"><a href="#cb18-344" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb18-345"><a href="#cb18-345" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tibble)</span>
+<span id="cb18-346"><a href="#cb18-346" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-347"><a href="#cb18-347" aria-hidden="true" tabindex="-1"></a><span class="co"># Stylised portfolio of energy company bonds</span></span>
+<span id="cb18-348"><a href="#cb18-348" aria-hidden="true" tabindex="-1"></a>portfolio <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb18-349"><a href="#cb18-349" aria-hidden="true" tabindex="-1"></a>  <span class="at">company =</span> <span class="fu">c</span>(<span class="st">"Coal Corp"</span>, <span class="st">"Oil Major"</span>, <span class="st">"Renewables Inc"</span>),</span>
+<span id="cb18-350"><a href="#cb18-350" aria-hidden="true" tabindex="-1"></a>  <span class="at">face_value =</span> <span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">150</span>),  <span class="co"># £ millions</span></span>
+<span id="cb18-351"><a href="#cb18-351" aria-hidden="true" tabindex="-1"></a>  <span class="at">coupon =</span> <span class="fu">c</span>(<span class="fl">0.06</span>, <span class="fl">0.04</span>, <span class="fl">0.03</span>),</span>
+<span id="cb18-352"><a href="#cb18-352" aria-hidden="true" tabindex="-1"></a>  <span class="at">maturity =</span> <span class="fu">c</span>(<span class="dv">2035</span>, <span class="dv">2040</span>, <span class="dv">2045</span>),</span>
+<span id="cb18-353"><a href="#cb18-353" aria-hidden="true" tabindex="-1"></a>  <span class="at">emissions_intensity =</span> <span class="fu">c</span>(<span class="fl">1.2</span>, <span class="fl">0.5</span>, <span class="fl">0.02</span>),  <span class="co"># tCO2 per £000 revenue</span></span>
+<span id="cb18-354"><a href="#cb18-354" aria-hidden="true" tabindex="-1"></a>  <span class="at">revenue =</span> <span class="fu">c</span>(<span class="dv">500</span>, <span class="dv">2000</span>, <span class="dv">800</span>)  <span class="co"># £ millions</span></span>
+<span id="cb18-355"><a href="#cb18-355" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb18-356"><a href="#cb18-356" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-357"><a href="#cb18-357" aria-hidden="true" tabindex="-1"></a><span class="co"># Annual carbon cost under different scenarios</span></span>
+<span id="cb18-358"><a href="#cb18-358" aria-hidden="true" tabindex="-1"></a>scenarios <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb18-359"><a href="#cb18-359" aria-hidden="true" tabindex="-1"></a>  <span class="at">scenario =</span> <span class="fu">c</span>(<span class="st">"Orderly"</span>, <span class="st">"Disorderly"</span>, <span class="st">"Hot house"</span>),</span>
+<span id="cb18-360"><a href="#cb18-360" aria-hidden="true" tabindex="-1"></a>  <span class="at">carbon_price_2030 =</span> <span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">300</span>, <span class="dv">10</span>),  <span class="co"># £/tCO2</span></span>
+<span id="cb18-361"><a href="#cb18-361" aria-hidden="true" tabindex="-1"></a>  <span class="at">carbon_price_2040 =</span> <span class="fu">c</span>(<span class="dv">200</span>, <span class="dv">400</span>, <span class="dv">15</span>)</span>
+<span id="cb18-362"><a href="#cb18-362" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb18-363"><a href="#cb18-363" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-364"><a href="#cb18-364" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate carbon costs as a share of revenue</span></span>
+<span id="cb18-365"><a href="#cb18-365" aria-hidden="true" tabindex="-1"></a>portfolio <span class="sc">|&gt;</span></span>
+<span id="cb18-366"><a href="#cb18-366" aria-hidden="true" tabindex="-1"></a>  <span class="fu">crossing</span>(scenarios) <span class="sc">|&gt;</span></span>
+<span id="cb18-367"><a href="#cb18-367" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb18-368"><a href="#cb18-368" aria-hidden="true" tabindex="-1"></a>    <span class="at">carbon_cost_2030 =</span> emissions_intensity <span class="sc">*</span> revenue <span class="sc">*</span> carbon_price_2030 <span class="sc">/</span> <span class="dv">1000</span>,</span>
+<span id="cb18-369"><a href="#cb18-369" aria-hidden="true" tabindex="-1"></a>    <span class="at">carbon_cost_pct =</span> carbon_cost_2030 <span class="sc">/</span> revenue <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb18-370"><a href="#cb18-370" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb18-371"><a href="#cb18-371" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(company, scenario, carbon_cost_2030, carbon_cost_pct)</span>
+<span id="cb18-372"><a href="#cb18-372" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-373"><a href="#cb18-373" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-374"><a href="#cb18-374" aria-hidden="true" tabindex="-1"></a>Under the orderly scenario, Coal Corp faces a carbon cost equal to 12 per cent of its revenue by 2030 — likely enough to render it unprofitable unless it can pass costs through to customers (difficult when competing against renewables). Under the disorderly scenario, the carbon cost triples, almost certainly triggering default on its bonds. Oil Major faces smaller but still material costs. Renewables Inc is essentially unaffected.</span>
+<span id="cb18-375"><a href="#cb18-375" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-376"><a href="#cb18-376" aria-hidden="true" tabindex="-1"></a>This exercise, while simplified, captures the core logic of climate stress testing. The Bank of England's CBES asked UK banks to perform exactly this kind of analysis for their entire loan books — assessing how each borrower's creditworthiness would change under different carbon price paths. The results showed that banks with concentrated exposures to fossil fuel-intensive sectors faced materially higher credit losses under transition scenarios.</span>
+<span id="cb18-377"><a href="#cb18-377" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-378"><a href="#cb18-378" aria-hidden="true" tabindex="-1"></a>The stranded assets problem extends beyond energy. Any company with high direct or indirect emissions faces transition risk — airlines, cement manufacturers, steel producers, shipping companies. A well-diversified investment portfolio needs to consider not just current emissions but the trajectory: companies that are credibly reducing their emissions intensity are better positioned than those that are not, regardless of their current level.</span>
+<span id="cb18-379"><a href="#cb18-379" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-382"><a href="#cb18-382" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb18-383"><a href="#cb18-383" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualise the carbon cost burden across scenarios</span></span>
+<span id="cb18-384"><a href="#cb18-384" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb18-385"><a href="#cb18-385" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-386"><a href="#cb18-386" aria-hidden="true" tabindex="-1"></a><span class="co"># portfolio_costs &lt;- portfolio |&gt;</span></span>
+<span id="cb18-387"><a href="#cb18-387" aria-hidden="true" tabindex="-1"></a><span class="co">#   crossing(scenarios) |&gt;</span></span>
+<span id="cb18-388"><a href="#cb18-388" aria-hidden="true" tabindex="-1"></a><span class="co">#   mutate(</span></span>
+<span id="cb18-389"><a href="#cb18-389" aria-hidden="true" tabindex="-1"></a><span class="co">#     carbon_cost_2030 = emissions_intensity * revenue * carbon_price_2030 / 1000,</span></span>
+<span id="cb18-390"><a href="#cb18-390" aria-hidden="true" tabindex="-1"></a><span class="co">#     carbon_cost_pct = carbon_cost_2030 / revenue * 100</span></span>
+<span id="cb18-391"><a href="#cb18-391" aria-hidden="true" tabindex="-1"></a><span class="co">#   )</span></span>
+<span id="cb18-392"><a href="#cb18-392" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb18-393"><a href="#cb18-393" aria-hidden="true" tabindex="-1"></a><span class="co"># ggplot(portfolio_costs, aes(x = company, y = carbon_cost_pct, fill = scenario)) +</span></span>
+<span id="cb18-394"><a href="#cb18-394" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_col(position = "dodge") +</span></span>
+<span id="cb18-395"><a href="#cb18-395" aria-hidden="true" tabindex="-1"></a><span class="co">#   labs(</span></span>
+<span id="cb18-396"><a href="#cb18-396" aria-hidden="true" tabindex="-1"></a><span class="co">#     title = "Carbon costs as share of revenue (2030)",</span></span>
+<span id="cb18-397"><a href="#cb18-397" aria-hidden="true" tabindex="-1"></a><span class="co">#     x = NULL, y = "Carbon cost (% of revenue)",</span></span>
+<span id="cb18-398"><a href="#cb18-398" aria-hidden="true" tabindex="-1"></a><span class="co">#     fill = "Scenario"</span></span>
+<span id="cb18-399"><a href="#cb18-399" aria-hidden="true" tabindex="-1"></a><span class="co">#   ) +</span></span>
+<span id="cb18-400"><a href="#cb18-400" aria-hidden="true" tabindex="-1"></a><span class="co">#   theme_macro()</span></span>
+<span id="cb18-401"><a href="#cb18-401" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-402"><a href="#cb18-402" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-403"><a href="#cb18-403" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises</span></span>
+<span id="cb18-404"><a href="#cb18-404" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-405"><a href="#cb18-405" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Download global CO2 emissions data from Our World in Data. Plot total and per-capita emissions for the G7 since 1990. Which country has reduced emissions the most in absolute terms? Which has reduced per-capita emissions the most? Are these the same country?</span>
+<span id="cb18-406"><a href="#cb18-406" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-407"><a href="#cb18-407" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>The UK's emissions reductions are partly due to deindustrialisation — emissions have been "offshored" to countries that manufacture goods consumed in the UK. Using the OWID dataset, compare the UK's production-based emissions (<span class="in">`co2`</span>) with its consumption-based emissions (<span class="in">`consumption_co2`</span>). How large is the gap? Has it narrowed or widened since 1990?</span>
+<span id="cb18-408"><a href="#cb18-408" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-409"><a href="#cb18-409" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Using the stylised NGFS carbon price paths from this chapter, calculate the net present value of carbon costs for a coal-fired power plant that emits 4 million tonnes of CO2 per year and operates until 2040. Use a discount rate of 5 per cent. Under which scenario is the plant economically unviable?</span>
+<span id="cb18-410"><a href="#cb18-410" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-411"><a href="#cb18-411" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Describe how a central bank would use NGFS scenarios to stress test a portfolio of corporate bonds. What macro variables would you need? How would you map carbon prices to credit risk? What are the limitations of this approach?</span>
+<span id="cb18-412"><a href="#cb18-412" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-413"><a href="#cb18-413" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Download GDP growth data from the World Bank and plot average growth (1990–2020) against absolute latitude for all countries. Is there a statistically significant relationship? What confounding variables might explain the correlation?</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

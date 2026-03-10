@@ -354,23 +354,10 @@ window.Quarto = {
 <p>Let us test unconditional convergence using World Bank data. We need GDP per capita in constant dollars for a large panel of countries, with observations in 1990 and 2020.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://vincentarelbundock.github.io/WDI/">WDI</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>
-Attaching package: 'dplyr'</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>The following objects are masked from 'package:stats':
-
-    filter, lag</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>The following objects are masked from 'package:base':
-
-    intersect, setdiff, setequal, union</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org">tidyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org">tidyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="st">"../R/theme_macro.R"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Download GDP per capita (constant 2015 US$)</span></span>
 <span><span class="va">gdp_pc</span> <span class="op">&lt;-</span> <span class="fu">WDI</span><span class="op">(</span></span>
@@ -401,7 +388,7 @@ Attaching package: 'dplyr'</code></pre>
 </div>
 <p>Now plot the classic convergence chart: log initial GDP per capita on the x-axis, average annual growth on the y-axis. If unconditional convergence holds, we should see a downward-sloping relationship — poorer countries (lower initial GDP) growing faster (higher average growth).</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">convergence</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">log_initial</span>, y <span class="op">=</span> <span class="va">avg_growth</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">convergence</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">log_initial</span>, y <span class="op">=</span> <span class="va">avg_growth</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_point</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_smooth</span><span class="op">(</span>method <span class="op">=</span> <span class="st">"lm"</span>, se <span class="op">=</span> <span class="cn">TRUE</span>, colour <span class="op">=</span> <span class="st">"steelblue"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">labs</span><span class="op">(</span></span>
@@ -409,10 +396,7 @@ Attaching package: 'dplyr'</code></pre>
 <span>    x <span class="op">=</span> <span class="st">"Log GDP per capita in 1990 (constant 2015 US$)"</span>,</span>
 <span>    y <span class="op">=</span> <span class="st">"Average annual growth (%)"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
-</div>
+<span>  <span class="fu">theme_macro</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure"><p><img src="14-cross-country_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
@@ -421,7 +405,7 @@ Attaching package: 'dplyr'</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Fit the regression</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Fit the regression</span></span>
 <span><span class="va">convergence_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">avg_growth</span> <span class="op">~</span> <span class="va">log_initial</span>, data <span class="op">=</span> <span class="va">convergence</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">convergence_model</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -448,7 +432,7 @@ F-statistic: 17.77 on 1 and 187 DF,  p-value: 3.871e-05</code></pre>
 <p>The result is typically weak. The coefficient on log initial GDP per capita is often statistically insignificant or only marginally significant, and the <span class="math inline">\(R^2\)</span> is very low — usually below 0.05. Unconditional convergence does not hold in the full sample. Some poor countries have grown rapidly (China, India, Vietnam), but many others have stagnated or even regressed (much of sub-Saharan Africa, several post-Soviet states).</p>
 <p>However, if we restrict the sample to OECD countries — a more homogeneous group with broadly similar institutions and policies — convergence is much stronger. Ireland, South Korea, and Poland have grown rapidly from relatively low starting points, while the United States and Switzerland have grown more slowly from high ones.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Convergence among OECD countries only</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Convergence among OECD countries only</span></span>
 <span><span class="va">oecd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"AUS"</span>, <span class="st">"AUT"</span>, <span class="st">"BEL"</span>, <span class="st">"CAN"</span>, <span class="st">"CHL"</span>, <span class="st">"COL"</span>, <span class="st">"CRI"</span>, <span class="st">"CZE"</span>,</span>
 <span>          <span class="st">"DNK"</span>, <span class="st">"EST"</span>, <span class="st">"FIN"</span>, <span class="st">"FRA"</span>, <span class="st">"DEU"</span>, <span class="st">"GRC"</span>, <span class="st">"HUN"</span>, <span class="st">"ISL"</span>,</span>
 <span>          <span class="st">"IRL"</span>, <span class="st">"ISR"</span>, <span class="st">"ITA"</span>, <span class="st">"JPN"</span>, <span class="st">"KOR"</span>, <span class="st">"LVA"</span>, <span class="st">"LTU"</span>, <span class="st">"LUX"</span>,</span>
@@ -467,10 +451,7 @@ F-statistic: 17.77 on 1 and 187 DF,  p-value: 3.871e-05</code></pre>
 <span>    x <span class="op">=</span> <span class="st">"Log GDP per capita in 1990"</span>,</span>
 <span>    y <span class="op">=</span> <span class="st">"Average annual growth (%)"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
-</div>
+<span>  <span class="fu">theme_macro</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure"><p><img src="14-cross-country_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
@@ -490,20 +471,12 @@ F-statistic: 17.77 on 1 and 187 DF,  p-value: 3.871e-05</code></pre>
 <p>TFP is sometimes called the “measure of our ignorance.” It captures everything that raises output beyond what can be attributed to more capital and more labour: technological progress, better management, improved institutions, more efficient resource allocation, and measurement error. Despite being a residual, TFP is typically the largest contributor to long-run growth in developed economies — accounting for 50–70 per cent of growth in the US and UK since 1950.</p>
 <p>We can perform a simple growth accounting exercise for the UK using ONS productivity data:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">ons</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">ons</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># ONS publishes output per hour and per worker indices</span></span>
-<span><span class="va">productivity</span> <span class="op">&lt;-</span> <span class="fu">ons_productivity</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>ℹ Fetching productivity (per_hour)</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>✔ Fetching productivity (per_hour) [37ms]</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code></code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">productivity</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span><span class="va">productivity</span> <span class="op">&lt;-</span> <span class="fu">ons_productivity</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">productivity</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>        date value
 1 1971-01-01  41.2
@@ -515,33 +488,17 @@ F-statistic: 17.77 on 1 and 187 DF,  p-value: 3.871e-05</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Alternatively, construct a manual growth accounting exercise</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Alternatively, construct a manual growth accounting exercise</span></span>
 <span><span class="co"># using GDP, capital stock, and employment data</span></span>
 <span></span>
 <span><span class="co"># GDP growth (ons_gdp() returns quarterly growth rates by default)</span></span>
 <span><span class="va">gdp</span> <span class="op">&lt;-</span> <span class="fu">ons_gdp</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">arrange</span><span class="op">(</span><span class="va">date</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>ℹ Fetching GDP (growth)</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>✔ Fetching GDP (growth) [52ms]</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code></code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Employment</span></span>
-<span><span class="va">employment</span> <span class="op">&lt;-</span> <span class="fu">ons_employment</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>ℹ Fetching employment rate (total)</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>✔ Fetching employment rate (total) [79ms]</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code></code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># For capital stock, use the ONS capital stocks dataset</span></span>
+<span>  <span class="fu">arrange</span><span class="op">(</span><span class="va">date</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Employment</span></span>
+<span><span class="va">employment</span> <span class="op">&lt;-</span> <span class="fu">ons_employment</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># For capital stock, use the ONS capital stocks dataset</span></span>
 <span><span class="co"># or approximate using gross fixed capital formation</span></span>
 <span></span>
 <span><span class="co"># Simple annual growth accounting:</span></span>
@@ -551,7 +508,7 @@ F-statistic: 17.77 on 1 and 187 DF,  p-value: 3.871e-05</code></pre>
 </div>
 <p>For a more detailed decomposition, the ONS publishes an official multi-factor productivity release that breaks output growth into contributions from labour composition (quality), capital deepening (quantity and quality of capital per worker), and multi-factor productivity. This is available in the “Multi-factor productivity” statistical bulletin.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Stylised UK growth accounting (average annual, per cent)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Stylised UK growth accounting (average annual, per cent)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tibble.tidyverse.org/">tibble</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">uk_growth</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span></span>
@@ -567,12 +524,13 @@ F-statistic: 17.77 on 1 and 187 DF,  p-value: 3.871e-05</code></pre>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">component</span> <span class="op">!=</span> <span class="st">"gdp_growth"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">period</span>, y <span class="op">=</span> <span class="va">pct</span>, fill <span class="op">=</span> <span class="va">component</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_col</span><span class="op">(</span>position <span class="op">=</span> <span class="st">"stack"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_fill_macro</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">labs</span><span class="op">(</span></span>
 <span>    title <span class="op">=</span> <span class="st">"UK growth accounting by decade"</span>,</span>
 <span>    x <span class="op">=</span> <span class="cn">NULL</span>, y <span class="op">=</span> <span class="st">"Contribution to GDP growth (pp)"</span>,</span>
 <span>    fill <span class="op">=</span> <span class="cn">NULL</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span>  <span class="fu">theme_macro</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure"><p><img src="14-cross-country_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
@@ -589,7 +547,7 @@ F-statistic: 17.77 on 1 and 187 DF,  p-value: 3.871e-05</code></pre>
 <p>The empirical challenge is that institutions and income are endogenous: rich countries can afford better institutions, and better institutions may cause higher income. Acemoglu, Johnson, and Robinson address this with an instrumental variables strategy using settler mortality rates in former colonies — but the debate over identification continues.</p>
 <p>We can examine the correlation between institutional quality and GDP per capita using the World Bank’s Worldwide Governance Indicators (WGI), which measure six dimensions of governance: voice and accountability, political stability, government effectiveness, regulatory quality, rule of law, and control of corruption.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Download GDP per capita</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Download GDP per capita</span></span>
 <span><span class="va">gdp_data</span> <span class="op">&lt;-</span> <span class="fu">WDI</span><span class="op">(</span></span>
 <span>  indicator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>gdp_pc <span class="op">=</span> <span class="st">"NY.GDP.PCAP.KD"</span><span class="op">)</span>,</span>
 <span>  start <span class="op">=</span> <span class="fl">2020</span>, end <span class="op">=</span> <span class="fl">2020</span>,</span>
@@ -621,7 +579,7 @@ F-statistic: 17.77 on 1 and 187 DF,  p-value: 3.871e-05</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">institutions</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">rule_of_law</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">gdp_pc</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">institutions</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">rule_of_law</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">gdp_pc</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_point</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_smooth</span><span class="op">(</span>method <span class="op">=</span> <span class="st">"lm"</span>, se <span class="op">=</span> <span class="cn">TRUE</span>, colour <span class="op">=</span> <span class="st">"steelblue"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">labs</span><span class="op">(</span></span>
@@ -629,10 +587,7 @@ F-statistic: 17.77 on 1 and 187 DF,  p-value: 3.871e-05</code></pre>
 <span>    x <span class="op">=</span> <span class="st">"Rule of Law index (WGI)"</span>,</span>
 <span>    y <span class="op">=</span> <span class="st">"Log GDP per capita (constant 2015 US$)"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
-</div>
+<span>  <span class="fu">theme_macro</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure"><p><img src="14-cross-country_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
@@ -641,7 +596,7 @@ F-statistic: 17.77 on 1 and 187 DF,  p-value: 3.871e-05</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Cross-section regression</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Cross-section regression</span></span>
 <span><span class="va">inst_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">gdp_pc</span><span class="op">)</span> <span class="op">~</span> <span class="va">rule_of_law</span> <span class="op">+</span> <span class="va">control_corruption</span>,</span>
 <span>                 data <span class="op">=</span> <span class="va">institutions</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">inst_model</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -671,7 +626,7 @@ F-statistic: 191.7 on 2 and 195 DF,  p-value: &lt; 2.2e-16</code></pre>
 <p>The correlation is strikingly strong — typically <span class="math inline">\(R^2 &gt; 0.5\)</span> in a simple bivariate regression of log GDP per capita on rule of law. But correlation is not causation. Several objections arise immediately. First, reverse causality: richer countries have more resources to build courts, train judges, and fight corruption. Second, omitted variables: geography, culture, colonial history, and natural resources all correlate with both institutions and income. Third, measurement error: governance indicators are partly based on perceptions of business executives and experts, who may rate countries higher simply because they are richer.</p>
 <p>Despite these caveats, the institutional explanation has become the dominant paradigm in growth economics. The Nobel Prize in Economics was awarded to Acemoglu, Johnson, and Robinson in 2024 for their work on how institutions shape prosperity. The policy implication is profound but daunting: if institutions are the binding constraint on development, then aid and investment alone are insufficient — what matters is governance reform, which is politically difficult and historically slow.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Visualise all three governance dimensions</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Visualise all three governance dimensions</span></span>
 <span><span class="va">institutions</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">select</span><span class="op">(</span><span class="va">country.x</span>, <span class="va">gdp_pc</span>, <span class="va">rule_of_law</span>, <span class="va">govt_effectiveness</span>, <span class="va">control_corruption</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">pivot_longer</span><span class="op">(</span></span>
@@ -687,10 +642,7 @@ F-statistic: 191.7 on 2 and 195 DF,  p-value: &lt; 2.2e-16</code></pre>
 <span>    title <span class="op">=</span> <span class="st">"Governance indicators and GDP per capita"</span>,</span>
 <span>    x <span class="op">=</span> <span class="st">"Governance score (WGI)"</span>, y <span class="op">=</span> <span class="st">"Log GDP per capita"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
-</div>
+<span>  <span class="fu">theme_macro</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure"><p><img src="14-cross-country_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
@@ -707,7 +659,7 @@ F-statistic: 191.7 on 2 and 195 DF,  p-value: &lt; 2.2e-16</code></pre>
 <p>where <span class="math inline">\(\alpha_i\)</span> is the country fixed effect, <span class="math inline">\(\gamma_t\)</span> is a time fixed effect (absorbing global shocks like the 2008 financial crisis that affect all countries), <span class="math inline">\(x_{it}\)</span> is a vector of time-varying explanatory variables, and <span class="math inline">\(\varepsilon_{it}\)</span> is the error term. The coefficients <span class="math inline">\(\beta\)</span> are identified from within-country, within-time-period variation.</p>
 <p>In R, the <code>fixest</code> package provides a fast and elegant implementation of fixed effects estimation via <code>feols()</code>. The <code>plm</code> package is an older alternative. We will use <code>fixest</code>.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://vincentarelbundock.github.io/WDI/">WDI</a></span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://vincentarelbundock.github.io/WDI/">WDI</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Download panel data for OECD countries</span></span>
@@ -750,18 +702,16 @@ F-statistic: 191.7 on 2 and 195 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 <p>Now estimate the panel regression with country and year fixed effects:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://lrberge.github.io/fixest/">fixest</a></span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://lrberge.github.io/fixest/">fixest</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Two-way fixed effects: country + year</span></span>
 <span><span class="va">fe_model</span> <span class="op">&lt;-</span> <span class="fu">feols</span><span class="op">(</span></span>
 <span>  <span class="va">growth</span> <span class="op">~</span> <span class="va">investment</span> <span class="op">+</span> <span class="va">trade</span> <span class="op">+</span> <span class="va">govt_effectiveness</span> <span class="op">+</span> <span class="va">population_growth</span> <span class="op">|</span></span>
 <span>    <span class="va">iso3c</span> <span class="op">+</span> <span class="va">year</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">panel</span></span>
-<span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>NOTE: 37 observations removed because of NA values (RHS: 37).</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">fe_model</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">fe_model</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>OLS estimation, Dep. Var.: growth
 Observations: 740
@@ -782,18 +732,10 @@ RMSE: 1.98141     Adj. R2: 0.651904
 <p>The year fixed effects (<span class="math inline">\(\gamma_t\)</span>) are important for macro panels. Without them, a global recession like 2008–2009 would create a spurious negative correlation between growth and any variable that happened to be low in those years. Year fixed effects absorb all common shocks, ensuring that the estimates reflect only country-specific variation.</p>
 <p>An alternative to fixed effects is <strong>random effects</strong>, which assumes that country-specific effects are uncorrelated with the explanatory variables. This is a stronger assumption but allows estimation of the effects of time-invariant variables (like geography or colonial history). The <strong>Hausman test</strong> compares fixed and random effects estimates: if they differ significantly, the random effects assumption is violated and fixed effects should be preferred.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Random effects model for comparison</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://cran.r-project.org/package=plm">plm</a></span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>
-Attaching package: 'plm'</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>The following objects are masked from 'package:dplyr':
-
-    between, lag, lead</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb46"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Convert to a plm panel data frame</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Random effects model for comparison</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://cran.r-project.org/package=plm">plm</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Convert to a plm panel data frame</span></span>
 <span><span class="va">panel_plm</span> <span class="op">&lt;-</span> <span class="fu">pdata.frame</span><span class="op">(</span></span>
 <span>  <span class="va">panel</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html">complete.cases</a></span><span class="op">(</span><span class="fu">pick</span><span class="op">(</span><span class="va">growth</span>, <span class="va">investment</span>, <span class="va">trade</span>,</span>
 <span>                                       <span class="va">population_growth</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -828,7 +770,7 @@ alternative hypothesis: one model is inconsistent</code></pre>
 <p>If the Hausman test rejects (p-value &lt; 0.05), the random effects estimates are inconsistent and we should use fixed effects. In macro panels, this is almost always the case — country-specific effects (institutions, geography, culture) are almost certainly correlated with the explanatory variables. Fixed effects is the workhorse estimator for macro panel data.</p>
 <p>A few practical cautions for panel regressions in macroeconomics. First, standard errors should be clustered at the country level to account for serial correlation within countries — <code>fixest</code> does this by default when you include fixed effects. Second, macro panels are “short and wide” (20–30 years, 30–40 countries), which limits the precision of estimates. Third, many macro variables are persistent (GDP growth, investment rates), raising concerns about Nickell bias in dynamic panels. For dynamic specifications, the Arellano-Bond GMM estimator is standard, but its small-sample properties are poor when the number of time periods is close to the number of countries.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb48"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Clustered standard errors (fixest does this by default with FEs)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Clustered standard errors (fixest does this by default with FEs)</span></span>
 <span><span class="co"># But we can be explicit:</span></span>
 <span><span class="va">fe_robust</span> <span class="op">&lt;-</span> <span class="fu">feols</span><span class="op">(</span></span>
 <span>  <span class="va">growth</span> <span class="op">~</span> <span class="va">investment</span> <span class="op">+</span> <span class="va">trade</span> <span class="op">+</span> <span class="va">population_growth</span> <span class="op">|</span> <span class="va">iso3c</span> <span class="op">+</span> <span class="va">year</span>,</span>
@@ -1332,397 +1274,399 @@ Signif. codes: 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb50" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
-<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a><span class="co">  eval: true</span></span>
-<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a><span class="fu"># Cross-Country Comparisons {#sec-cross-country}</span></span>
-<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>Why are some countries richer than others? This is arguably the most important question in economics. A child born in Norway can expect an income roughly 50 times higher than one born in the Democratic Republic of Congo. Understanding what drives these differences — and whether they are converging or diverging — is the domain of growth economics.</span>
-<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>This chapter covers three pillars of cross-country analysis: the convergence hypothesis (do poor countries catch up?), growth accounting (what are the proximate sources of growth?), and institutions (what are the fundamental causes?). We then introduce panel data techniques that allow us to estimate these relationships rigorously using data from many countries over many years.</span>
-<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a><span class="fu">## The convergence hypothesis</span></span>
-<span id="cb50-13"><a href="#cb50-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-14"><a href="#cb50-14" aria-hidden="true" tabindex="-1"></a>The Solow growth model makes a powerful prediction: poorer countries should grow faster than richer ones. The logic is diminishing returns to capital. A country with very little capital per worker gets a large output boost from each additional unit of investment, while a capital-rich country gets a smaller boost. If all countries have access to the same technology and save at similar rates, they should converge to the same steady-state income level. This is **unconditional convergence** — the prediction that initial income alone predicts subsequent growth, regardless of other characteristics.</span>
-<span id="cb50-15"><a href="#cb50-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-16"><a href="#cb50-16" aria-hidden="true" tabindex="-1"></a>**Conditional convergence** is a weaker but more defensible prediction. It says that countries converge to their own steady states, which depend on savings rates, population growth, human capital, and institutional quality. Two countries with identical fundamentals but different starting points will converge. But two countries with different fundamentals may diverge, even if one starts poorer. The empirical implication is that initial income should predict growth only after controlling for these other factors.</span>
-<span id="cb50-17"><a href="#cb50-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-18"><a href="#cb50-18" aria-hidden="true" tabindex="-1"></a>Let us test unconditional convergence using World Bank data. We need GDP per capita in constant dollars for a large panel of countries, with observations in 1990 and 2020.</span>
-<span id="cb50-19"><a href="#cb50-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-22"><a href="#cb50-22" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb50-23"><a href="#cb50-23" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(WDI)</span>
-<span id="cb50-24"><a href="#cb50-24" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb50-25"><a href="#cb50-25" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
-<span id="cb50-26"><a href="#cb50-26" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb50-27"><a href="#cb50-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-28"><a href="#cb50-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Download GDP per capita (constant 2015 US$)</span></span>
-<span id="cb50-29"><a href="#cb50-29" aria-hidden="true" tabindex="-1"></a>gdp_pc <span class="ot">&lt;-</span> <span class="fu">WDI</span>(</span>
-<span id="cb50-30"><a href="#cb50-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">indicator =</span> <span class="fu">c</span>(<span class="at">gdp_pc =</span> <span class="st">"NY.GDP.PCAP.KD"</span>),</span>
-<span id="cb50-31"><a href="#cb50-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">start =</span> <span class="dv">1990</span>, <span class="at">end =</span> <span class="dv">2020</span>,</span>
-<span id="cb50-32"><a href="#cb50-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">extra =</span> <span class="cn">TRUE</span></span>
-<span id="cb50-33"><a href="#cb50-33" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb50-34"><a href="#cb50-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-35"><a href="#cb50-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Keep only countries (not aggregates like "World" or "OECD")</span></span>
-<span id="cb50-36"><a href="#cb50-36" aria-hidden="true" tabindex="-1"></a>gdp_pc <span class="ot">&lt;-</span> gdp_pc <span class="sc">|&gt;</span></span>
-<span id="cb50-37"><a href="#cb50-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(region <span class="sc">!=</span> <span class="st">"Aggregates"</span>)</span>
-<span id="cb50-38"><a href="#cb50-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-39"><a href="#cb50-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Get initial (1990) GDP per capita and average annual growth</span></span>
-<span id="cb50-40"><a href="#cb50-40" aria-hidden="true" tabindex="-1"></a>convergence <span class="ot">&lt;-</span> gdp_pc <span class="sc">|&gt;</span></span>
-<span id="cb50-41"><a href="#cb50-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1990</span>, <span class="dv">2020</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb50-42"><a href="#cb50-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(iso3c, country, year, gdp_pc) <span class="sc">|&gt;</span></span>
-<span id="cb50-43"><a href="#cb50-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> year, <span class="at">values_from =</span> gdp_pc, <span class="at">names_prefix =</span> <span class="st">"y"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb50-44"><a href="#cb50-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(y1990), <span class="sc">!</span><span class="fu">is.na</span>(y2020), y1990 <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
-<span id="cb50-45"><a href="#cb50-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb50-46"><a href="#cb50-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_growth =</span> ((y2020 <span class="sc">/</span> y1990)<span class="sc">^</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">30</span>) <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="dv">100</span>,</span>
-<span id="cb50-47"><a href="#cb50-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_initial =</span> <span class="fu">log</span>(y1990)</span>
-<span id="cb50-48"><a href="#cb50-48" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb50-49"><a href="#cb50-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-50"><a href="#cb50-50" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(convergence)</span>
-<span id="cb50-51"><a href="#cb50-51" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb50-52"><a href="#cb50-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-53"><a href="#cb50-53" aria-hidden="true" tabindex="-1"></a>Now plot the classic convergence chart: log initial GDP per capita on the x-axis, average annual growth on the y-axis. If unconditional convergence holds, we should see a downward-sloping relationship — poorer countries (lower initial GDP) growing faster (higher average growth).</span>
-<span id="cb50-54"><a href="#cb50-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-57"><a href="#cb50-57" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb50-58"><a href="#cb50-58" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(convergence, <span class="fu">aes</span>(<span class="at">x =</span> log_initial, <span class="at">y =</span> avg_growth)) <span class="sc">+</span></span>
-<span id="cb50-59"><a href="#cb50-59" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
-<span id="cb50-60"><a href="#cb50-60" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">TRUE</span>, <span class="at">colour =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
-<span id="cb50-61"><a href="#cb50-61" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb50-62"><a href="#cb50-62" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Unconditional convergence: 1990-2020"</span>,</span>
-<span id="cb50-63"><a href="#cb50-63" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Log GDP per capita in 1990 (constant 2015 US$)"</span>,</span>
-<span id="cb50-64"><a href="#cb50-64" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Average annual growth (%)"</span></span>
-<span id="cb50-65"><a href="#cb50-65" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb50-66"><a href="#cb50-66" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb50-67"><a href="#cb50-67" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb50-68"><a href="#cb50-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-71"><a href="#cb50-71" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb50-72"><a href="#cb50-72" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit the regression</span></span>
-<span id="cb50-73"><a href="#cb50-73" aria-hidden="true" tabindex="-1"></a>convergence_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(avg_growth <span class="sc">~</span> log_initial, <span class="at">data =</span> convergence)</span>
-<span id="cb50-74"><a href="#cb50-74" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(convergence_model)</span>
-<span id="cb50-75"><a href="#cb50-75" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb50-76"><a href="#cb50-76" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-77"><a href="#cb50-77" aria-hidden="true" tabindex="-1"></a>The result is typically weak. The coefficient on log initial GDP per capita is often statistically insignificant or only marginally significant, and the $R^2$ is very low — usually below 0.05. Unconditional convergence does not hold in the full sample. Some poor countries have grown rapidly (China, India, Vietnam), but many others have stagnated or even regressed (much of sub-Saharan Africa, several post-Soviet states).</span>
-<span id="cb50-78"><a href="#cb50-78" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-79"><a href="#cb50-79" aria-hidden="true" tabindex="-1"></a>However, if we restrict the sample to OECD countries — a more homogeneous group with broadly similar institutions and policies — convergence is much stronger. Ireland, South Korea, and Poland have grown rapidly from relatively low starting points, while the United States and Switzerland have grown more slowly from high ones.</span>
-<span id="cb50-80"><a href="#cb50-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-83"><a href="#cb50-83" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb50-84"><a href="#cb50-84" aria-hidden="true" tabindex="-1"></a><span class="co"># Convergence among OECD countries only</span></span>
-<span id="cb50-85"><a href="#cb50-85" aria-hidden="true" tabindex="-1"></a>oecd <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"AUS"</span>, <span class="st">"AUT"</span>, <span class="st">"BEL"</span>, <span class="st">"CAN"</span>, <span class="st">"CHL"</span>, <span class="st">"COL"</span>, <span class="st">"CRI"</span>, <span class="st">"CZE"</span>,</span>
-<span id="cb50-86"><a href="#cb50-86" aria-hidden="true" tabindex="-1"></a>          <span class="st">"DNK"</span>, <span class="st">"EST"</span>, <span class="st">"FIN"</span>, <span class="st">"FRA"</span>, <span class="st">"DEU"</span>, <span class="st">"GRC"</span>, <span class="st">"HUN"</span>, <span class="st">"ISL"</span>,</span>
-<span id="cb50-87"><a href="#cb50-87" aria-hidden="true" tabindex="-1"></a>          <span class="st">"IRL"</span>, <span class="st">"ISR"</span>, <span class="st">"ITA"</span>, <span class="st">"JPN"</span>, <span class="st">"KOR"</span>, <span class="st">"LVA"</span>, <span class="st">"LTU"</span>, <span class="st">"LUX"</span>,</span>
-<span id="cb50-88"><a href="#cb50-88" aria-hidden="true" tabindex="-1"></a>          <span class="st">"MEX"</span>, <span class="st">"NLD"</span>, <span class="st">"NZL"</span>, <span class="st">"NOR"</span>, <span class="st">"POL"</span>, <span class="st">"PRT"</span>, <span class="st">"SVK"</span>, <span class="st">"SVN"</span>,</span>
-<span id="cb50-89"><a href="#cb50-89" aria-hidden="true" tabindex="-1"></a>          <span class="st">"ESP"</span>, <span class="st">"SWE"</span>, <span class="st">"CHE"</span>, <span class="st">"TUR"</span>, <span class="st">"GBR"</span>, <span class="st">"USA"</span>)</span>
-<span id="cb50-90"><a href="#cb50-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-91"><a href="#cb50-91" aria-hidden="true" tabindex="-1"></a>convergence_oecd <span class="ot">&lt;-</span> convergence <span class="sc">|&gt;</span></span>
-<span id="cb50-92"><a href="#cb50-92" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(iso3c <span class="sc">%in%</span> oecd)</span>
-<span id="cb50-93"><a href="#cb50-93" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-94"><a href="#cb50-94" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(convergence_oecd, <span class="fu">aes</span>(<span class="at">x =</span> log_initial, <span class="at">y =</span> avg_growth)) <span class="sc">+</span></span>
-<span id="cb50-95"><a href="#cb50-95" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb50-96"><a href="#cb50-96" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">TRUE</span>, <span class="at">colour =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
-<span id="cb50-97"><a href="#cb50-97" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> iso3c), <span class="at">size =</span> <span class="fl">2.5</span>, <span class="at">nudge_y =</span> <span class="fl">0.15</span>) <span class="sc">+</span></span>
-<span id="cb50-98"><a href="#cb50-98" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb50-99"><a href="#cb50-99" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Convergence among OECD countries: 1990-2020"</span>,</span>
-<span id="cb50-100"><a href="#cb50-100" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Log GDP per capita in 1990"</span>,</span>
-<span id="cb50-101"><a href="#cb50-101" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Average annual growth (%)"</span></span>
-<span id="cb50-102"><a href="#cb50-102" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb50-103"><a href="#cb50-103" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb50-104"><a href="#cb50-104" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb50-105"><a href="#cb50-105" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-106"><a href="#cb50-106" aria-hidden="true" tabindex="-1"></a>This is the core insight of Mankiw, Romer, and Weil (1992): convergence is conditional. Countries converge, but only towards their own steady states. To explain cross-country income differences, we need to understand what determines those steady states — which brings us to growth accounting and institutions.</span>
-<span id="cb50-107"><a href="#cb50-107" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-108"><a href="#cb50-108" aria-hidden="true" tabindex="-1"></a><span class="fu">## Growth accounting</span></span>
-<span id="cb50-109"><a href="#cb50-109" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-110"><a href="#cb50-110" aria-hidden="true" tabindex="-1"></a>Growth accounting decomposes the growth rate of output into contributions from capital, labour, and a residual called Total Factor Productivity (TFP). The framework starts with a Cobb-Douglas production function:</span>
-<span id="cb50-111"><a href="#cb50-111" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-112"><a href="#cb50-112" aria-hidden="true" tabindex="-1"></a>$$Y = A \cdot K^{\alpha} \cdot L^{1-\alpha}$$</span>
-<span id="cb50-113"><a href="#cb50-113" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-114"><a href="#cb50-114" aria-hidden="true" tabindex="-1"></a>where $Y$ is output, $A$ is TFP, $K$ is the capital stock, $L$ is the labour input, and $\alpha$ is capital's share of income (typically around 0.3 for developed economies). Taking logarithms and differentiating with respect to time gives us the growth accounting equation:</span>
-<span id="cb50-115"><a href="#cb50-115" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-116"><a href="#cb50-116" aria-hidden="true" tabindex="-1"></a>$$g_Y = g_A + \alpha \cdot g_K + (1-\alpha) \cdot g_L$$</span>
-<span id="cb50-117"><a href="#cb50-117" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-118"><a href="#cb50-118" aria-hidden="true" tabindex="-1"></a>That is: output growth ($g_Y$) equals TFP growth ($g_A$) plus the weighted contributions of capital growth ($g_K$) and labour growth ($g_L$). TFP is calculated as the residual — the portion of output growth not explained by the growth of measured inputs:</span>
-<span id="cb50-119"><a href="#cb50-119" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-120"><a href="#cb50-120" aria-hidden="true" tabindex="-1"></a>$$g_A = g_Y - \alpha \cdot g_K - (1-\alpha) \cdot g_L$$</span>
-<span id="cb50-121"><a href="#cb50-121" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-122"><a href="#cb50-122" aria-hidden="true" tabindex="-1"></a>TFP is sometimes called the "measure of our ignorance." It captures everything that raises output beyond what can be attributed to more capital and more labour: technological progress, better management, improved institutions, more efficient resource allocation, and measurement error. Despite being a residual, TFP is typically the largest contributor to long-run growth in developed economies — accounting for 50–70 per cent of growth in the US and UK since 1950.</span>
-<span id="cb50-123"><a href="#cb50-123" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-124"><a href="#cb50-124" aria-hidden="true" tabindex="-1"></a>We can perform a simple growth accounting exercise for the UK using ONS productivity data:</span>
-<span id="cb50-125"><a href="#cb50-125" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-128"><a href="#cb50-128" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb50-129"><a href="#cb50-129" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ons)</span>
-<span id="cb50-130"><a href="#cb50-130" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-131"><a href="#cb50-131" aria-hidden="true" tabindex="-1"></a><span class="co"># ONS publishes output per hour and per worker indices</span></span>
-<span id="cb50-132"><a href="#cb50-132" aria-hidden="true" tabindex="-1"></a>productivity <span class="ot">&lt;-</span> <span class="fu">ons_productivity</span>()</span>
-<span id="cb50-133"><a href="#cb50-133" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-134"><a href="#cb50-134" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(productivity)</span>
-<span id="cb50-135"><a href="#cb50-135" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb50-136"><a href="#cb50-136" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-139"><a href="#cb50-139" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb50-140"><a href="#cb50-140" aria-hidden="true" tabindex="-1"></a><span class="co"># Alternatively, construct a manual growth accounting exercise</span></span>
-<span id="cb50-141"><a href="#cb50-141" aria-hidden="true" tabindex="-1"></a><span class="co"># using GDP, capital stock, and employment data</span></span>
-<span id="cb50-142"><a href="#cb50-142" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-143"><a href="#cb50-143" aria-hidden="true" tabindex="-1"></a><span class="co"># GDP growth (ons_gdp() returns quarterly growth rates by default)</span></span>
-<span id="cb50-144"><a href="#cb50-144" aria-hidden="true" tabindex="-1"></a>gdp <span class="ot">&lt;-</span> <span class="fu">ons_gdp</span>() <span class="sc">|&gt;</span></span>
-<span id="cb50-145"><a href="#cb50-145" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(date)</span>
-<span id="cb50-146"><a href="#cb50-146" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-147"><a href="#cb50-147" aria-hidden="true" tabindex="-1"></a><span class="co"># Employment</span></span>
-<span id="cb50-148"><a href="#cb50-148" aria-hidden="true" tabindex="-1"></a>employment <span class="ot">&lt;-</span> <span class="fu">ons_employment</span>()</span>
-<span id="cb50-149"><a href="#cb50-149" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-150"><a href="#cb50-150" aria-hidden="true" tabindex="-1"></a><span class="co"># For capital stock, use the ONS capital stocks dataset</span></span>
-<span id="cb50-151"><a href="#cb50-151" aria-hidden="true" tabindex="-1"></a><span class="co"># or approximate using gross fixed capital formation</span></span>
-<span id="cb50-152"><a href="#cb50-152" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-153"><a href="#cb50-153" aria-hidden="true" tabindex="-1"></a><span class="co"># Simple annual growth accounting:</span></span>
-<span id="cb50-154"><a href="#cb50-154" aria-hidden="true" tabindex="-1"></a><span class="co"># Suppose we have annual: gdp_growth, capital_growth, labour_growth</span></span>
-<span id="cb50-155"><a href="#cb50-155" aria-hidden="true" tabindex="-1"></a><span class="co"># alpha &lt;- 0.3</span></span>
-<span id="cb50-156"><a href="#cb50-156" aria-hidden="true" tabindex="-1"></a><span class="co"># tfp_growth &lt;- gdp_growth - alpha * capital_growth - (1 - alpha) * labour_growth</span></span>
-<span id="cb50-157"><a href="#cb50-157" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb50-158"><a href="#cb50-158" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-159"><a href="#cb50-159" aria-hidden="true" tabindex="-1"></a>For a more detailed decomposition, the ONS publishes an official multi-factor productivity release that breaks output growth into contributions from labour composition (quality), capital deepening (quantity and quality of capital per worker), and multi-factor productivity. This is available in the "Multi-factor productivity" statistical bulletin.</span>
-<span id="cb50-160"><a href="#cb50-160" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-163"><a href="#cb50-163" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb50-164"><a href="#cb50-164" aria-hidden="true" tabindex="-1"></a><span class="co"># Stylised UK growth accounting (average annual, per cent)</span></span>
-<span id="cb50-165"><a href="#cb50-165" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tibble)</span>
-<span id="cb50-166"><a href="#cb50-166" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-167"><a href="#cb50-167" aria-hidden="true" tabindex="-1"></a>uk_growth <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb50-168"><a href="#cb50-168" aria-hidden="true" tabindex="-1"></a>  <span class="at">period =</span> <span class="fu">c</span>(<span class="st">"1990-2000"</span>, <span class="st">"2000-2007"</span>, <span class="st">"2007-2019"</span>, <span class="st">"2019-2023"</span>),</span>
-<span id="cb50-169"><a href="#cb50-169" aria-hidden="true" tabindex="-1"></a>  <span class="at">gdp_growth =</span> <span class="fu">c</span>(<span class="fl">2.8</span>, <span class="fl">2.5</span>, <span class="fl">1.5</span>, <span class="fl">0.8</span>),</span>
-<span id="cb50-170"><a href="#cb50-170" aria-hidden="true" tabindex="-1"></a>  <span class="at">capital_contribution =</span> <span class="fu">c</span>(<span class="fl">0.9</span>, <span class="fl">0.8</span>, <span class="fl">0.5</span>, <span class="fl">0.3</span>),</span>
-<span id="cb50-171"><a href="#cb50-171" aria-hidden="true" tabindex="-1"></a>  <span class="at">labour_contribution =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.6</span>, <span class="fl">0.7</span>, <span class="fl">0.3</span>),</span>
-<span id="cb50-172"><a href="#cb50-172" aria-hidden="true" tabindex="-1"></a>  <span class="at">tfp_growth =</span> <span class="fu">c</span>(<span class="fl">1.4</span>, <span class="fl">1.1</span>, <span class="fl">0.3</span>, <span class="fl">0.2</span>)</span>
-<span id="cb50-173"><a href="#cb50-173" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb50-174"><a href="#cb50-174" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-175"><a href="#cb50-175" aria-hidden="true" tabindex="-1"></a>uk_growth <span class="sc">|&gt;</span></span>
-<span id="cb50-176"><a href="#cb50-176" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>period, <span class="at">names_to =</span> <span class="st">"component"</span>, <span class="at">values_to =</span> <span class="st">"pct"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb50-177"><a href="#cb50-177" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(component <span class="sc">!=</span> <span class="st">"gdp_growth"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb50-178"><a href="#cb50-178" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> period, <span class="at">y =</span> pct, <span class="at">fill =</span> component)) <span class="sc">+</span></span>
-<span id="cb50-179"><a href="#cb50-179" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="st">"stack"</span>) <span class="sc">+</span></span>
-<span id="cb50-180"><a href="#cb50-180" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb50-181"><a href="#cb50-181" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"UK growth accounting by decade"</span>,</span>
-<span id="cb50-182"><a href="#cb50-182" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Contribution to GDP growth (pp)"</span>,</span>
-<span id="cb50-183"><a href="#cb50-183" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="cn">NULL</span></span>
-<span id="cb50-184"><a href="#cb50-184" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb50-185"><a href="#cb50-185" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb50-186"><a href="#cb50-186" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb50-187"><a href="#cb50-187" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-188"><a href="#cb50-188" aria-hidden="true" tabindex="-1"></a>The pattern reveals the UK's "productivity puzzle." Before the financial crisis, TFP growth was the dominant source of output growth — averaging over 1 per cent per year. After 2007, TFP growth collapsed to near zero. Labour input remained positive (employment rose strongly after 2012), and capital deepening continued, but without TFP growth, overall GDP growth was anaemic. This productivity slowdown is the single most important macroeconomic development in the UK since the financial crisis, and explaining it remains an open question. Leading candidates include weak business investment, reduced labour mobility, the long tail of banking sector damage, slower technology diffusion, and measurement issues in the digital economy.</span>
-<span id="cb50-189"><a href="#cb50-189" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-190"><a href="#cb50-190" aria-hidden="true" tabindex="-1"></a>The productivity puzzle is not unique to the UK. The United States, the euro area, and Japan all experienced a marked slowdown in TFP growth after 2005–2008. Robert Gordon's "The Rise and Fall of American Growth" (2016) argues that the period of rapid TFP growth (1920–1970) was historically anomalous, driven by one-off inventions (electricity, the internal combustion engine, indoor plumbing) that cannot be repeated. Others, like Erik Brynjolfsson, argue that we are in a period of "measured" slowdown but unmeasured acceleration, as digital technologies transform production in ways that GDP statistics fail to capture.</span>
-<span id="cb50-191"><a href="#cb50-191" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-192"><a href="#cb50-192" aria-hidden="true" tabindex="-1"></a><span class="fu">## Institutions and growth</span></span>
-<span id="cb50-193"><a href="#cb50-193" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-194"><a href="#cb50-194" aria-hidden="true" tabindex="-1"></a>Why does growth accounting leave so much unexplained? Because capital, labour, and even TFP are proximate causes of growth — they describe *how* a country grows but not *why*. A deeper question is: why do some countries accumulate more capital, invest more in human capital, and deploy technology more efficiently than others?</span>
-<span id="cb50-195"><a href="#cb50-195" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-196"><a href="#cb50-196" aria-hidden="true" tabindex="-1"></a>Daron Acemoglu, Simon Johnson, and James Robinson — in a series of influential papers and their book "Why Nations Fail" (2012) — argue that the fundamental cause is **institutions**: the rules, norms, and enforcement mechanisms that shape economic incentives. Countries with "inclusive" institutions — secure property rights, impartial courts, competitive markets, constraints on executive power — create incentives for investment, innovation, and effort. Countries with "extractive" institutions — where elites can confiscate wealth, rig markets, or suppress competition — discourage productive activity and encourage rent-seeking.</span>
-<span id="cb50-197"><a href="#cb50-197" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-198"><a href="#cb50-198" aria-hidden="true" tabindex="-1"></a>The empirical challenge is that institutions and income are endogenous: rich countries can afford better institutions, and better institutions may cause higher income. Acemoglu, Johnson, and Robinson address this with an instrumental variables strategy using settler mortality rates in former colonies — but the debate over identification continues.</span>
-<span id="cb50-199"><a href="#cb50-199" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-200"><a href="#cb50-200" aria-hidden="true" tabindex="-1"></a>We can examine the correlation between institutional quality and GDP per capita using the World Bank's Worldwide Governance Indicators (WGI), which measure six dimensions of governance: voice and accountability, political stability, government effectiveness, regulatory quality, rule of law, and control of corruption.</span>
-<span id="cb50-201"><a href="#cb50-201" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-204"><a href="#cb50-204" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb50-205"><a href="#cb50-205" aria-hidden="true" tabindex="-1"></a><span class="co"># Download GDP per capita</span></span>
-<span id="cb50-206"><a href="#cb50-206" aria-hidden="true" tabindex="-1"></a>gdp_data <span class="ot">&lt;-</span> <span class="fu">WDI</span>(</span>
-<span id="cb50-207"><a href="#cb50-207" aria-hidden="true" tabindex="-1"></a>  <span class="at">indicator =</span> <span class="fu">c</span>(<span class="at">gdp_pc =</span> <span class="st">"NY.GDP.PCAP.KD"</span>),</span>
-<span id="cb50-208"><a href="#cb50-208" aria-hidden="true" tabindex="-1"></a>  <span class="at">start =</span> <span class="dv">2020</span>, <span class="at">end =</span> <span class="dv">2020</span>,</span>
-<span id="cb50-209"><a href="#cb50-209" aria-hidden="true" tabindex="-1"></a>  <span class="at">extra =</span> <span class="cn">TRUE</span></span>
-<span id="cb50-210"><a href="#cb50-210" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
-<span id="cb50-211"><a href="#cb50-211" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(region <span class="sc">!=</span> <span class="st">"Aggregates"</span>, <span class="sc">!</span><span class="fu">is.na</span>(gdp_pc))</span>
-<span id="cb50-212"><a href="#cb50-212" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-213"><a href="#cb50-213" aria-hidden="true" tabindex="-1"></a><span class="co"># World Governance Indicators can be downloaded from:</span></span>
-<span id="cb50-214"><a href="#cb50-214" aria-hidden="true" tabindex="-1"></a><span class="co"># https://info.worldbank.org/governance/wgi/</span></span>
-<span id="cb50-215"><a href="#cb50-215" aria-hidden="true" tabindex="-1"></a><span class="co"># The WDI package also provides some governance indicators</span></span>
-<span id="cb50-216"><a href="#cb50-216" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-217"><a href="#cb50-217" aria-hidden="true" tabindex="-1"></a>wgi <span class="ot">&lt;-</span> <span class="fu">WDI</span>(</span>
-<span id="cb50-218"><a href="#cb50-218" aria-hidden="true" tabindex="-1"></a>  <span class="at">indicator =</span> <span class="fu">c</span>(</span>
-<span id="cb50-219"><a href="#cb50-219" aria-hidden="true" tabindex="-1"></a>    <span class="at">rule_of_law =</span> <span class="st">"RL.EST"</span>,</span>
-<span id="cb50-220"><a href="#cb50-220" aria-hidden="true" tabindex="-1"></a>    <span class="at">govt_effectiveness =</span> <span class="st">"GE.EST"</span>,</span>
-<span id="cb50-221"><a href="#cb50-221" aria-hidden="true" tabindex="-1"></a>    <span class="at">control_corruption =</span> <span class="st">"CC.EST"</span></span>
-<span id="cb50-222"><a href="#cb50-222" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb50-223"><a href="#cb50-223" aria-hidden="true" tabindex="-1"></a>  <span class="at">start =</span> <span class="dv">2020</span>, <span class="at">end =</span> <span class="dv">2020</span></span>
-<span id="cb50-224"><a href="#cb50-224" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb50-225"><a href="#cb50-225" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-226"><a href="#cb50-226" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge</span></span>
-<span id="cb50-227"><a href="#cb50-227" aria-hidden="true" tabindex="-1"></a>institutions <span class="ot">&lt;-</span> gdp_data <span class="sc">|&gt;</span></span>
-<span id="cb50-228"><a href="#cb50-228" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(wgi, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"iso2c"</span>, <span class="st">"year"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb50-229"><a href="#cb50-229" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(rule_of_law), <span class="sc">!</span><span class="fu">is.na</span>(gdp_pc))</span>
-<span id="cb50-230"><a href="#cb50-230" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-231"><a href="#cb50-231" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(institutions)</span>
-<span id="cb50-232"><a href="#cb50-232" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb50-233"><a href="#cb50-233" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-236"><a href="#cb50-236" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb50-237"><a href="#cb50-237" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(institutions, <span class="fu">aes</span>(<span class="at">x =</span> rule_of_law, <span class="at">y =</span> <span class="fu">log</span>(gdp_pc))) <span class="sc">+</span></span>
-<span id="cb50-238"><a href="#cb50-238" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
-<span id="cb50-239"><a href="#cb50-239" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">TRUE</span>, <span class="at">colour =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
-<span id="cb50-240"><a href="#cb50-240" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb50-241"><a href="#cb50-241" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Rule of law and GDP per capita (2020)"</span>,</span>
-<span id="cb50-242"><a href="#cb50-242" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Rule of Law index (WGI)"</span>,</span>
-<span id="cb50-243"><a href="#cb50-243" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Log GDP per capita (constant 2015 US$)"</span></span>
-<span id="cb50-244"><a href="#cb50-244" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb50-245"><a href="#cb50-245" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb50-246"><a href="#cb50-246" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb50-247"><a href="#cb50-247" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-250"><a href="#cb50-250" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb50-251"><a href="#cb50-251" aria-hidden="true" tabindex="-1"></a><span class="co"># Cross-section regression</span></span>
-<span id="cb50-252"><a href="#cb50-252" aria-hidden="true" tabindex="-1"></a>inst_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="fu">log</span>(gdp_pc) <span class="sc">~</span> rule_of_law <span class="sc">+</span> control_corruption,</span>
-<span id="cb50-253"><a href="#cb50-253" aria-hidden="true" tabindex="-1"></a>                 <span class="at">data =</span> institutions)</span>
-<span id="cb50-254"><a href="#cb50-254" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(inst_model)</span>
-<span id="cb50-255"><a href="#cb50-255" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb50-256"><a href="#cb50-256" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-257"><a href="#cb50-257" aria-hidden="true" tabindex="-1"></a>The correlation is strikingly strong — typically $R^2 &gt; 0.5$ in a simple bivariate regression of log GDP per capita on rule of law. But correlation is not causation. Several objections arise immediately. First, reverse causality: richer countries have more resources to build courts, train judges, and fight corruption. Second, omitted variables: geography, culture, colonial history, and natural resources all correlate with both institutions and income. Third, measurement error: governance indicators are partly based on perceptions of business executives and experts, who may rate countries higher simply because they are richer.</span>
-<span id="cb50-258"><a href="#cb50-258" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-259"><a href="#cb50-259" aria-hidden="true" tabindex="-1"></a>Despite these caveats, the institutional explanation has become the dominant paradigm in growth economics. The Nobel Prize in Economics was awarded to Acemoglu, Johnson, and Robinson in 2024 for their work on how institutions shape prosperity. The policy implication is profound but daunting: if institutions are the binding constraint on development, then aid and investment alone are insufficient — what matters is governance reform, which is politically difficult and historically slow.</span>
-<span id="cb50-260"><a href="#cb50-260" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-263"><a href="#cb50-263" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb50-264"><a href="#cb50-264" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualise all three governance dimensions</span></span>
-<span id="cb50-265"><a href="#cb50-265" aria-hidden="true" tabindex="-1"></a>institutions <span class="sc">|&gt;</span></span>
-<span id="cb50-266"><a href="#cb50-266" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(country.x, gdp_pc, rule_of_law, govt_effectiveness, control_corruption) <span class="sc">|&gt;</span></span>
-<span id="cb50-267"><a href="#cb50-267" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb50-268"><a href="#cb50-268" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">c</span>(rule_of_law, govt_effectiveness, control_corruption),</span>
-<span id="cb50-269"><a href="#cb50-269" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"indicator"</span>,</span>
-<span id="cb50-270"><a href="#cb50-270" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"score"</span></span>
-<span id="cb50-271"><a href="#cb50-271" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb50-272"><a href="#cb50-272" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> score, <span class="at">y =</span> <span class="fu">log</span>(gdp_pc))) <span class="sc">+</span></span>
-<span id="cb50-273"><a href="#cb50-273" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.3</span>, <span class="at">size =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
-<span id="cb50-274"><a href="#cb50-274" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">colour =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
-<span id="cb50-275"><a href="#cb50-275" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>indicator, <span class="at">scales =</span> <span class="st">"free_x"</span>) <span class="sc">+</span></span>
-<span id="cb50-276"><a href="#cb50-276" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb50-277"><a href="#cb50-277" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Governance indicators and GDP per capita"</span>,</span>
-<span id="cb50-278"><a href="#cb50-278" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Governance score (WGI)"</span>, <span class="at">y =</span> <span class="st">"Log GDP per capita"</span></span>
-<span id="cb50-279"><a href="#cb50-279" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb50-280"><a href="#cb50-280" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb50-281"><a href="#cb50-281" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb50-282"><a href="#cb50-282" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-283"><a href="#cb50-283" aria-hidden="true" tabindex="-1"></a><span class="fu">## Panel data techniques for macro</span></span>
-<span id="cb50-284"><a href="#cb50-284" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-285"><a href="#cb50-285" aria-hidden="true" tabindex="-1"></a>Cross-sectional regressions — one observation per country — suffer from omitted variable bias. Every country differs in countless ways (geography, history, culture, resources), and no set of controls can capture all of them. Panel data, which observe the same countries over multiple time periods, offer a powerful solution: **fixed effects**.</span>
-<span id="cb50-286"><a href="#cb50-286" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-287"><a href="#cb50-287" aria-hidden="true" tabindex="-1"></a>A country fixed effect absorbs all time-invariant characteristics of that country — its geography, colonial history, deep cultural traits, and anything else that does not change over the sample period. This means that fixed effects estimates are identified purely from *within-country variation over time*. If a country's institutional quality improves over a decade, does its growth also improve? This is a much cleaner comparison than asking whether countries with better institutions are richer, because it removes all the static confounders.</span>
-<span id="cb50-288"><a href="#cb50-288" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-289"><a href="#cb50-289" aria-hidden="true" tabindex="-1"></a>The fixed effects model for a panel of countries $i$ over time periods $t$ is:</span>
-<span id="cb50-290"><a href="#cb50-290" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-291"><a href="#cb50-291" aria-hidden="true" tabindex="-1"></a>$$y_{it} = \alpha_i + \beta \cdot x_{it} + \gamma_t + \varepsilon_{it}$$</span>
-<span id="cb50-292"><a href="#cb50-292" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-293"><a href="#cb50-293" aria-hidden="true" tabindex="-1"></a>where $\alpha_i$ is the country fixed effect, $\gamma_t$ is a time fixed effect (absorbing global shocks like the 2008 financial crisis that affect all countries), $x_{it}$ is a vector of time-varying explanatory variables, and $\varepsilon_{it}$ is the error term. The coefficients $\beta$ are identified from within-country, within-time-period variation.</span>
-<span id="cb50-294"><a href="#cb50-294" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-295"><a href="#cb50-295" aria-hidden="true" tabindex="-1"></a>In R, the <span class="in">`fixest`</span> package provides a fast and elegant implementation of fixed effects estimation via <span class="in">`feols()`</span>. The <span class="in">`plm`</span> package is an older alternative. We will use <span class="in">`fixest`</span>.</span>
-<span id="cb50-296"><a href="#cb50-296" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-299"><a href="#cb50-299" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb50-300"><a href="#cb50-300" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(WDI)</span>
-<span id="cb50-301"><a href="#cb50-301" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb50-302"><a href="#cb50-302" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-303"><a href="#cb50-303" aria-hidden="true" tabindex="-1"></a><span class="co"># Download panel data for OECD countries</span></span>
-<span id="cb50-304"><a href="#cb50-304" aria-hidden="true" tabindex="-1"></a>panel_raw <span class="ot">&lt;-</span> <span class="fu">WDI</span>(</span>
-<span id="cb50-305"><a href="#cb50-305" aria-hidden="true" tabindex="-1"></a>  <span class="at">indicator =</span> <span class="fu">c</span>(</span>
-<span id="cb50-306"><a href="#cb50-306" aria-hidden="true" tabindex="-1"></a>    <span class="at">growth =</span> <span class="st">"NY.GDP.MKTP.KD.ZG"</span>,        <span class="co"># GDP growth</span></span>
-<span id="cb50-307"><a href="#cb50-307" aria-hidden="true" tabindex="-1"></a>    <span class="at">investment =</span> <span class="st">"NE.GDI.TOTL.ZS"</span>,        <span class="co"># Gross capital formation (% GDP)</span></span>
-<span id="cb50-308"><a href="#cb50-308" aria-hidden="true" tabindex="-1"></a>    <span class="at">trade =</span> <span class="st">"NE.TRD.GNFS.ZS"</span>,            <span class="co"># Trade (% GDP)</span></span>
-<span id="cb50-309"><a href="#cb50-309" aria-hidden="true" tabindex="-1"></a>    <span class="at">govt_effectiveness =</span> <span class="st">"GE.EST"</span>,         <span class="co"># Government effectiveness</span></span>
-<span id="cb50-310"><a href="#cb50-310" aria-hidden="true" tabindex="-1"></a>    <span class="at">population_growth =</span> <span class="st">"SP.POP.GROW"</span>      <span class="co"># Population growth</span></span>
-<span id="cb50-311"><a href="#cb50-311" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb50-312"><a href="#cb50-312" aria-hidden="true" tabindex="-1"></a>  <span class="at">start =</span> <span class="dv">2000</span>, <span class="at">end =</span> <span class="dv">2020</span>,</span>
-<span id="cb50-313"><a href="#cb50-313" aria-hidden="true" tabindex="-1"></a>  <span class="at">extra =</span> <span class="cn">TRUE</span></span>
-<span id="cb50-314"><a href="#cb50-314" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb50-315"><a href="#cb50-315" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-316"><a href="#cb50-316" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter to OECD countries</span></span>
-<span id="cb50-317"><a href="#cb50-317" aria-hidden="true" tabindex="-1"></a>oecd_codes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"AUS"</span>, <span class="st">"AUT"</span>, <span class="st">"BEL"</span>, <span class="st">"CAN"</span>, <span class="st">"CHL"</span>, <span class="st">"COL"</span>, <span class="st">"CZE"</span>, <span class="st">"DNK"</span>,</span>
-<span id="cb50-318"><a href="#cb50-318" aria-hidden="true" tabindex="-1"></a>                <span class="st">"EST"</span>, <span class="st">"FIN"</span>, <span class="st">"FRA"</span>, <span class="st">"DEU"</span>, <span class="st">"GRC"</span>, <span class="st">"HUN"</span>, <span class="st">"ISL"</span>, <span class="st">"IRL"</span>,</span>
-<span id="cb50-319"><a href="#cb50-319" aria-hidden="true" tabindex="-1"></a>                <span class="st">"ISR"</span>, <span class="st">"ITA"</span>, <span class="st">"JPN"</span>, <span class="st">"KOR"</span>, <span class="st">"LVA"</span>, <span class="st">"LTU"</span>, <span class="st">"LUX"</span>, <span class="st">"MEX"</span>,</span>
-<span id="cb50-320"><a href="#cb50-320" aria-hidden="true" tabindex="-1"></a>                <span class="st">"NLD"</span>, <span class="st">"NZL"</span>, <span class="st">"NOR"</span>, <span class="st">"POL"</span>, <span class="st">"PRT"</span>, <span class="st">"SVK"</span>, <span class="st">"SVN"</span>, <span class="st">"ESP"</span>,</span>
-<span id="cb50-321"><a href="#cb50-321" aria-hidden="true" tabindex="-1"></a>                <span class="st">"SWE"</span>, <span class="st">"CHE"</span>, <span class="st">"TUR"</span>, <span class="st">"GBR"</span>, <span class="st">"USA"</span>)</span>
-<span id="cb50-322"><a href="#cb50-322" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-323"><a href="#cb50-323" aria-hidden="true" tabindex="-1"></a>panel <span class="ot">&lt;-</span> panel_raw <span class="sc">|&gt;</span></span>
-<span id="cb50-324"><a href="#cb50-324" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(iso3c <span class="sc">%in%</span> oecd_codes) <span class="sc">|&gt;</span></span>
-<span id="cb50-325"><a href="#cb50-325" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(iso3c, year, growth, investment, trade,</span>
-<span id="cb50-326"><a href="#cb50-326" aria-hidden="true" tabindex="-1"></a>         govt_effectiveness, population_growth)</span>
-<span id="cb50-327"><a href="#cb50-327" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-328"><a href="#cb50-328" aria-hidden="true" tabindex="-1"></a><span class="co"># Check coverage</span></span>
-<span id="cb50-329"><a href="#cb50-329" aria-hidden="true" tabindex="-1"></a>panel <span class="sc">|&gt;</span></span>
-<span id="cb50-330"><a href="#cb50-330" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb50-331"><a href="#cb50-331" aria-hidden="true" tabindex="-1"></a>    <span class="at">countries =</span> <span class="fu">n_distinct</span>(iso3c),</span>
-<span id="cb50-332"><a href="#cb50-332" aria-hidden="true" tabindex="-1"></a>    <span class="at">years =</span> <span class="fu">n_distinct</span>(year),</span>
-<span id="cb50-333"><a href="#cb50-333" aria-hidden="true" tabindex="-1"></a>    <span class="at">obs =</span> <span class="fu">n</span>(),</span>
-<span id="cb50-334"><a href="#cb50-334" aria-hidden="true" tabindex="-1"></a>    <span class="at">complete =</span> <span class="fu">sum</span>(<span class="fu">complete.cases</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())))</span>
-<span id="cb50-335"><a href="#cb50-335" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb50-336"><a href="#cb50-336" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb50-337"><a href="#cb50-337" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-338"><a href="#cb50-338" aria-hidden="true" tabindex="-1"></a>Now estimate the panel regression with country and year fixed effects:</span>
-<span id="cb50-339"><a href="#cb50-339" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-342"><a href="#cb50-342" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb50-343"><a href="#cb50-343" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fixest)</span>
-<span id="cb50-344"><a href="#cb50-344" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-345"><a href="#cb50-345" aria-hidden="true" tabindex="-1"></a><span class="co"># Two-way fixed effects: country + year</span></span>
-<span id="cb50-346"><a href="#cb50-346" aria-hidden="true" tabindex="-1"></a>fe_model <span class="ot">&lt;-</span> <span class="fu">feols</span>(</span>
-<span id="cb50-347"><a href="#cb50-347" aria-hidden="true" tabindex="-1"></a>  growth <span class="sc">~</span> investment <span class="sc">+</span> trade <span class="sc">+</span> govt_effectiveness <span class="sc">+</span> population_growth <span class="sc">|</span></span>
-<span id="cb50-348"><a href="#cb50-348" aria-hidden="true" tabindex="-1"></a>    iso3c <span class="sc">+</span> year,</span>
-<span id="cb50-349"><a href="#cb50-349" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> panel</span>
-<span id="cb50-350"><a href="#cb50-350" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb50-351"><a href="#cb50-351" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-352"><a href="#cb50-352" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fe_model)</span>
-<span id="cb50-353"><a href="#cb50-353" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb50-354"><a href="#cb50-354" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-355"><a href="#cb50-355" aria-hidden="true" tabindex="-1"></a>Interpreting the coefficients: the estimate on <span class="in">`investment`</span> tells us that, *within a given OECD country*, a one-percentage-point increase in the investment rate is associated with a certain change in GDP growth, holding constant trade openness, governance, and population growth — and after removing country-specific and year-specific effects. This is a much more credible estimate than a cross-sectional regression, because it is not confounded by the myriad time-invariant differences between, say, Luxembourg and Mexico.</span>
-<span id="cb50-356"><a href="#cb50-356" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-357"><a href="#cb50-357" aria-hidden="true" tabindex="-1"></a>The year fixed effects ($\gamma_t$) are important for macro panels. Without them, a global recession like 2008–2009 would create a spurious negative correlation between growth and any variable that happened to be low in those years. Year fixed effects absorb all common shocks, ensuring that the estimates reflect only country-specific variation.</span>
-<span id="cb50-358"><a href="#cb50-358" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-359"><a href="#cb50-359" aria-hidden="true" tabindex="-1"></a>An alternative to fixed effects is **random effects**, which assumes that country-specific effects are uncorrelated with the explanatory variables. This is a stronger assumption but allows estimation of the effects of time-invariant variables (like geography or colonial history). The **Hausman test** compares fixed and random effects estimates: if they differ significantly, the random effects assumption is violated and fixed effects should be preferred.</span>
-<span id="cb50-360"><a href="#cb50-360" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-363"><a href="#cb50-363" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb50-364"><a href="#cb50-364" aria-hidden="true" tabindex="-1"></a><span class="co"># Random effects model for comparison</span></span>
-<span id="cb50-365"><a href="#cb50-365" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plm)</span>
-<span id="cb50-366"><a href="#cb50-366" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-367"><a href="#cb50-367" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to a plm panel data frame</span></span>
-<span id="cb50-368"><a href="#cb50-368" aria-hidden="true" tabindex="-1"></a>panel_plm <span class="ot">&lt;-</span> <span class="fu">pdata.frame</span>(</span>
-<span id="cb50-369"><a href="#cb50-369" aria-hidden="true" tabindex="-1"></a>  panel <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="fu">complete.cases</span>(<span class="fu">pick</span>(growth, investment, trade,</span>
-<span id="cb50-370"><a href="#cb50-370" aria-hidden="true" tabindex="-1"></a>                                       population_growth))),</span>
-<span id="cb50-371"><a href="#cb50-371" aria-hidden="true" tabindex="-1"></a>  <span class="at">index =</span> <span class="fu">c</span>(<span class="st">"iso3c"</span>, <span class="st">"year"</span>)</span>
-<span id="cb50-372"><a href="#cb50-372" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb50-373"><a href="#cb50-373" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-374"><a href="#cb50-374" aria-hidden="true" tabindex="-1"></a><span class="co"># Random effects</span></span>
-<span id="cb50-375"><a href="#cb50-375" aria-hidden="true" tabindex="-1"></a>re_model <span class="ot">&lt;-</span> <span class="fu">plm</span>(</span>
-<span id="cb50-376"><a href="#cb50-376" aria-hidden="true" tabindex="-1"></a>  growth <span class="sc">~</span> investment <span class="sc">+</span> trade <span class="sc">+</span> population_growth,</span>
-<span id="cb50-377"><a href="#cb50-377" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> panel_plm,</span>
-<span id="cb50-378"><a href="#cb50-378" aria-hidden="true" tabindex="-1"></a>  <span class="at">model =</span> <span class="st">"random"</span></span>
-<span id="cb50-379"><a href="#cb50-379" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb50-380"><a href="#cb50-380" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-381"><a href="#cb50-381" aria-hidden="true" tabindex="-1"></a><span class="co"># Fixed effects (within estimator)</span></span>
-<span id="cb50-382"><a href="#cb50-382" aria-hidden="true" tabindex="-1"></a>fe_model_plm <span class="ot">&lt;-</span> <span class="fu">plm</span>(</span>
-<span id="cb50-383"><a href="#cb50-383" aria-hidden="true" tabindex="-1"></a>  growth <span class="sc">~</span> investment <span class="sc">+</span> trade <span class="sc">+</span> population_growth,</span>
-<span id="cb50-384"><a href="#cb50-384" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> panel_plm,</span>
-<span id="cb50-385"><a href="#cb50-385" aria-hidden="true" tabindex="-1"></a>  <span class="at">model =</span> <span class="st">"within"</span></span>
-<span id="cb50-386"><a href="#cb50-386" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb50-387"><a href="#cb50-387" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-388"><a href="#cb50-388" aria-hidden="true" tabindex="-1"></a><span class="co"># Hausman test: H0 is that RE is consistent (i.e., RE is fine)</span></span>
-<span id="cb50-389"><a href="#cb50-389" aria-hidden="true" tabindex="-1"></a><span class="fu">phtest</span>(fe_model_plm, re_model)</span>
-<span id="cb50-390"><a href="#cb50-390" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb50-391"><a href="#cb50-391" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-392"><a href="#cb50-392" aria-hidden="true" tabindex="-1"></a>If the Hausman test rejects (p-value &lt; 0.05), the random effects estimates are inconsistent and we should use fixed effects. In macro panels, this is almost always the case — country-specific effects (institutions, geography, culture) are almost certainly correlated with the explanatory variables. Fixed effects is the workhorse estimator for macro panel data.</span>
-<span id="cb50-393"><a href="#cb50-393" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-394"><a href="#cb50-394" aria-hidden="true" tabindex="-1"></a>A few practical cautions for panel regressions in macroeconomics. First, standard errors should be clustered at the country level to account for serial correlation within countries — <span class="in">`fixest`</span> does this by default when you include fixed effects. Second, macro panels are "short and wide" (20–30 years, 30–40 countries), which limits the precision of estimates. Third, many macro variables are persistent (GDP growth, investment rates), raising concerns about Nickell bias in dynamic panels. For dynamic specifications, the Arellano-Bond GMM estimator is standard, but its small-sample properties are poor when the number of time periods is close to the number of countries.</span>
-<span id="cb50-395"><a href="#cb50-395" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-398"><a href="#cb50-398" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb50-399"><a href="#cb50-399" aria-hidden="true" tabindex="-1"></a><span class="co"># Clustered standard errors (fixest does this by default with FEs)</span></span>
-<span id="cb50-400"><a href="#cb50-400" aria-hidden="true" tabindex="-1"></a><span class="co"># But we can be explicit:</span></span>
-<span id="cb50-401"><a href="#cb50-401" aria-hidden="true" tabindex="-1"></a>fe_robust <span class="ot">&lt;-</span> <span class="fu">feols</span>(</span>
-<span id="cb50-402"><a href="#cb50-402" aria-hidden="true" tabindex="-1"></a>  growth <span class="sc">~</span> investment <span class="sc">+</span> trade <span class="sc">+</span> population_growth <span class="sc">|</span> iso3c <span class="sc">+</span> year,</span>
-<span id="cb50-403"><a href="#cb50-403" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> panel,</span>
-<span id="cb50-404"><a href="#cb50-404" aria-hidden="true" tabindex="-1"></a>  <span class="at">cluster =</span> <span class="sc">~</span>iso3c</span>
-<span id="cb50-405"><a href="#cb50-405" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb50-406"><a href="#cb50-406" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-407"><a href="#cb50-407" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare standard errors</span></span>
-<span id="cb50-408"><a href="#cb50-408" aria-hidden="true" tabindex="-1"></a><span class="fu">etable</span>(fe_model, fe_robust, <span class="at">se =</span> <span class="st">"cluster"</span>)</span>
-<span id="cb50-409"><a href="#cb50-409" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb50-410"><a href="#cb50-410" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-411"><a href="#cb50-411" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises</span></span>
-<span id="cb50-412"><a href="#cb50-412" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-413"><a href="#cb50-413" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Using the <span class="in">`WDI`</span> package, download GDP per capita for all countries in 1990 and 2020. Test the unconditional convergence hypothesis by regressing average annual growth on log initial GDP per capita. Is the slope statistically significant? What is the $R^2$? Repeat for OECD countries only. How do the results differ?</span>
-<span id="cb50-414"><a href="#cb50-414" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-415"><a href="#cb50-415" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Perform a growth accounting exercise for the UK using ONS data. Assume $\alpha = 0.3$. If UK GDP grew at 1.5 per cent per year over 2010–2019, capital grew at 1.8 per cent, and labour grew at 0.8 per cent, what was TFP growth? What share of total growth does each factor account for?</span>
-<span id="cb50-416"><a href="#cb50-416" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-417"><a href="#cb50-417" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Download the World Bank's Worldwide Governance Indicators for 2020. Plot log GDP per capita against each of the six governance dimensions. Which dimension has the strongest correlation with income? Run a multiple regression with all six dimensions — how does multicollinearity affect the results?</span>
-<span id="cb50-418"><a href="#cb50-418" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-419"><a href="#cb50-419" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Estimate a panel regression of GDP growth on investment, trade openness, and population growth for OECD countries over 2000–2020, using both fixed effects and random effects. Conduct a Hausman test. Which model is preferred? Interpret the coefficient on investment.</span>
-<span id="cb50-420"><a href="#cb50-420" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-421"><a href="#cb50-421" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>The convergence regression $g_i = \alpha + \beta \cdot \ln(y_{i,0}) + \varepsilon_i$ implies a convergence speed of $-\beta$ per year. If $\beta = -0.02$, how many years does it take for a country to close half the gap to its steady state? (Hint: the half-life is $\ln(2) / |\beta|$.) Is this fast or slow in practice?</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="co">  eval: true</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="fu"># Cross-Country Comparisons {#sec-cross-country}</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>Why are some countries richer than others? This is arguably the most important question in economics. A child born in Norway can expect an income roughly 50 times higher than one born in the Democratic Republic of Congo. Understanding what drives these differences — and whether they are converging or diverging — is the domain of growth economics.</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>This chapter covers three pillars of cross-country analysis: the convergence hypothesis (do poor countries catch up?), growth accounting (what are the proximate sources of growth?), and institutions (what are the fundamental causes?). We then introduce panel data techniques that allow us to estimate these relationships rigorously using data from many countries over many years.</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a><span class="fu">## The convergence hypothesis</span></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>The Solow growth model makes a powerful prediction: poorer countries should grow faster than richer ones. The logic is diminishing returns to capital. A country with very little capital per worker gets a large output boost from each additional unit of investment, while a capital-rich country gets a smaller boost. If all countries have access to the same technology and save at similar rates, they should converge to the same steady-state income level. This is **unconditional convergence** — the prediction that initial income alone predicts subsequent growth, regardless of other characteristics.</span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>**Conditional convergence** is a weaker but more defensible prediction. It says that countries converge to their own steady states, which depend on savings rates, population growth, human capital, and institutional quality. Two countries with identical fundamentals but different starting points will converge. But two countries with different fundamentals may diverge, even if one starts poorer. The empirical implication is that initial income should predict growth only after controlling for these other factors.</span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>Let us test unconditional convergence using World Bank data. We need GDP per capita in constant dollars for a large panel of countries, with observations in 1990 and 2020.</span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(WDI)</span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"../R/theme_macro.R"</span>)</span>
+<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Download GDP per capita (constant 2015 US$)</span></span>
+<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a>gdp_pc <span class="ot">&lt;-</span> <span class="fu">WDI</span>(</span>
+<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">indicator =</span> <span class="fu">c</span>(<span class="at">gdp_pc =</span> <span class="st">"NY.GDP.PCAP.KD"</span>),</span>
+<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">start =</span> <span class="dv">1990</span>, <span class="at">end =</span> <span class="dv">2020</span>,</span>
+<span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">extra =</span> <span class="cn">TRUE</span></span>
+<span id="cb25-34"><a href="#cb25-34" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-35"><a href="#cb25-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-36"><a href="#cb25-36" aria-hidden="true" tabindex="-1"></a><span class="co"># Keep only countries (not aggregates like "World" or "OECD")</span></span>
+<span id="cb25-37"><a href="#cb25-37" aria-hidden="true" tabindex="-1"></a>gdp_pc <span class="ot">&lt;-</span> gdp_pc <span class="sc">|&gt;</span></span>
+<span id="cb25-38"><a href="#cb25-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(region <span class="sc">!=</span> <span class="st">"Aggregates"</span>)</span>
+<span id="cb25-39"><a href="#cb25-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-40"><a href="#cb25-40" aria-hidden="true" tabindex="-1"></a><span class="co"># Get initial (1990) GDP per capita and average annual growth</span></span>
+<span id="cb25-41"><a href="#cb25-41" aria-hidden="true" tabindex="-1"></a>convergence <span class="ot">&lt;-</span> gdp_pc <span class="sc">|&gt;</span></span>
+<span id="cb25-42"><a href="#cb25-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1990</span>, <span class="dv">2020</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb25-43"><a href="#cb25-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(iso3c, country, year, gdp_pc) <span class="sc">|&gt;</span></span>
+<span id="cb25-44"><a href="#cb25-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> year, <span class="at">values_from =</span> gdp_pc, <span class="at">names_prefix =</span> <span class="st">"y"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb25-45"><a href="#cb25-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(y1990), <span class="sc">!</span><span class="fu">is.na</span>(y2020), y1990 <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
+<span id="cb25-46"><a href="#cb25-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb25-47"><a href="#cb25-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_growth =</span> ((y2020 <span class="sc">/</span> y1990)<span class="sc">^</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">30</span>) <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="dv">100</span>,</span>
+<span id="cb25-48"><a href="#cb25-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_initial =</span> <span class="fu">log</span>(y1990)</span>
+<span id="cb25-49"><a href="#cb25-49" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb25-50"><a href="#cb25-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-51"><a href="#cb25-51" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(convergence)</span>
+<span id="cb25-52"><a href="#cb25-52" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-53"><a href="#cb25-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-54"><a href="#cb25-54" aria-hidden="true" tabindex="-1"></a>Now plot the classic convergence chart: log initial GDP per capita on the x-axis, average annual growth on the y-axis. If unconditional convergence holds, we should see a downward-sloping relationship — poorer countries (lower initial GDP) growing faster (higher average growth).</span>
+<span id="cb25-55"><a href="#cb25-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-58"><a href="#cb25-58" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb25-59"><a href="#cb25-59" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(convergence, <span class="fu">aes</span>(<span class="at">x =</span> log_initial, <span class="at">y =</span> avg_growth)) <span class="sc">+</span></span>
+<span id="cb25-60"><a href="#cb25-60" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb25-61"><a href="#cb25-61" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">TRUE</span>, <span class="at">colour =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
+<span id="cb25-62"><a href="#cb25-62" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb25-63"><a href="#cb25-63" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Unconditional convergence: 1990-2020"</span>,</span>
+<span id="cb25-64"><a href="#cb25-64" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Log GDP per capita in 1990 (constant 2015 US$)"</span>,</span>
+<span id="cb25-65"><a href="#cb25-65" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Average annual growth (%)"</span></span>
+<span id="cb25-66"><a href="#cb25-66" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb25-67"><a href="#cb25-67" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_macro</span>()</span>
+<span id="cb25-68"><a href="#cb25-68" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-69"><a href="#cb25-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-72"><a href="#cb25-72" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb25-73"><a href="#cb25-73" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit the regression</span></span>
+<span id="cb25-74"><a href="#cb25-74" aria-hidden="true" tabindex="-1"></a>convergence_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(avg_growth <span class="sc">~</span> log_initial, <span class="at">data =</span> convergence)</span>
+<span id="cb25-75"><a href="#cb25-75" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(convergence_model)</span>
+<span id="cb25-76"><a href="#cb25-76" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-77"><a href="#cb25-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-78"><a href="#cb25-78" aria-hidden="true" tabindex="-1"></a>The result is typically weak. The coefficient on log initial GDP per capita is often statistically insignificant or only marginally significant, and the $R^2$ is very low — usually below 0.05. Unconditional convergence does not hold in the full sample. Some poor countries have grown rapidly (China, India, Vietnam), but many others have stagnated or even regressed (much of sub-Saharan Africa, several post-Soviet states).</span>
+<span id="cb25-79"><a href="#cb25-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-80"><a href="#cb25-80" aria-hidden="true" tabindex="-1"></a>However, if we restrict the sample to OECD countries — a more homogeneous group with broadly similar institutions and policies — convergence is much stronger. Ireland, South Korea, and Poland have grown rapidly from relatively low starting points, while the United States and Switzerland have grown more slowly from high ones.</span>
+<span id="cb25-81"><a href="#cb25-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-84"><a href="#cb25-84" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb25-85"><a href="#cb25-85" aria-hidden="true" tabindex="-1"></a><span class="co"># Convergence among OECD countries only</span></span>
+<span id="cb25-86"><a href="#cb25-86" aria-hidden="true" tabindex="-1"></a>oecd <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"AUS"</span>, <span class="st">"AUT"</span>, <span class="st">"BEL"</span>, <span class="st">"CAN"</span>, <span class="st">"CHL"</span>, <span class="st">"COL"</span>, <span class="st">"CRI"</span>, <span class="st">"CZE"</span>,</span>
+<span id="cb25-87"><a href="#cb25-87" aria-hidden="true" tabindex="-1"></a>          <span class="st">"DNK"</span>, <span class="st">"EST"</span>, <span class="st">"FIN"</span>, <span class="st">"FRA"</span>, <span class="st">"DEU"</span>, <span class="st">"GRC"</span>, <span class="st">"HUN"</span>, <span class="st">"ISL"</span>,</span>
+<span id="cb25-88"><a href="#cb25-88" aria-hidden="true" tabindex="-1"></a>          <span class="st">"IRL"</span>, <span class="st">"ISR"</span>, <span class="st">"ITA"</span>, <span class="st">"JPN"</span>, <span class="st">"KOR"</span>, <span class="st">"LVA"</span>, <span class="st">"LTU"</span>, <span class="st">"LUX"</span>,</span>
+<span id="cb25-89"><a href="#cb25-89" aria-hidden="true" tabindex="-1"></a>          <span class="st">"MEX"</span>, <span class="st">"NLD"</span>, <span class="st">"NZL"</span>, <span class="st">"NOR"</span>, <span class="st">"POL"</span>, <span class="st">"PRT"</span>, <span class="st">"SVK"</span>, <span class="st">"SVN"</span>,</span>
+<span id="cb25-90"><a href="#cb25-90" aria-hidden="true" tabindex="-1"></a>          <span class="st">"ESP"</span>, <span class="st">"SWE"</span>, <span class="st">"CHE"</span>, <span class="st">"TUR"</span>, <span class="st">"GBR"</span>, <span class="st">"USA"</span>)</span>
+<span id="cb25-91"><a href="#cb25-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-92"><a href="#cb25-92" aria-hidden="true" tabindex="-1"></a>convergence_oecd <span class="ot">&lt;-</span> convergence <span class="sc">|&gt;</span></span>
+<span id="cb25-93"><a href="#cb25-93" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(iso3c <span class="sc">%in%</span> oecd)</span>
+<span id="cb25-94"><a href="#cb25-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-95"><a href="#cb25-95" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(convergence_oecd, <span class="fu">aes</span>(<span class="at">x =</span> log_initial, <span class="at">y =</span> avg_growth)) <span class="sc">+</span></span>
+<span id="cb25-96"><a href="#cb25-96" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb25-97"><a href="#cb25-97" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">TRUE</span>, <span class="at">colour =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
+<span id="cb25-98"><a href="#cb25-98" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> iso3c), <span class="at">size =</span> <span class="fl">2.5</span>, <span class="at">nudge_y =</span> <span class="fl">0.15</span>) <span class="sc">+</span></span>
+<span id="cb25-99"><a href="#cb25-99" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb25-100"><a href="#cb25-100" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Convergence among OECD countries: 1990-2020"</span>,</span>
+<span id="cb25-101"><a href="#cb25-101" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Log GDP per capita in 1990"</span>,</span>
+<span id="cb25-102"><a href="#cb25-102" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Average annual growth (%)"</span></span>
+<span id="cb25-103"><a href="#cb25-103" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb25-104"><a href="#cb25-104" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_macro</span>()</span>
+<span id="cb25-105"><a href="#cb25-105" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-106"><a href="#cb25-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-107"><a href="#cb25-107" aria-hidden="true" tabindex="-1"></a>This is the core insight of Mankiw, Romer, and Weil (1992): convergence is conditional. Countries converge, but only towards their own steady states. To explain cross-country income differences, we need to understand what determines those steady states — which brings us to growth accounting and institutions.</span>
+<span id="cb25-108"><a href="#cb25-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-109"><a href="#cb25-109" aria-hidden="true" tabindex="-1"></a><span class="fu">## Growth accounting</span></span>
+<span id="cb25-110"><a href="#cb25-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-111"><a href="#cb25-111" aria-hidden="true" tabindex="-1"></a>Growth accounting decomposes the growth rate of output into contributions from capital, labour, and a residual called Total Factor Productivity (TFP). The framework starts with a Cobb-Douglas production function:</span>
+<span id="cb25-112"><a href="#cb25-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-113"><a href="#cb25-113" aria-hidden="true" tabindex="-1"></a>$$Y = A \cdot K^{\alpha} \cdot L^{1-\alpha}$$</span>
+<span id="cb25-114"><a href="#cb25-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-115"><a href="#cb25-115" aria-hidden="true" tabindex="-1"></a>where $Y$ is output, $A$ is TFP, $K$ is the capital stock, $L$ is the labour input, and $\alpha$ is capital's share of income (typically around 0.3 for developed economies). Taking logarithms and differentiating with respect to time gives us the growth accounting equation:</span>
+<span id="cb25-116"><a href="#cb25-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-117"><a href="#cb25-117" aria-hidden="true" tabindex="-1"></a>$$g_Y = g_A + \alpha \cdot g_K + (1-\alpha) \cdot g_L$$</span>
+<span id="cb25-118"><a href="#cb25-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-119"><a href="#cb25-119" aria-hidden="true" tabindex="-1"></a>That is: output growth ($g_Y$) equals TFP growth ($g_A$) plus the weighted contributions of capital growth ($g_K$) and labour growth ($g_L$). TFP is calculated as the residual — the portion of output growth not explained by the growth of measured inputs:</span>
+<span id="cb25-120"><a href="#cb25-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-121"><a href="#cb25-121" aria-hidden="true" tabindex="-1"></a>$$g_A = g_Y - \alpha \cdot g_K - (1-\alpha) \cdot g_L$$</span>
+<span id="cb25-122"><a href="#cb25-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-123"><a href="#cb25-123" aria-hidden="true" tabindex="-1"></a>TFP is sometimes called the "measure of our ignorance." It captures everything that raises output beyond what can be attributed to more capital and more labour: technological progress, better management, improved institutions, more efficient resource allocation, and measurement error. Despite being a residual, TFP is typically the largest contributor to long-run growth in developed economies — accounting for 50–70 per cent of growth in the US and UK since 1950.</span>
+<span id="cb25-124"><a href="#cb25-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-125"><a href="#cb25-125" aria-hidden="true" tabindex="-1"></a>We can perform a simple growth accounting exercise for the UK using ONS productivity data:</span>
+<span id="cb25-126"><a href="#cb25-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-129"><a href="#cb25-129" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb25-130"><a href="#cb25-130" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ons)</span>
+<span id="cb25-131"><a href="#cb25-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-132"><a href="#cb25-132" aria-hidden="true" tabindex="-1"></a><span class="co"># ONS publishes output per hour and per worker indices</span></span>
+<span id="cb25-133"><a href="#cb25-133" aria-hidden="true" tabindex="-1"></a>productivity <span class="ot">&lt;-</span> <span class="fu">ons_productivity</span>()</span>
+<span id="cb25-134"><a href="#cb25-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-135"><a href="#cb25-135" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(productivity)</span>
+<span id="cb25-136"><a href="#cb25-136" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-137"><a href="#cb25-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-140"><a href="#cb25-140" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb25-141"><a href="#cb25-141" aria-hidden="true" tabindex="-1"></a><span class="co"># Alternatively, construct a manual growth accounting exercise</span></span>
+<span id="cb25-142"><a href="#cb25-142" aria-hidden="true" tabindex="-1"></a><span class="co"># using GDP, capital stock, and employment data</span></span>
+<span id="cb25-143"><a href="#cb25-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-144"><a href="#cb25-144" aria-hidden="true" tabindex="-1"></a><span class="co"># GDP growth (ons_gdp() returns quarterly growth rates by default)</span></span>
+<span id="cb25-145"><a href="#cb25-145" aria-hidden="true" tabindex="-1"></a>gdp <span class="ot">&lt;-</span> <span class="fu">ons_gdp</span>() <span class="sc">|&gt;</span></span>
+<span id="cb25-146"><a href="#cb25-146" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(date)</span>
+<span id="cb25-147"><a href="#cb25-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-148"><a href="#cb25-148" aria-hidden="true" tabindex="-1"></a><span class="co"># Employment</span></span>
+<span id="cb25-149"><a href="#cb25-149" aria-hidden="true" tabindex="-1"></a>employment <span class="ot">&lt;-</span> <span class="fu">ons_employment</span>()</span>
+<span id="cb25-150"><a href="#cb25-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-151"><a href="#cb25-151" aria-hidden="true" tabindex="-1"></a><span class="co"># For capital stock, use the ONS capital stocks dataset</span></span>
+<span id="cb25-152"><a href="#cb25-152" aria-hidden="true" tabindex="-1"></a><span class="co"># or approximate using gross fixed capital formation</span></span>
+<span id="cb25-153"><a href="#cb25-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-154"><a href="#cb25-154" aria-hidden="true" tabindex="-1"></a><span class="co"># Simple annual growth accounting:</span></span>
+<span id="cb25-155"><a href="#cb25-155" aria-hidden="true" tabindex="-1"></a><span class="co"># Suppose we have annual: gdp_growth, capital_growth, labour_growth</span></span>
+<span id="cb25-156"><a href="#cb25-156" aria-hidden="true" tabindex="-1"></a><span class="co"># alpha &lt;- 0.3</span></span>
+<span id="cb25-157"><a href="#cb25-157" aria-hidden="true" tabindex="-1"></a><span class="co"># tfp_growth &lt;- gdp_growth - alpha * capital_growth - (1 - alpha) * labour_growth</span></span>
+<span id="cb25-158"><a href="#cb25-158" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-159"><a href="#cb25-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-160"><a href="#cb25-160" aria-hidden="true" tabindex="-1"></a>For a more detailed decomposition, the ONS publishes an official multi-factor productivity release that breaks output growth into contributions from labour composition (quality), capital deepening (quantity and quality of capital per worker), and multi-factor productivity. This is available in the "Multi-factor productivity" statistical bulletin.</span>
+<span id="cb25-161"><a href="#cb25-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-164"><a href="#cb25-164" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb25-165"><a href="#cb25-165" aria-hidden="true" tabindex="-1"></a><span class="co"># Stylised UK growth accounting (average annual, per cent)</span></span>
+<span id="cb25-166"><a href="#cb25-166" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tibble)</span>
+<span id="cb25-167"><a href="#cb25-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-168"><a href="#cb25-168" aria-hidden="true" tabindex="-1"></a>uk_growth <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb25-169"><a href="#cb25-169" aria-hidden="true" tabindex="-1"></a>  <span class="at">period =</span> <span class="fu">c</span>(<span class="st">"1990-2000"</span>, <span class="st">"2000-2007"</span>, <span class="st">"2007-2019"</span>, <span class="st">"2019-2023"</span>),</span>
+<span id="cb25-170"><a href="#cb25-170" aria-hidden="true" tabindex="-1"></a>  <span class="at">gdp_growth =</span> <span class="fu">c</span>(<span class="fl">2.8</span>, <span class="fl">2.5</span>, <span class="fl">1.5</span>, <span class="fl">0.8</span>),</span>
+<span id="cb25-171"><a href="#cb25-171" aria-hidden="true" tabindex="-1"></a>  <span class="at">capital_contribution =</span> <span class="fu">c</span>(<span class="fl">0.9</span>, <span class="fl">0.8</span>, <span class="fl">0.5</span>, <span class="fl">0.3</span>),</span>
+<span id="cb25-172"><a href="#cb25-172" aria-hidden="true" tabindex="-1"></a>  <span class="at">labour_contribution =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.6</span>, <span class="fl">0.7</span>, <span class="fl">0.3</span>),</span>
+<span id="cb25-173"><a href="#cb25-173" aria-hidden="true" tabindex="-1"></a>  <span class="at">tfp_growth =</span> <span class="fu">c</span>(<span class="fl">1.4</span>, <span class="fl">1.1</span>, <span class="fl">0.3</span>, <span class="fl">0.2</span>)</span>
+<span id="cb25-174"><a href="#cb25-174" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-175"><a href="#cb25-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-176"><a href="#cb25-176" aria-hidden="true" tabindex="-1"></a>uk_growth <span class="sc">|&gt;</span></span>
+<span id="cb25-177"><a href="#cb25-177" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>period, <span class="at">names_to =</span> <span class="st">"component"</span>, <span class="at">values_to =</span> <span class="st">"pct"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb25-178"><a href="#cb25-178" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(component <span class="sc">!=</span> <span class="st">"gdp_growth"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb25-179"><a href="#cb25-179" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> period, <span class="at">y =</span> pct, <span class="at">fill =</span> component)) <span class="sc">+</span></span>
+<span id="cb25-180"><a href="#cb25-180" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="st">"stack"</span>) <span class="sc">+</span></span>
+<span id="cb25-181"><a href="#cb25-181" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_macro</span>() <span class="sc">+</span></span>
+<span id="cb25-182"><a href="#cb25-182" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb25-183"><a href="#cb25-183" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"UK growth accounting by decade"</span>,</span>
+<span id="cb25-184"><a href="#cb25-184" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Contribution to GDP growth (pp)"</span>,</span>
+<span id="cb25-185"><a href="#cb25-185" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="cn">NULL</span></span>
+<span id="cb25-186"><a href="#cb25-186" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb25-187"><a href="#cb25-187" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_macro</span>()</span>
+<span id="cb25-188"><a href="#cb25-188" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-189"><a href="#cb25-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-190"><a href="#cb25-190" aria-hidden="true" tabindex="-1"></a>The pattern reveals the UK's "productivity puzzle." Before the financial crisis, TFP growth was the dominant source of output growth — averaging over 1 per cent per year. After 2007, TFP growth collapsed to near zero. Labour input remained positive (employment rose strongly after 2012), and capital deepening continued, but without TFP growth, overall GDP growth was anaemic. This productivity slowdown is the single most important macroeconomic development in the UK since the financial crisis, and explaining it remains an open question. Leading candidates include weak business investment, reduced labour mobility, the long tail of banking sector damage, slower technology diffusion, and measurement issues in the digital economy.</span>
+<span id="cb25-191"><a href="#cb25-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-192"><a href="#cb25-192" aria-hidden="true" tabindex="-1"></a>The productivity puzzle is not unique to the UK. The United States, the euro area, and Japan all experienced a marked slowdown in TFP growth after 2005–2008. Robert Gordon's "The Rise and Fall of American Growth" (2016) argues that the period of rapid TFP growth (1920–1970) was historically anomalous, driven by one-off inventions (electricity, the internal combustion engine, indoor plumbing) that cannot be repeated. Others, like Erik Brynjolfsson, argue that we are in a period of "measured" slowdown but unmeasured acceleration, as digital technologies transform production in ways that GDP statistics fail to capture.</span>
+<span id="cb25-193"><a href="#cb25-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-194"><a href="#cb25-194" aria-hidden="true" tabindex="-1"></a><span class="fu">## Institutions and growth</span></span>
+<span id="cb25-195"><a href="#cb25-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-196"><a href="#cb25-196" aria-hidden="true" tabindex="-1"></a>Why does growth accounting leave so much unexplained? Because capital, labour, and even TFP are proximate causes of growth — they describe *how* a country grows but not *why*. A deeper question is: why do some countries accumulate more capital, invest more in human capital, and deploy technology more efficiently than others?</span>
+<span id="cb25-197"><a href="#cb25-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-198"><a href="#cb25-198" aria-hidden="true" tabindex="-1"></a>Daron Acemoglu, Simon Johnson, and James Robinson — in a series of influential papers and their book "Why Nations Fail" (2012) — argue that the fundamental cause is **institutions**: the rules, norms, and enforcement mechanisms that shape economic incentives. Countries with "inclusive" institutions — secure property rights, impartial courts, competitive markets, constraints on executive power — create incentives for investment, innovation, and effort. Countries with "extractive" institutions — where elites can confiscate wealth, rig markets, or suppress competition — discourage productive activity and encourage rent-seeking.</span>
+<span id="cb25-199"><a href="#cb25-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-200"><a href="#cb25-200" aria-hidden="true" tabindex="-1"></a>The empirical challenge is that institutions and income are endogenous: rich countries can afford better institutions, and better institutions may cause higher income. Acemoglu, Johnson, and Robinson address this with an instrumental variables strategy using settler mortality rates in former colonies — but the debate over identification continues.</span>
+<span id="cb25-201"><a href="#cb25-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-202"><a href="#cb25-202" aria-hidden="true" tabindex="-1"></a>We can examine the correlation between institutional quality and GDP per capita using the World Bank's Worldwide Governance Indicators (WGI), which measure six dimensions of governance: voice and accountability, political stability, government effectiveness, regulatory quality, rule of law, and control of corruption.</span>
+<span id="cb25-203"><a href="#cb25-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-206"><a href="#cb25-206" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb25-207"><a href="#cb25-207" aria-hidden="true" tabindex="-1"></a><span class="co"># Download GDP per capita</span></span>
+<span id="cb25-208"><a href="#cb25-208" aria-hidden="true" tabindex="-1"></a>gdp_data <span class="ot">&lt;-</span> <span class="fu">WDI</span>(</span>
+<span id="cb25-209"><a href="#cb25-209" aria-hidden="true" tabindex="-1"></a>  <span class="at">indicator =</span> <span class="fu">c</span>(<span class="at">gdp_pc =</span> <span class="st">"NY.GDP.PCAP.KD"</span>),</span>
+<span id="cb25-210"><a href="#cb25-210" aria-hidden="true" tabindex="-1"></a>  <span class="at">start =</span> <span class="dv">2020</span>, <span class="at">end =</span> <span class="dv">2020</span>,</span>
+<span id="cb25-211"><a href="#cb25-211" aria-hidden="true" tabindex="-1"></a>  <span class="at">extra =</span> <span class="cn">TRUE</span></span>
+<span id="cb25-212"><a href="#cb25-212" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb25-213"><a href="#cb25-213" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(region <span class="sc">!=</span> <span class="st">"Aggregates"</span>, <span class="sc">!</span><span class="fu">is.na</span>(gdp_pc))</span>
+<span id="cb25-214"><a href="#cb25-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-215"><a href="#cb25-215" aria-hidden="true" tabindex="-1"></a><span class="co"># World Governance Indicators can be downloaded from:</span></span>
+<span id="cb25-216"><a href="#cb25-216" aria-hidden="true" tabindex="-1"></a><span class="co"># https://info.worldbank.org/governance/wgi/</span></span>
+<span id="cb25-217"><a href="#cb25-217" aria-hidden="true" tabindex="-1"></a><span class="co"># The WDI package also provides some governance indicators</span></span>
+<span id="cb25-218"><a href="#cb25-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-219"><a href="#cb25-219" aria-hidden="true" tabindex="-1"></a>wgi <span class="ot">&lt;-</span> <span class="fu">WDI</span>(</span>
+<span id="cb25-220"><a href="#cb25-220" aria-hidden="true" tabindex="-1"></a>  <span class="at">indicator =</span> <span class="fu">c</span>(</span>
+<span id="cb25-221"><a href="#cb25-221" aria-hidden="true" tabindex="-1"></a>    <span class="at">rule_of_law =</span> <span class="st">"RL.EST"</span>,</span>
+<span id="cb25-222"><a href="#cb25-222" aria-hidden="true" tabindex="-1"></a>    <span class="at">govt_effectiveness =</span> <span class="st">"GE.EST"</span>,</span>
+<span id="cb25-223"><a href="#cb25-223" aria-hidden="true" tabindex="-1"></a>    <span class="at">control_corruption =</span> <span class="st">"CC.EST"</span></span>
+<span id="cb25-224"><a href="#cb25-224" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb25-225"><a href="#cb25-225" aria-hidden="true" tabindex="-1"></a>  <span class="at">start =</span> <span class="dv">2020</span>, <span class="at">end =</span> <span class="dv">2020</span></span>
+<span id="cb25-226"><a href="#cb25-226" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-227"><a href="#cb25-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-228"><a href="#cb25-228" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge</span></span>
+<span id="cb25-229"><a href="#cb25-229" aria-hidden="true" tabindex="-1"></a>institutions <span class="ot">&lt;-</span> gdp_data <span class="sc">|&gt;</span></span>
+<span id="cb25-230"><a href="#cb25-230" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(wgi, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"iso2c"</span>, <span class="st">"year"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb25-231"><a href="#cb25-231" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(rule_of_law), <span class="sc">!</span><span class="fu">is.na</span>(gdp_pc))</span>
+<span id="cb25-232"><a href="#cb25-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-233"><a href="#cb25-233" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(institutions)</span>
+<span id="cb25-234"><a href="#cb25-234" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-235"><a href="#cb25-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-238"><a href="#cb25-238" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb25-239"><a href="#cb25-239" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(institutions, <span class="fu">aes</span>(<span class="at">x =</span> rule_of_law, <span class="at">y =</span> <span class="fu">log</span>(gdp_pc))) <span class="sc">+</span></span>
+<span id="cb25-240"><a href="#cb25-240" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb25-241"><a href="#cb25-241" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">TRUE</span>, <span class="at">colour =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
+<span id="cb25-242"><a href="#cb25-242" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb25-243"><a href="#cb25-243" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Rule of law and GDP per capita (2020)"</span>,</span>
+<span id="cb25-244"><a href="#cb25-244" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Rule of Law index (WGI)"</span>,</span>
+<span id="cb25-245"><a href="#cb25-245" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Log GDP per capita (constant 2015 US$)"</span></span>
+<span id="cb25-246"><a href="#cb25-246" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb25-247"><a href="#cb25-247" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_macro</span>()</span>
+<span id="cb25-248"><a href="#cb25-248" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-249"><a href="#cb25-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-252"><a href="#cb25-252" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb25-253"><a href="#cb25-253" aria-hidden="true" tabindex="-1"></a><span class="co"># Cross-section regression</span></span>
+<span id="cb25-254"><a href="#cb25-254" aria-hidden="true" tabindex="-1"></a>inst_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="fu">log</span>(gdp_pc) <span class="sc">~</span> rule_of_law <span class="sc">+</span> control_corruption,</span>
+<span id="cb25-255"><a href="#cb25-255" aria-hidden="true" tabindex="-1"></a>                 <span class="at">data =</span> institutions)</span>
+<span id="cb25-256"><a href="#cb25-256" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(inst_model)</span>
+<span id="cb25-257"><a href="#cb25-257" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-258"><a href="#cb25-258" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-259"><a href="#cb25-259" aria-hidden="true" tabindex="-1"></a>The correlation is strikingly strong — typically $R^2 &gt; 0.5$ in a simple bivariate regression of log GDP per capita on rule of law. But correlation is not causation. Several objections arise immediately. First, reverse causality: richer countries have more resources to build courts, train judges, and fight corruption. Second, omitted variables: geography, culture, colonial history, and natural resources all correlate with both institutions and income. Third, measurement error: governance indicators are partly based on perceptions of business executives and experts, who may rate countries higher simply because they are richer.</span>
+<span id="cb25-260"><a href="#cb25-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-261"><a href="#cb25-261" aria-hidden="true" tabindex="-1"></a>Despite these caveats, the institutional explanation has become the dominant paradigm in growth economics. The Nobel Prize in Economics was awarded to Acemoglu, Johnson, and Robinson in 2024 for their work on how institutions shape prosperity. The policy implication is profound but daunting: if institutions are the binding constraint on development, then aid and investment alone are insufficient — what matters is governance reform, which is politically difficult and historically slow.</span>
+<span id="cb25-262"><a href="#cb25-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-265"><a href="#cb25-265" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb25-266"><a href="#cb25-266" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualise all three governance dimensions</span></span>
+<span id="cb25-267"><a href="#cb25-267" aria-hidden="true" tabindex="-1"></a>institutions <span class="sc">|&gt;</span></span>
+<span id="cb25-268"><a href="#cb25-268" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(country.x, gdp_pc, rule_of_law, govt_effectiveness, control_corruption) <span class="sc">|&gt;</span></span>
+<span id="cb25-269"><a href="#cb25-269" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb25-270"><a href="#cb25-270" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">c</span>(rule_of_law, govt_effectiveness, control_corruption),</span>
+<span id="cb25-271"><a href="#cb25-271" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"indicator"</span>,</span>
+<span id="cb25-272"><a href="#cb25-272" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"score"</span></span>
+<span id="cb25-273"><a href="#cb25-273" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb25-274"><a href="#cb25-274" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> score, <span class="at">y =</span> <span class="fu">log</span>(gdp_pc))) <span class="sc">+</span></span>
+<span id="cb25-275"><a href="#cb25-275" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.3</span>, <span class="at">size =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb25-276"><a href="#cb25-276" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">colour =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
+<span id="cb25-277"><a href="#cb25-277" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>indicator, <span class="at">scales =</span> <span class="st">"free_x"</span>) <span class="sc">+</span></span>
+<span id="cb25-278"><a href="#cb25-278" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb25-279"><a href="#cb25-279" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Governance indicators and GDP per capita"</span>,</span>
+<span id="cb25-280"><a href="#cb25-280" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Governance score (WGI)"</span>, <span class="at">y =</span> <span class="st">"Log GDP per capita"</span></span>
+<span id="cb25-281"><a href="#cb25-281" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb25-282"><a href="#cb25-282" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_macro</span>()</span>
+<span id="cb25-283"><a href="#cb25-283" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-284"><a href="#cb25-284" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-285"><a href="#cb25-285" aria-hidden="true" tabindex="-1"></a><span class="fu">## Panel data techniques for macro</span></span>
+<span id="cb25-286"><a href="#cb25-286" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-287"><a href="#cb25-287" aria-hidden="true" tabindex="-1"></a>Cross-sectional regressions — one observation per country — suffer from omitted variable bias. Every country differs in countless ways (geography, history, culture, resources), and no set of controls can capture all of them. Panel data, which observe the same countries over multiple time periods, offer a powerful solution: **fixed effects**.</span>
+<span id="cb25-288"><a href="#cb25-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-289"><a href="#cb25-289" aria-hidden="true" tabindex="-1"></a>A country fixed effect absorbs all time-invariant characteristics of that country — its geography, colonial history, deep cultural traits, and anything else that does not change over the sample period. This means that fixed effects estimates are identified purely from *within-country variation over time*. If a country's institutional quality improves over a decade, does its growth also improve? This is a much cleaner comparison than asking whether countries with better institutions are richer, because it removes all the static confounders.</span>
+<span id="cb25-290"><a href="#cb25-290" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-291"><a href="#cb25-291" aria-hidden="true" tabindex="-1"></a>The fixed effects model for a panel of countries $i$ over time periods $t$ is:</span>
+<span id="cb25-292"><a href="#cb25-292" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-293"><a href="#cb25-293" aria-hidden="true" tabindex="-1"></a>$$y_{it} = \alpha_i + \beta \cdot x_{it} + \gamma_t + \varepsilon_{it}$$</span>
+<span id="cb25-294"><a href="#cb25-294" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-295"><a href="#cb25-295" aria-hidden="true" tabindex="-1"></a>where $\alpha_i$ is the country fixed effect, $\gamma_t$ is a time fixed effect (absorbing global shocks like the 2008 financial crisis that affect all countries), $x_{it}$ is a vector of time-varying explanatory variables, and $\varepsilon_{it}$ is the error term. The coefficients $\beta$ are identified from within-country, within-time-period variation.</span>
+<span id="cb25-296"><a href="#cb25-296" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-297"><a href="#cb25-297" aria-hidden="true" tabindex="-1"></a>In R, the <span class="in">`fixest`</span> package provides a fast and elegant implementation of fixed effects estimation via <span class="in">`feols()`</span>. The <span class="in">`plm`</span> package is an older alternative. We will use <span class="in">`fixest`</span>.</span>
+<span id="cb25-298"><a href="#cb25-298" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-301"><a href="#cb25-301" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb25-302"><a href="#cb25-302" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(WDI)</span>
+<span id="cb25-303"><a href="#cb25-303" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb25-304"><a href="#cb25-304" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-305"><a href="#cb25-305" aria-hidden="true" tabindex="-1"></a><span class="co"># Download panel data for OECD countries</span></span>
+<span id="cb25-306"><a href="#cb25-306" aria-hidden="true" tabindex="-1"></a>panel_raw <span class="ot">&lt;-</span> <span class="fu">WDI</span>(</span>
+<span id="cb25-307"><a href="#cb25-307" aria-hidden="true" tabindex="-1"></a>  <span class="at">indicator =</span> <span class="fu">c</span>(</span>
+<span id="cb25-308"><a href="#cb25-308" aria-hidden="true" tabindex="-1"></a>    <span class="at">growth =</span> <span class="st">"NY.GDP.MKTP.KD.ZG"</span>,        <span class="co"># GDP growth</span></span>
+<span id="cb25-309"><a href="#cb25-309" aria-hidden="true" tabindex="-1"></a>    <span class="at">investment =</span> <span class="st">"NE.GDI.TOTL.ZS"</span>,        <span class="co"># Gross capital formation (% GDP)</span></span>
+<span id="cb25-310"><a href="#cb25-310" aria-hidden="true" tabindex="-1"></a>    <span class="at">trade =</span> <span class="st">"NE.TRD.GNFS.ZS"</span>,            <span class="co"># Trade (% GDP)</span></span>
+<span id="cb25-311"><a href="#cb25-311" aria-hidden="true" tabindex="-1"></a>    <span class="at">govt_effectiveness =</span> <span class="st">"GE.EST"</span>,         <span class="co"># Government effectiveness</span></span>
+<span id="cb25-312"><a href="#cb25-312" aria-hidden="true" tabindex="-1"></a>    <span class="at">population_growth =</span> <span class="st">"SP.POP.GROW"</span>      <span class="co"># Population growth</span></span>
+<span id="cb25-313"><a href="#cb25-313" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb25-314"><a href="#cb25-314" aria-hidden="true" tabindex="-1"></a>  <span class="at">start =</span> <span class="dv">2000</span>, <span class="at">end =</span> <span class="dv">2020</span>,</span>
+<span id="cb25-315"><a href="#cb25-315" aria-hidden="true" tabindex="-1"></a>  <span class="at">extra =</span> <span class="cn">TRUE</span></span>
+<span id="cb25-316"><a href="#cb25-316" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-317"><a href="#cb25-317" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-318"><a href="#cb25-318" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter to OECD countries</span></span>
+<span id="cb25-319"><a href="#cb25-319" aria-hidden="true" tabindex="-1"></a>oecd_codes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"AUS"</span>, <span class="st">"AUT"</span>, <span class="st">"BEL"</span>, <span class="st">"CAN"</span>, <span class="st">"CHL"</span>, <span class="st">"COL"</span>, <span class="st">"CZE"</span>, <span class="st">"DNK"</span>,</span>
+<span id="cb25-320"><a href="#cb25-320" aria-hidden="true" tabindex="-1"></a>                <span class="st">"EST"</span>, <span class="st">"FIN"</span>, <span class="st">"FRA"</span>, <span class="st">"DEU"</span>, <span class="st">"GRC"</span>, <span class="st">"HUN"</span>, <span class="st">"ISL"</span>, <span class="st">"IRL"</span>,</span>
+<span id="cb25-321"><a href="#cb25-321" aria-hidden="true" tabindex="-1"></a>                <span class="st">"ISR"</span>, <span class="st">"ITA"</span>, <span class="st">"JPN"</span>, <span class="st">"KOR"</span>, <span class="st">"LVA"</span>, <span class="st">"LTU"</span>, <span class="st">"LUX"</span>, <span class="st">"MEX"</span>,</span>
+<span id="cb25-322"><a href="#cb25-322" aria-hidden="true" tabindex="-1"></a>                <span class="st">"NLD"</span>, <span class="st">"NZL"</span>, <span class="st">"NOR"</span>, <span class="st">"POL"</span>, <span class="st">"PRT"</span>, <span class="st">"SVK"</span>, <span class="st">"SVN"</span>, <span class="st">"ESP"</span>,</span>
+<span id="cb25-323"><a href="#cb25-323" aria-hidden="true" tabindex="-1"></a>                <span class="st">"SWE"</span>, <span class="st">"CHE"</span>, <span class="st">"TUR"</span>, <span class="st">"GBR"</span>, <span class="st">"USA"</span>)</span>
+<span id="cb25-324"><a href="#cb25-324" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-325"><a href="#cb25-325" aria-hidden="true" tabindex="-1"></a>panel <span class="ot">&lt;-</span> panel_raw <span class="sc">|&gt;</span></span>
+<span id="cb25-326"><a href="#cb25-326" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(iso3c <span class="sc">%in%</span> oecd_codes) <span class="sc">|&gt;</span></span>
+<span id="cb25-327"><a href="#cb25-327" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(iso3c, year, growth, investment, trade,</span>
+<span id="cb25-328"><a href="#cb25-328" aria-hidden="true" tabindex="-1"></a>         govt_effectiveness, population_growth)</span>
+<span id="cb25-329"><a href="#cb25-329" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-330"><a href="#cb25-330" aria-hidden="true" tabindex="-1"></a><span class="co"># Check coverage</span></span>
+<span id="cb25-331"><a href="#cb25-331" aria-hidden="true" tabindex="-1"></a>panel <span class="sc">|&gt;</span></span>
+<span id="cb25-332"><a href="#cb25-332" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb25-333"><a href="#cb25-333" aria-hidden="true" tabindex="-1"></a>    <span class="at">countries =</span> <span class="fu">n_distinct</span>(iso3c),</span>
+<span id="cb25-334"><a href="#cb25-334" aria-hidden="true" tabindex="-1"></a>    <span class="at">years =</span> <span class="fu">n_distinct</span>(year),</span>
+<span id="cb25-335"><a href="#cb25-335" aria-hidden="true" tabindex="-1"></a>    <span class="at">obs =</span> <span class="fu">n</span>(),</span>
+<span id="cb25-336"><a href="#cb25-336" aria-hidden="true" tabindex="-1"></a>    <span class="at">complete =</span> <span class="fu">sum</span>(<span class="fu">complete.cases</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())))</span>
+<span id="cb25-337"><a href="#cb25-337" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb25-338"><a href="#cb25-338" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-339"><a href="#cb25-339" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-340"><a href="#cb25-340" aria-hidden="true" tabindex="-1"></a>Now estimate the panel regression with country and year fixed effects:</span>
+<span id="cb25-341"><a href="#cb25-341" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-344"><a href="#cb25-344" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb25-345"><a href="#cb25-345" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fixest)</span>
+<span id="cb25-346"><a href="#cb25-346" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-347"><a href="#cb25-347" aria-hidden="true" tabindex="-1"></a><span class="co"># Two-way fixed effects: country + year</span></span>
+<span id="cb25-348"><a href="#cb25-348" aria-hidden="true" tabindex="-1"></a>fe_model <span class="ot">&lt;-</span> <span class="fu">feols</span>(</span>
+<span id="cb25-349"><a href="#cb25-349" aria-hidden="true" tabindex="-1"></a>  growth <span class="sc">~</span> investment <span class="sc">+</span> trade <span class="sc">+</span> govt_effectiveness <span class="sc">+</span> population_growth <span class="sc">|</span></span>
+<span id="cb25-350"><a href="#cb25-350" aria-hidden="true" tabindex="-1"></a>    iso3c <span class="sc">+</span> year,</span>
+<span id="cb25-351"><a href="#cb25-351" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> panel</span>
+<span id="cb25-352"><a href="#cb25-352" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-353"><a href="#cb25-353" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-354"><a href="#cb25-354" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fe_model)</span>
+<span id="cb25-355"><a href="#cb25-355" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-356"><a href="#cb25-356" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-357"><a href="#cb25-357" aria-hidden="true" tabindex="-1"></a>Interpreting the coefficients: the estimate on <span class="in">`investment`</span> tells us that, *within a given OECD country*, a one-percentage-point increase in the investment rate is associated with a certain change in GDP growth, holding constant trade openness, governance, and population growth — and after removing country-specific and year-specific effects. This is a much more credible estimate than a cross-sectional regression, because it is not confounded by the myriad time-invariant differences between, say, Luxembourg and Mexico.</span>
+<span id="cb25-358"><a href="#cb25-358" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-359"><a href="#cb25-359" aria-hidden="true" tabindex="-1"></a>The year fixed effects ($\gamma_t$) are important for macro panels. Without them, a global recession like 2008–2009 would create a spurious negative correlation between growth and any variable that happened to be low in those years. Year fixed effects absorb all common shocks, ensuring that the estimates reflect only country-specific variation.</span>
+<span id="cb25-360"><a href="#cb25-360" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-361"><a href="#cb25-361" aria-hidden="true" tabindex="-1"></a>An alternative to fixed effects is **random effects**, which assumes that country-specific effects are uncorrelated with the explanatory variables. This is a stronger assumption but allows estimation of the effects of time-invariant variables (like geography or colonial history). The **Hausman test** compares fixed and random effects estimates: if they differ significantly, the random effects assumption is violated and fixed effects should be preferred.</span>
+<span id="cb25-362"><a href="#cb25-362" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-365"><a href="#cb25-365" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb25-366"><a href="#cb25-366" aria-hidden="true" tabindex="-1"></a><span class="co"># Random effects model for comparison</span></span>
+<span id="cb25-367"><a href="#cb25-367" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plm)</span>
+<span id="cb25-368"><a href="#cb25-368" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-369"><a href="#cb25-369" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to a plm panel data frame</span></span>
+<span id="cb25-370"><a href="#cb25-370" aria-hidden="true" tabindex="-1"></a>panel_plm <span class="ot">&lt;-</span> <span class="fu">pdata.frame</span>(</span>
+<span id="cb25-371"><a href="#cb25-371" aria-hidden="true" tabindex="-1"></a>  panel <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="fu">complete.cases</span>(<span class="fu">pick</span>(growth, investment, trade,</span>
+<span id="cb25-372"><a href="#cb25-372" aria-hidden="true" tabindex="-1"></a>                                       population_growth))),</span>
+<span id="cb25-373"><a href="#cb25-373" aria-hidden="true" tabindex="-1"></a>  <span class="at">index =</span> <span class="fu">c</span>(<span class="st">"iso3c"</span>, <span class="st">"year"</span>)</span>
+<span id="cb25-374"><a href="#cb25-374" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-375"><a href="#cb25-375" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-376"><a href="#cb25-376" aria-hidden="true" tabindex="-1"></a><span class="co"># Random effects</span></span>
+<span id="cb25-377"><a href="#cb25-377" aria-hidden="true" tabindex="-1"></a>re_model <span class="ot">&lt;-</span> <span class="fu">plm</span>(</span>
+<span id="cb25-378"><a href="#cb25-378" aria-hidden="true" tabindex="-1"></a>  growth <span class="sc">~</span> investment <span class="sc">+</span> trade <span class="sc">+</span> population_growth,</span>
+<span id="cb25-379"><a href="#cb25-379" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> panel_plm,</span>
+<span id="cb25-380"><a href="#cb25-380" aria-hidden="true" tabindex="-1"></a>  <span class="at">model =</span> <span class="st">"random"</span></span>
+<span id="cb25-381"><a href="#cb25-381" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-382"><a href="#cb25-382" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-383"><a href="#cb25-383" aria-hidden="true" tabindex="-1"></a><span class="co"># Fixed effects (within estimator)</span></span>
+<span id="cb25-384"><a href="#cb25-384" aria-hidden="true" tabindex="-1"></a>fe_model_plm <span class="ot">&lt;-</span> <span class="fu">plm</span>(</span>
+<span id="cb25-385"><a href="#cb25-385" aria-hidden="true" tabindex="-1"></a>  growth <span class="sc">~</span> investment <span class="sc">+</span> trade <span class="sc">+</span> population_growth,</span>
+<span id="cb25-386"><a href="#cb25-386" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> panel_plm,</span>
+<span id="cb25-387"><a href="#cb25-387" aria-hidden="true" tabindex="-1"></a>  <span class="at">model =</span> <span class="st">"within"</span></span>
+<span id="cb25-388"><a href="#cb25-388" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-389"><a href="#cb25-389" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-390"><a href="#cb25-390" aria-hidden="true" tabindex="-1"></a><span class="co"># Hausman test: H0 is that RE is consistent (i.e., RE is fine)</span></span>
+<span id="cb25-391"><a href="#cb25-391" aria-hidden="true" tabindex="-1"></a><span class="fu">phtest</span>(fe_model_plm, re_model)</span>
+<span id="cb25-392"><a href="#cb25-392" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-393"><a href="#cb25-393" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-394"><a href="#cb25-394" aria-hidden="true" tabindex="-1"></a>If the Hausman test rejects (p-value &lt; 0.05), the random effects estimates are inconsistent and we should use fixed effects. In macro panels, this is almost always the case — country-specific effects (institutions, geography, culture) are almost certainly correlated with the explanatory variables. Fixed effects is the workhorse estimator for macro panel data.</span>
+<span id="cb25-395"><a href="#cb25-395" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-396"><a href="#cb25-396" aria-hidden="true" tabindex="-1"></a>A few practical cautions for panel regressions in macroeconomics. First, standard errors should be clustered at the country level to account for serial correlation within countries — <span class="in">`fixest`</span> does this by default when you include fixed effects. Second, macro panels are "short and wide" (20–30 years, 30–40 countries), which limits the precision of estimates. Third, many macro variables are persistent (GDP growth, investment rates), raising concerns about Nickell bias in dynamic panels. For dynamic specifications, the Arellano-Bond GMM estimator is standard, but its small-sample properties are poor when the number of time periods is close to the number of countries.</span>
+<span id="cb25-397"><a href="#cb25-397" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-400"><a href="#cb25-400" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb25-401"><a href="#cb25-401" aria-hidden="true" tabindex="-1"></a><span class="co"># Clustered standard errors (fixest does this by default with FEs)</span></span>
+<span id="cb25-402"><a href="#cb25-402" aria-hidden="true" tabindex="-1"></a><span class="co"># But we can be explicit:</span></span>
+<span id="cb25-403"><a href="#cb25-403" aria-hidden="true" tabindex="-1"></a>fe_robust <span class="ot">&lt;-</span> <span class="fu">feols</span>(</span>
+<span id="cb25-404"><a href="#cb25-404" aria-hidden="true" tabindex="-1"></a>  growth <span class="sc">~</span> investment <span class="sc">+</span> trade <span class="sc">+</span> population_growth <span class="sc">|</span> iso3c <span class="sc">+</span> year,</span>
+<span id="cb25-405"><a href="#cb25-405" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> panel,</span>
+<span id="cb25-406"><a href="#cb25-406" aria-hidden="true" tabindex="-1"></a>  <span class="at">cluster =</span> <span class="sc">~</span>iso3c</span>
+<span id="cb25-407"><a href="#cb25-407" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-408"><a href="#cb25-408" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-409"><a href="#cb25-409" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare standard errors</span></span>
+<span id="cb25-410"><a href="#cb25-410" aria-hidden="true" tabindex="-1"></a><span class="fu">etable</span>(fe_model, fe_robust, <span class="at">se =</span> <span class="st">"cluster"</span>)</span>
+<span id="cb25-411"><a href="#cb25-411" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-412"><a href="#cb25-412" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-413"><a href="#cb25-413" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises</span></span>
+<span id="cb25-414"><a href="#cb25-414" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-415"><a href="#cb25-415" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Using the <span class="in">`WDI`</span> package, download GDP per capita for all countries in 1990 and 2020. Test the unconditional convergence hypothesis by regressing average annual growth on log initial GDP per capita. Is the slope statistically significant? What is the $R^2$? Repeat for OECD countries only. How do the results differ?</span>
+<span id="cb25-416"><a href="#cb25-416" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-417"><a href="#cb25-417" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Perform a growth accounting exercise for the UK using ONS data. Assume $\alpha = 0.3$. If UK GDP grew at 1.5 per cent per year over 2010–2019, capital grew at 1.8 per cent, and labour grew at 0.8 per cent, what was TFP growth? What share of total growth does each factor account for?</span>
+<span id="cb25-418"><a href="#cb25-418" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-419"><a href="#cb25-419" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Download the World Bank's Worldwide Governance Indicators for 2020. Plot log GDP per capita against each of the six governance dimensions. Which dimension has the strongest correlation with income? Run a multiple regression with all six dimensions — how does multicollinearity affect the results?</span>
+<span id="cb25-420"><a href="#cb25-420" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-421"><a href="#cb25-421" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Estimate a panel regression of GDP growth on investment, trade openness, and population growth for OECD countries over 2000–2020, using both fixed effects and random effects. Conduct a Hausman test. Which model is preferred? Interpret the coefficient on investment.</span>
+<span id="cb25-422"><a href="#cb25-422" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-423"><a href="#cb25-423" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>The convergence regression $g_i = \alpha + \beta \cdot \ln(y_{i,0}) + \varepsilon_i$ implies a convergence speed of $-\beta$ per year. If $\beta = -0.02$, how many years does it take for a country to close half the gap to its steady state? (Hint: the half-life is $\ln(2) / |\beta|$.) Is this fast or slow in practice?</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
