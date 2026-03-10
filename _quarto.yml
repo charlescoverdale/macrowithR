@@ -48,4 +48,8 @@ format:
     number-sections: true
     highlight-style: github
 
+execute:
+  eval: false
+  echo: true
+
 bibliography: references.bib
