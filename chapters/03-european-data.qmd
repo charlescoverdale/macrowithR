@@ -171,7 +171,7 @@ head(unemp_oecd)
 ```
 
 ```{r}
-ggplot(unemp_oecd, aes(x = year, y = value, colour = country_name)) +
+ggplot(unemp_oecd, aes(x = period, y = value, colour = country_name)) +
   geom_line() +
   labs(
     title = "Unemployment rate: cross-country comparison",

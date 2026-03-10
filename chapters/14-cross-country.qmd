@@ -20,6 +20,7 @@ Let us test unconditional convergence using World Bank data. We need GDP per cap
 ```{r}
 library(WDI)
 library(dplyr)
+library(tidyr)
 library(ggplot2)
 
 # Download GDP per capita (constant 2015 US$)

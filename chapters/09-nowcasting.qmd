@@ -142,6 +142,7 @@ x_m <- x_m_df |>
 ```
 
 ```{r}
+#| eval: false
 # Estimate MIDAS regression with exponential Almon weights
 # mls() specifies: variable, number of high-frequency lags, frequency ratio
 midas_model <- midas_r(y_q ~ mls(x_m, 0:8, 3, nealmon),
@@ -153,6 +154,7 @@ summary(midas_model)
 The estimated weight function reveals how the model values different monthly lags. If the weights decline steeply, only the most recent month or two matter for the nowcast. If they decline gradually, information from several months back remains useful. Plotting the estimated weights is a standard diagnostic.
 
 ```{r}
+#| eval: false
 # Plot the estimated MIDAS weights
 plot_midas_weights <- data.frame(
   lag = 0:8,
@@ -280,6 +282,7 @@ The three methods above can be combined into a practical nowcasting workflow. Th
 The workflow has four steps. First, pull all available data and note which series have been updated most recently — this defines the information set. Second, run each model (bridge equation, MIDAS, DFM) on the current data. Third, combine the nowcasts. Fourth, compare to the eventual GDP release once it arrives, and update the model weights accordingly.
 
 ```{r}
+#| eval: false
 # Step 1: Define the information set
 cat("Data availability:\n")
 cat("Retail sales through:", format(max(retail_monthly$date)), "\n")
