@@ -326,20 +326,85 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>This chapter builds a toolkit for the charts macro practitioners actually use. We start by defining a reusable house style, then work through the specific chart types you will encounter most often: recession-shaded time series, fan charts, small multiples, yield curve snapshots, and annotated event charts.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org">tidyr</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://lubridate.tidyverse.org">lubridate</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">ons</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">boe</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">readecb</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">obr</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'dplyr'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:stats':
+
+    filter, lag</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org">tidyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://lubridate.tidyverse.org">lubridate</a></span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'lubridate'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">ons</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">boe</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'boe'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:ons':
+
+    clear_cache</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">readecb</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'readecb'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:boe':
+
+    clear_cache, list_exchange_rates</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:ons':
+
+    clear_cache</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">obr</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'obr'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:readecb':
+
+    clear_cache</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:boe':
+
+    clear_cache</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:ons':
+
+    clear_cache</code></pre>
+</div>
 </div>
 <section id="a-house-style-for-economics" class="level2" data-number="5.1"><h2 data-number="5.1" class="anchored" data-anchor-id="a-house-style-for-economics">
 <span class="header-section-number">5.1</span> A house style for economics</h2>
 <p>Every central bank, government department, and economic think tank has a house style. The Bank of England uses a clean sans-serif look with minimal gridlines. The Economist favours bold colours and a red accent. The FT uses a cream background with a distinctive serif typeface. What they all share is restraint: no 3D effects, no heavy borders, no unnecessary decoration.</p>
 <p>A well-designed <code>theme_macro()</code> function lets you apply a consistent style to every chart in your analysis with a single line. The theme below draws on the common elements of institutional economic charts: a white background, light horizontal gridlines to aid reading values off the y-axis, no vertical gridlines (which add clutter to time series), and a clean sans-serif font. The axis text is sized for readability when charts are exported at typical report dimensions.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">theme_macro</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">base_size</span> <span class="op">=</span> <span class="fl">12</span>, <span class="va">base_family</span> <span class="op">=</span> <span class="st">"Helvetica"</span><span class="op">)</span> <span class="op">{</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">theme_macro</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">base_size</span> <span class="op">=</span> <span class="fl">12</span>, <span class="va">base_family</span> <span class="op">=</span> <span class="st">"Helvetica"</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu">theme_minimal</span><span class="op">(</span>base_size <span class="op">=</span> <span class="va">base_size</span>, base_family <span class="op">=</span> <span class="va">base_family</span><span class="op">)</span> <span class="op">%+replace%</span></span>
 <span>    <span class="fu">theme</span><span class="op">(</span></span>
 <span>      <span class="co"># Background</span></span>
@@ -387,7 +452,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>With the theme defined, you can apply it to any ggplot by adding <code>+ theme_macro()</code>. It is worth defining a matching colour palette too. A small, curated set of colours is more useful than a rainbow — most economic charts use two or three series at most.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">macro_colours</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">macro_colours</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">"#1B5E7B"</span>,</span>
 <span>  <span class="st">"#C0392B"</span>,</span>
 <span>  <span class="st">"#27AE60"</span>,</span>
@@ -406,9 +471,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>Let us put the theme to work with a simple example. The chart below plots CPI inflation — a single time series with a clean title, source caption, and no visual clutter.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">cpi</span> <span class="op">&lt;-</span> <span class="fu">ons_cpi</span><span class="op">(</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">cpi</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">cpi</span> <span class="op">&lt;-</span> <span class="fu">ons_cpi</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ℹ Fetching CPI (rate)</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>✔ Fetching CPI (rate) [64ms]</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">cpi</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_line</span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"#1B5E7B"</span>, linewidth <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">labs</span><span class="op">(</span></span>
 <span>    title    <span class="op">=</span> <span class="st">"UK Consumer Price Inflation"</span>,</span>
@@ -417,13 +490,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>    caption  <span class="op">=</span> <span class="st">"Source: ONS"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_macro</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="05-macro-charts_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
 </div>
 </section><section id="time-series-with-recession-shading" class="level2" data-number="5.2"><h2 data-number="5.2" class="anchored" data-anchor-id="time-series-with-recession-shading">
 <span class="header-section-number">5.2</span> Time series with recession shading</h2>
 <p>Recession shading is the single most requested feature for macro charts. Overlaying grey bands on periods of economic contraction gives immediate visual context — was a spike in unemployment driven by a recession, or did it happen during an expansion? The technique is straightforward: define the recession periods as a data frame of start and end dates, then draw them with <code>geom_rect()</code>.</p>
 <p>For the United Kingdom, there is no single official recession chronology like the NBER produces for the United States. The conventional definition is two consecutive quarters of negative GDP growth. The dates below cover the major post-war recessions that are widely agreed upon by the ONS and Bank of England.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">uk_recessions</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">uk_recessions</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span></span>
 <span>  start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
 <span>    <span class="st">"1973-08-01"</span>, <span class="st">"1980-01-01"</span>, <span class="st">"1990-07-01"</span>, <span class="st">"2008-04-01"</span>, <span class="st">"2020-01-01"</span></span>
 <span>  <span class="op">)</span><span class="op">)</span>,</span>
@@ -438,9 +517,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>To apply the shading, add a <code>geom_rect()</code> layer <em>before</em> the main data layer so the shading sits behind the line. Setting <code>ymin</code> and <code>ymax</code> to <code>-Inf</code> and <code>Inf</code> ensures the bands stretch across the full y-axis range regardless of the data.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gdp</span> <span class="op">&lt;-</span> <span class="fu">ons_gdp</span><span class="op">(</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">gdp</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gdp</span> <span class="op">&lt;-</span> <span class="fu">ons_gdp</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ℹ Fetching GDP (growth)</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>✔ Fetching GDP (growth) [37ms]</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">gdp</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_rect</span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">uk_recessions</span>,</span>
 <span>    <span class="fu">aes</span><span class="op">(</span>xmin <span class="op">=</span> <span class="va">start</span>, xmax <span class="op">=</span> <span class="va">end</span>, ymin <span class="op">=</span> <span class="op">-</span><span class="cn">Inf</span>, ymax <span class="op">=</span> <span class="cn">Inf</span><span class="op">)</span>,</span>
@@ -455,11 +542,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>    caption  <span class="op">=</span> <span class="st">"Source: ONS. Shaded areas indicate recessions."</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_macro</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="05-macro-charts_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
 </div>
 <p>The <code>inherit.aes = FALSE</code> argument is important. Without it, ggplot will try to map the recession data frame to the aesthetic mappings defined in the main <code>ggplot()</code> call, which will fail because the recession data has different columns. This is a common source of confusion when layering different data frames in ggplot2.</p>
 <p>You can reuse the <code>uk_recessions</code> data frame across every chart in your analysis. Some practitioners wrap the recession layer into a helper function to keep their plotting code concise:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">add_recession_shading</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">recessions</span> <span class="op">=</span> <span class="va">uk_recessions</span>,</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">add_recession_shading</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">recessions</span> <span class="op">=</span> <span class="va">uk_recessions</span>,</span>
 <span>                                  <span class="va">fill</span> <span class="op">=</span> <span class="st">"#D5D8DC"</span>, <span class="va">alpha</span> <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu">geom_rect</span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">recessions</span>,</span>
@@ -477,10 +570,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>The chart works by stacking <code>geom_ribbon()</code> layers, each representing a different confidence interval. The widest band (say, 90%) is drawn first in the lightest shade, then the 75% band, then the 50%, and finally the central forecast line on top. This ordering ensures narrower, darker bands are visible in front of wider, lighter ones.</p>
 <p>To demonstrate, we will build a fan chart for UK GDP growth using OBR forecast data. In practice you would pull the OBR’s forecast distribution parameters; here we simulate symmetric uncertainty bands around a central path to illustrate the technique.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Pull OBR GDP forecast</span></span>
-<span><span class="va">obr_gdp</span> <span class="op">&lt;-</span> <span class="fu">obr_forecast</span><span class="op">(</span><span class="st">"GDP growth"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># For illustration, create expanding uncertainty bands around the central forecast.</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Pull OBR GDP forecast — keep only the latest vintage</span></span>
+<span><span class="va">obr_gdp</span> <span class="op">&lt;-</span> <span class="fu">get_forecasts</span><span class="op">(</span><span class="st">"real_GDP"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">forecast_date</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">forecast_date</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">fiscal_year</span>, <span class="st">"-01-01"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ℹ Loading from cache. Use `refresh = TRUE` to re-download.</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># For illustration, create expanding uncertainty bands around the central forecast.</span></span>
 <span><span class="co"># In a real application you would use the OBR's published forecast distribution.</span></span>
 <span><span class="va">fan_data</span> <span class="op">&lt;-</span> <span class="va">obr_gdp</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span></span>
@@ -505,6 +602,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>    caption  <span class="op">=</span> <span class="st">"Source: OBR. Shaded areas show 50%, 75%, and 90% confidence intervals."</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_macro</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="05-macro-charts_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
 </div>
 <p>The key design choices here are the use of a single hue with varying transparency rather than multiple colours. This follows the Bank of England convention and avoids the visual noise of a rainbow palette. The dashed zero line provides a reference point — viewers can immediately see when growth is expected to turn negative.</p>
 <p>For asymmetric distributions (where risks are tilted to the upside or downside), you would use different widths above and below the central forecast. The Bank of England’s fan charts are famously asymmetric, reflecting the MPC’s assessment of the balance of risks. The mechanics in ggplot2 are identical — you simply set different upper and lower bounds for each ribbon.</p>
@@ -514,15 +617,49 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>In ggplot2, small multiples are built with <code>facet_wrap()</code> or <code>facet_grid()</code>. The approach works particularly well with the <code>readecb</code> package, which returns tidy data frames with a country or reference area column ready for faceting.</p>
 <p>Let us plot HICP inflation for the four largest euro area economies. The ECB publishes harmonised consumer price indices for all member states, making cross-country comparison straightforward because the methodology is consistent.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">countries</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"DE"</span>, <span class="st">"FR"</span>, <span class="st">"IT"</span>, <span class="st">"ES"</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">countries</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"DE"</span>, <span class="st">"FR"</span>, <span class="st">"IT"</span>, <span class="st">"ES"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">hicp_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">countries</span>, <span class="kw">function</span><span class="op">(</span><span class="va">cc</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu">ecb_hicp</span><span class="op">(</span>geo <span class="op">=</span> <span class="va">cc</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu">mutate</span><span class="op">(</span>country <span class="op">=</span> <span class="va">cc</span><span class="op">)</span></span>
+<span>  <span class="fu">ecb_hicp</span><span class="op">(</span>country <span class="op">=</span> <span class="va">cc</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">bind_rows</span><span class="op">(</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Map country codes to readable names</span></span>
+<span>  <span class="fu">bind_rows</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ℹ Fetching HICP data</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>✔ Fetching HICP data [5ms]</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ℹ Fetching HICP data</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>✔ Fetching HICP data [7ms]</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ℹ Fetching HICP data</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>✔ Fetching HICP data [4ms]</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ℹ Fetching HICP data</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>✔ Fetching HICP data [4ms]</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb50"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Map country codes to readable names</span></span>
 <span><span class="va">country_names</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
 <span>  DE <span class="op">=</span> <span class="st">"Germany"</span>, FR <span class="op">=</span> <span class="st">"France"</span>,</span>
 <span>  IT <span class="op">=</span> <span class="st">"Italy"</span>,   ES <span class="op">=</span> <span class="st">"Spain"</span></span>
@@ -541,6 +678,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_macro</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme</span><span class="op">(</span>strip.text <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>face <span class="op">=</span> <span class="st">"bold"</span>, size <span class="op">=</span> <span class="fu">rel</span><span class="op">(</span><span class="fl">0.95</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="05-macro-charts_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
 </div>
 <p>Several design choices make this chart work. First, all four panels share the same y-axis scale (the default in <code>facet_wrap()</code>), which allows genuine comparison of levels. If one country’s inflation was persistently higher, it would be immediately visible. Second, we use a single colour because the facet labels already identify each country — adding colour would be redundant. Third, the panels are arranged in a 2x2 grid, which keeps each panel wide enough for the time axis to remain legible.</p>
 <p>If the scales are very different across countries — for example, when comparing GDP levels rather than growth rates — you can use <code>facet_wrap(~ country, scales = "free_y")</code>. But use this sparingly, because it makes it harder to compare magnitudes across panels. A note in the subtitle or caption is essential when scales differ.</p>
@@ -549,17 +692,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>The yield curve — the relationship between government bond yields and their maturity — is one of the most closely watched indicators in finance and macroeconomics. Its shape carries information about market expectations for interest rates, inflation, and growth. An inverted yield curve, where short-term yields exceed long-term yields, has preceded every US recession since the 1960s.</p>
 <p>Plotting multiple yield curves on the same chart at different points in time shows how expectations have shifted. This is far more informative than a single snapshot. The <code>boe_yield_curve()</code> function from the <code>boe</code> package returns gilt yields at various maturities, making it straightforward to build these overlays.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Pull yield curve data for selected dates</span></span>
-<span><span class="va">yield_data</span> <span class="op">&lt;-</span> <span class="fu">boe_yield_curve</span><span class="op">(</span>from <span class="op">=</span> <span class="st">"2019-01"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Select specific dates to plot</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb51"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Pull yield curve data for selected dates</span></span>
+<span><span class="va">yield_data</span> <span class="op">&lt;-</span> <span class="fu">boe_yield_curve</span><span class="op">(</span>from <span class="op">=</span> <span class="st">"2019-01-01"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ℹ Using cached data</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>✔ Using cached data [3ms]</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb55"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Select specific dates to plot</span></span>
 <span><span class="va">snapshot_dates</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"2019-06-28"</span>, <span class="st">"2020-06-30"</span>, <span class="st">"2022-06-30"</span>, <span class="st">"2024-06-28"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">yield_snapshots</span> <span class="op">&lt;-</span> <span class="va">yield_data</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">date</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="va">snapshot_dates</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span>date_label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span><span class="op">(</span><span class="va">date</span>, <span class="st">"%B %Y"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">yield_snapshots</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">maturity</span>, y <span class="op">=</span> <span class="va">value</span>, colour <span class="op">=</span> <span class="va">date_label</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">yield_snapshots</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">maturity</span>, y <span class="op">=</span> <span class="va">yield_pct</span>, colour <span class="op">=</span> <span class="va">date_label</span>, group <span class="op">=</span> <span class="va">date_label</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_line</span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_point</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">scale_colour_macro</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -570,6 +721,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>    caption  <span class="op">=</span> <span class="st">"Source: Bank of England"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_macro</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="05-macro-charts_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
 </div>
 <p>The chart immediately reveals the story of UK monetary policy across these dates. In mid-2019, the curve was relatively flat, reflecting expectations that rates would remain low. By mid-2022, the curve had shifted sharply upward as inflation surged and the Bank of England tightened policy. Overlaying curves in this way is more effective than plotting a single maturity over time, because it shows the entire term structure at a glance.</p>
 <p>When working with yield curve data, pay attention to the x-axis. Maturities are not evenly spaced — there are more data points at the short end (1, 2, 3, 5 years) than the long end (10, 20, 30 years). A linear scale is standard, but the points will cluster at shorter maturities. Adding <code>geom_point()</code> helps mark the actual data points and avoids suggesting false precision between observations.</p>
@@ -578,16 +735,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Time series charts become much more informative when key events are marked directly on the plot. Rather than forcing readers to remember that the UK left the EU on 31 January 2020, or that the Bank of England cut rates to 0.1% in March 2020, you can annotate these events on the chart itself. This is particularly valuable in publications where charts need to be self-contained.</p>
 <p>The two main tools are <code>geom_vline()</code> for vertical reference lines and <code>annotate()</code> for text labels. Vertical lines are best drawn as thin dashed lines in a neutral colour so they do not compete with the data. Text annotations should be brief — a few words at most — and positioned to avoid overlapping the data.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">bank_rate</span> <span class="op">&lt;-</span> <span class="fu">boe_bank_rate</span><span class="op">(</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">events</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb56"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">bank_rate</span> <span class="op">&lt;-</span> <span class="fu">boe_bank_rate</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ℹ Using cached data</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>✔ Using cached data [3ms]</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb60"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">events</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span></span>
 <span>  date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"2016-06-23"</span>, <span class="st">"2020-03-11"</span>, <span class="st">"2021-12-16"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Brexit\nreferendum"</span>, <span class="st">"COVID-19\nrate cut"</span>, <span class="st">"First post-COVID\nrate rise"</span><span class="op">)</span>,</span>
 <span>  y_pos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">5.5</span>, <span class="fl">5.5</span>, <span class="fl">5.5</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">ggplot</span><span class="op">(</span><span class="va">bank_rate</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">date</span> <span class="op">&gt;=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="st">"2005-01-01"</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>       <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>       <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">rate_pct</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_line</span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"#1B5E7B"</span>, linewidth <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_vline</span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">events</span>, <span class="fu">aes</span><span class="op">(</span>xintercept <span class="op">=</span> <span class="va">date</span><span class="op">)</span>,</span>
@@ -606,15 +771,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>    caption  <span class="op">=</span> <span class="st">"Source: Bank of England"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_macro</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="05-macro-charts_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
 </div>
 <p>A few practical tips for annotations. First, use <code>\n</code> in label text to break long labels across two lines rather than letting them run off the chart. Second, <code>hjust</code> and <code>vjust</code> control the anchor point — <code>hjust = -0.1</code> places the text just to the right of the vertical line, which is the conventional position. Third, keep annotation text short and factual. The chart should prompt the reader to think, not do their thinking for them.</p>
 <p>For charts with many events, consider using <code>ggrepel::geom_text_repel()</code> to automatically avoid overlapping labels. This is especially useful for dense time series where multiple events cluster together.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Alternative with ggrepel for automatic label placement</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb61"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Alternative with ggrepel for automatic label placement</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggrepel.slowkow.com/">ggrepel</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">ggplot</span><span class="op">(</span><span class="va">bank_rate</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">date</span> <span class="op">&gt;=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="st">"2005-01-01"</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>       <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>       <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">rate_pct</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_line</span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"#1B5E7B"</span>, linewidth <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_vline</span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">events</span>, <span class="fu">aes</span><span class="op">(</span>xintercept <span class="op">=</span> <span class="va">date</span><span class="op">)</span>,</span>
@@ -622,7 +793,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_point</span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">bank_rate</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">date</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="va">events</span><span class="op">$</span><span class="va">date</span><span class="op">)</span>,</span>
-<span>    colour <span class="op">=</span> <span class="st">"#C0392B"</span>, size <span class="op">=</span> <span class="fl">2</span></span>
+<span>    <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">rate_pct</span><span class="op">)</span>,</span>
+<span>    colour <span class="op">=</span> <span class="st">"#C0392B"</span>, size <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>    inherit.aes <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_text_repel</span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">events</span>,</span>
@@ -638,6 +811,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>    caption  <span class="op">=</span> <span class="st">"Source: Bank of England"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_macro</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="05-macro-charts_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
 </div>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -1127,385 +1306,393 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Publication-Quality Economic Charts {#sec-charts}</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>A good chart can carry an argument. Central bank reports, budget documents, and think tank publications all rely on a small set of chart types — done well, with clean design and careful annotation.</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>This chapter builds a toolkit for the charts macro practitioners actually use. We start by defining a reusable house style, then work through the specific chart types you will encounter most often: recession-shaded time series, fan charts, small multiples, yield curve snapshots, and annotated event charts.</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ons)</span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(boe)</span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readecb)</span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(obr)</span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="fu">## A house style for economics</span></span>
-<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>Every central bank, government department, and economic think tank has a house style. The Bank of England uses a clean sans-serif look with minimal gridlines. The Economist favours bold colours and a red accent. The FT uses a cream background with a distinctive serif typeface. What they all share is restraint: no 3D effects, no heavy borders, no unnecessary decoration.</span>
-<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>A well-designed <span class="in">`theme_macro()`</span> function lets you apply a consistent style to every chart in your analysis with a single line. The theme below draws on the common elements of institutional economic charts: a white background, light horizontal gridlines to aid reading values off the y-axis, no vertical gridlines (which add clutter to time series), and a clean sans-serif font. The axis text is sized for readability when charts are exported at typical report dimensions.</span>
-<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>theme_macro <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">base_size =</span> <span class="dv">12</span>, <span class="at">base_family =</span> <span class="st">"Helvetica"</span>) {</span>
-<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> base_size, <span class="at">base_family =</span> base_family) <span class="sc">%+replace%</span></span>
-<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
-<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Background</span></span>
-<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot.background   =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"white"</span>, <span class="at">colour =</span> <span class="cn">NA</span>),</span>
-<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.background  =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"white"</span>, <span class="at">colour =</span> <span class="cn">NA</span>),</span>
-<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.border      =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Gridlines: light horizontal only</span></span>
-<span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.major.y =</span> <span class="fu">element_line</span>(<span class="at">colour =</span> <span class="st">"#D9D9D9"</span>, <span class="at">linewidth =</span> <span class="fl">0.3</span>),</span>
-<span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.major.x =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.minor   =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-42"><a href="#cb13-42" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Axes</span></span>
-<span id="cb13-43"><a href="#cb13-43" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.line.x  =</span> <span class="fu">element_line</span>(<span class="at">colour =</span> <span class="st">"#333333"</span>, <span class="at">linewidth =</span> <span class="fl">0.4</span>),</span>
-<span id="cb13-44"><a href="#cb13-44" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.ticks.x =</span> <span class="fu">element_line</span>(<span class="at">colour =</span> <span class="st">"#333333"</span>, <span class="at">linewidth =</span> <span class="fl">0.3</span>),</span>
-<span id="cb13-45"><a href="#cb13-45" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.ticks.y =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb13-46"><a href="#cb13-46" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.title   =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="fu">rel</span>(<span class="fl">0.9</span>), <span class="at">colour =</span> <span class="st">"#333333"</span>),</span>
-<span id="cb13-47"><a href="#cb13-47" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.text    =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="fu">rel</span>(<span class="fl">0.85</span>), <span class="at">colour =</span> <span class="st">"#555555"</span>),</span>
-<span id="cb13-48"><a href="#cb13-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-49"><a href="#cb13-49" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Title and caption</span></span>
-<span id="cb13-50"><a href="#cb13-50" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot.title    =</span> <span class="fu">element_text</span>(</span>
-<span id="cb13-51"><a href="#cb13-51" aria-hidden="true" tabindex="-1"></a>        <span class="at">size =</span> <span class="fu">rel</span>(<span class="fl">1.2</span>), <span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">colour =</span> <span class="st">"#1A1A1A"</span>,</span>
-<span id="cb13-52"><a href="#cb13-52" aria-hidden="true" tabindex="-1"></a>        <span class="at">hjust =</span> <span class="dv">0</span>, <span class="at">margin =</span> <span class="fu">margin</span>(<span class="at">b =</span> <span class="dv">8</span>)</span>
-<span id="cb13-53"><a href="#cb13-53" aria-hidden="true" tabindex="-1"></a>      ),</span>
-<span id="cb13-54"><a href="#cb13-54" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(</span>
-<span id="cb13-55"><a href="#cb13-55" aria-hidden="true" tabindex="-1"></a>        <span class="at">size =</span> <span class="fu">rel</span>(<span class="fl">0.95</span>), <span class="at">colour =</span> <span class="st">"#555555"</span>,</span>
-<span id="cb13-56"><a href="#cb13-56" aria-hidden="true" tabindex="-1"></a>        <span class="at">hjust =</span> <span class="dv">0</span>, <span class="at">margin =</span> <span class="fu">margin</span>(<span class="at">b =</span> <span class="dv">12</span>)</span>
-<span id="cb13-57"><a href="#cb13-57" aria-hidden="true" tabindex="-1"></a>      ),</span>
-<span id="cb13-58"><a href="#cb13-58" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot.caption  =</span> <span class="fu">element_text</span>(</span>
-<span id="cb13-59"><a href="#cb13-59" aria-hidden="true" tabindex="-1"></a>        <span class="at">size =</span> <span class="fu">rel</span>(<span class="fl">0.75</span>), <span class="at">colour =</span> <span class="st">"#999999"</span>,</span>
-<span id="cb13-60"><a href="#cb13-60" aria-hidden="true" tabindex="-1"></a>        <span class="at">hjust =</span> <span class="dv">1</span>, <span class="at">margin =</span> <span class="fu">margin</span>(<span class="at">t =</span> <span class="dv">10</span>)</span>
-<span id="cb13-61"><a href="#cb13-61" aria-hidden="true" tabindex="-1"></a>      ),</span>
-<span id="cb13-62"><a href="#cb13-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-63"><a href="#cb13-63" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Legend</span></span>
-<span id="cb13-64"><a href="#cb13-64" aria-hidden="true" tabindex="-1"></a>      <span class="at">legend.position  =</span> <span class="st">"top"</span>,</span>
-<span id="cb13-65"><a href="#cb13-65" aria-hidden="true" tabindex="-1"></a>      <span class="at">legend.direction =</span> <span class="st">"horizontal"</span>,</span>
-<span id="cb13-66"><a href="#cb13-66" aria-hidden="true" tabindex="-1"></a>      <span class="at">legend.title     =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb13-67"><a href="#cb13-67" aria-hidden="true" tabindex="-1"></a>      <span class="at">legend.text      =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="fu">rel</span>(<span class="fl">0.85</span>)),</span>
-<span id="cb13-68"><a href="#cb13-68" aria-hidden="true" tabindex="-1"></a>      <span class="at">legend.key       =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="cn">NA</span>),</span>
-<span id="cb13-69"><a href="#cb13-69" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-70"><a href="#cb13-70" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Margins</span></span>
-<span id="cb13-71"><a href="#cb13-71" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot.margin =</span> <span class="fu">margin</span>(<span class="dv">12</span>, <span class="dv">16</span>, <span class="dv">8</span>, <span class="dv">12</span>)</span>
-<span id="cb13-72"><a href="#cb13-72" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb13-73"><a href="#cb13-73" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb13-74"><a href="#cb13-74" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-75"><a href="#cb13-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-76"><a href="#cb13-76" aria-hidden="true" tabindex="-1"></a>With the theme defined, you can apply it to any ggplot by adding <span class="in">`+ theme_macro()`</span>. It is worth defining a matching colour palette too. A small, curated set of colours is more useful than a rainbow — most economic charts use two or three series at most.</span>
-<span id="cb13-77"><a href="#cb13-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-80"><a href="#cb13-80" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb13-81"><a href="#cb13-81" aria-hidden="true" tabindex="-1"></a>macro_colours <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb13-82"><a href="#cb13-82" aria-hidden="true" tabindex="-1"></a>  <span class="st">"#1B5E7B"</span>,</span>
-<span id="cb13-83"><a href="#cb13-83" aria-hidden="true" tabindex="-1"></a>  <span class="st">"#C0392B"</span>,</span>
-<span id="cb13-84"><a href="#cb13-84" aria-hidden="true" tabindex="-1"></a>  <span class="st">"#27AE60"</span>,</span>
-<span id="cb13-85"><a href="#cb13-85" aria-hidden="true" tabindex="-1"></a>  <span class="st">"#F39C12"</span>,</span>
-<span id="cb13-86"><a href="#cb13-86" aria-hidden="true" tabindex="-1"></a>  <span class="st">"#8E44AD"</span>,</span>
-<span id="cb13-87"><a href="#cb13-87" aria-hidden="true" tabindex="-1"></a>  <span class="st">"#2C3E50"</span></span>
-<span id="cb13-88"><a href="#cb13-88" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb13-89"><a href="#cb13-89" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-90"><a href="#cb13-90" aria-hidden="true" tabindex="-1"></a>scale_colour_macro <span class="ot">&lt;-</span> <span class="cf">function</span>(...) {</span>
-<span id="cb13-91"><a href="#cb13-91" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> macro_colours, ...)</span>
-<span id="cb13-92"><a href="#cb13-92" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb13-93"><a href="#cb13-93" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-94"><a href="#cb13-94" aria-hidden="true" tabindex="-1"></a>scale_fill_macro <span class="ot">&lt;-</span> <span class="cf">function</span>(...) {</span>
-<span id="cb13-95"><a href="#cb13-95" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> macro_colours, ...)</span>
-<span id="cb13-96"><a href="#cb13-96" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb13-97"><a href="#cb13-97" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-98"><a href="#cb13-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-99"><a href="#cb13-99" aria-hidden="true" tabindex="-1"></a>Let us put the theme to work with a simple example. The chart below plots CPI inflation — a single time series with a clean title, source caption, and no visual clutter.</span>
-<span id="cb13-100"><a href="#cb13-100" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-103"><a href="#cb13-103" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb13-104"><a href="#cb13-104" aria-hidden="true" tabindex="-1"></a>cpi <span class="ot">&lt;-</span> <span class="fu">ons_cpi</span>()</span>
-<span id="cb13-105"><a href="#cb13-105" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-106"><a href="#cb13-106" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(cpi, <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> value)) <span class="sc">+</span></span>
-<span id="cb13-107"><a href="#cb13-107" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">colour =</span> <span class="st">"#1B5E7B"</span>, <span class="at">linewidth =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
-<span id="cb13-108"><a href="#cb13-108" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb13-109"><a href="#cb13-109" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"UK Consumer Price Inflation"</span>,</span>
-<span id="cb13-110"><a href="#cb13-110" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"CPI, annual rate (%)"</span>,</span>
-<span id="cb13-111"><a href="#cb13-111" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="cn">NULL</span>,</span>
-<span id="cb13-112"><a href="#cb13-112" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Source: ONS"</span></span>
-<span id="cb13-113"><a href="#cb13-113" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb13-114"><a href="#cb13-114" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_macro</span>()</span>
-<span id="cb13-115"><a href="#cb13-115" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-116"><a href="#cb13-116" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-117"><a href="#cb13-117" aria-hidden="true" tabindex="-1"></a><span class="fu">## Time series with recession shading</span></span>
-<span id="cb13-118"><a href="#cb13-118" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-119"><a href="#cb13-119" aria-hidden="true" tabindex="-1"></a>Recession shading is the single most requested feature for macro charts. Overlaying grey bands on periods of economic contraction gives immediate visual context — was a spike in unemployment driven by a recession, or did it happen during an expansion? The technique is straightforward: define the recession periods as a data frame of start and end dates, then draw them with <span class="in">`geom_rect()`</span>.</span>
-<span id="cb13-120"><a href="#cb13-120" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-121"><a href="#cb13-121" aria-hidden="true" tabindex="-1"></a>For the United Kingdom, there is no single official recession chronology like the NBER produces for the United States. The conventional definition is two consecutive quarters of negative GDP growth. The dates below cover the major post-war recessions that are widely agreed upon by the ONS and Bank of England.</span>
-<span id="cb13-122"><a href="#cb13-122" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-125"><a href="#cb13-125" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb13-126"><a href="#cb13-126" aria-hidden="true" tabindex="-1"></a>uk_recessions <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb13-127"><a href="#cb13-127" aria-hidden="true" tabindex="-1"></a>  <span class="at">start =</span> <span class="fu">as.Date</span>(<span class="fu">c</span>(</span>
-<span id="cb13-128"><a href="#cb13-128" aria-hidden="true" tabindex="-1"></a>    <span class="st">"1973-08-01"</span>, <span class="st">"1980-01-01"</span>, <span class="st">"1990-07-01"</span>, <span class="st">"2008-04-01"</span>, <span class="st">"2020-01-01"</span></span>
-<span id="cb13-129"><a href="#cb13-129" aria-hidden="true" tabindex="-1"></a>  )),</span>
-<span id="cb13-130"><a href="#cb13-130" aria-hidden="true" tabindex="-1"></a>  <span class="at">end =</span> <span class="fu">as.Date</span>(<span class="fu">c</span>(</span>
-<span id="cb13-131"><a href="#cb13-131" aria-hidden="true" tabindex="-1"></a>    <span class="st">"1975-04-01"</span>, <span class="st">"1981-05-01"</span>, <span class="st">"1992-04-01"</span>, <span class="st">"2009-06-01"</span>, <span class="st">"2020-06-01"</span></span>
-<span id="cb13-132"><a href="#cb13-132" aria-hidden="true" tabindex="-1"></a>  )),</span>
-<span id="cb13-133"><a href="#cb13-133" aria-hidden="true" tabindex="-1"></a>  <span class="at">label =</span> <span class="fu">c</span>(</span>
-<span id="cb13-134"><a href="#cb13-134" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Oil crisis"</span>, <span class="st">"Early 1980s"</span>, <span class="st">"Early 1990s"</span>,</span>
-<span id="cb13-135"><a href="#cb13-135" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Global financial crisis"</span>, <span class="st">"COVID-19"</span></span>
-<span id="cb13-136"><a href="#cb13-136" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb13-137"><a href="#cb13-137" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb13-138"><a href="#cb13-138" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-139"><a href="#cb13-139" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-140"><a href="#cb13-140" aria-hidden="true" tabindex="-1"></a>To apply the shading, add a <span class="in">`geom_rect()`</span> layer *before* the main data layer so the shading sits behind the line. Setting <span class="in">`ymin`</span> and <span class="in">`ymax`</span> to <span class="in">`-Inf`</span> and <span class="in">`Inf`</span> ensures the bands stretch across the full y-axis range regardless of the data.</span>
-<span id="cb13-141"><a href="#cb13-141" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-144"><a href="#cb13-144" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb13-145"><a href="#cb13-145" aria-hidden="true" tabindex="-1"></a>gdp <span class="ot">&lt;-</span> <span class="fu">ons_gdp</span>()</span>
-<span id="cb13-146"><a href="#cb13-146" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-147"><a href="#cb13-147" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(gdp, <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> value)) <span class="sc">+</span></span>
-<span id="cb13-148"><a href="#cb13-148" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_rect</span>(</span>
-<span id="cb13-149"><a href="#cb13-149" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> uk_recessions,</span>
-<span id="cb13-150"><a href="#cb13-150" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">xmin =</span> start, <span class="at">xmax =</span> end, <span class="at">ymin =</span> <span class="sc">-</span><span class="cn">Inf</span>, <span class="at">ymax =</span> <span class="cn">Inf</span>),</span>
-<span id="cb13-151"><a href="#cb13-151" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"#D5D8DC"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>,</span>
-<span id="cb13-152"><a href="#cb13-152" aria-hidden="true" tabindex="-1"></a>    <span class="at">inherit.aes =</span> <span class="cn">FALSE</span></span>
-<span id="cb13-153"><a href="#cb13-153" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb13-154"><a href="#cb13-154" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">colour =</span> <span class="st">"#1B5E7B"</span>, <span class="at">linewidth =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
-<span id="cb13-155"><a href="#cb13-155" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb13-156"><a href="#cb13-156" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"UK Gross Domestic Product"</span>,</span>
-<span id="cb13-157"><a href="#cb13-157" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Chained volume measure, seasonally adjusted"</span>,</span>
-<span id="cb13-158"><a href="#cb13-158" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="cn">NULL</span>,</span>
-<span id="cb13-159"><a href="#cb13-159" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Source: ONS. Shaded areas indicate recessions."</span></span>
-<span id="cb13-160"><a href="#cb13-160" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb13-161"><a href="#cb13-161" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_macro</span>()</span>
-<span id="cb13-162"><a href="#cb13-162" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-163"><a href="#cb13-163" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-164"><a href="#cb13-164" aria-hidden="true" tabindex="-1"></a>The <span class="in">`inherit.aes = FALSE`</span> argument is important. Without it, ggplot will try to map the recession data frame to the aesthetic mappings defined in the main <span class="in">`ggplot()`</span> call, which will fail because the recession data has different columns. This is a common source of confusion when layering different data frames in ggplot2.</span>
-<span id="cb13-165"><a href="#cb13-165" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-166"><a href="#cb13-166" aria-hidden="true" tabindex="-1"></a>You can reuse the <span class="in">`uk_recessions`</span> data frame across every chart in your analysis. Some practitioners wrap the recession layer into a helper function to keep their plotting code concise:</span>
-<span id="cb13-167"><a href="#cb13-167" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-170"><a href="#cb13-170" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb13-171"><a href="#cb13-171" aria-hidden="true" tabindex="-1"></a>add_recession_shading <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">recessions =</span> uk_recessions,</span>
-<span id="cb13-172"><a href="#cb13-172" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">fill =</span> <span class="st">"#D5D8DC"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>) {</span>
-<span id="cb13-173"><a href="#cb13-173" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_rect</span>(</span>
-<span id="cb13-174"><a href="#cb13-174" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> recessions,</span>
-<span id="cb13-175"><a href="#cb13-175" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">xmin =</span> start, <span class="at">xmax =</span> end, <span class="at">ymin =</span> <span class="sc">-</span><span class="cn">Inf</span>, <span class="at">ymax =</span> <span class="cn">Inf</span>),</span>
-<span id="cb13-176"><a href="#cb13-176" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> fill, <span class="at">alpha =</span> alpha,</span>
-<span id="cb13-177"><a href="#cb13-177" aria-hidden="true" tabindex="-1"></a>    <span class="at">inherit.aes =</span> <span class="cn">FALSE</span></span>
-<span id="cb13-178"><a href="#cb13-178" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb13-179"><a href="#cb13-179" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb13-180"><a href="#cb13-180" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-181"><a href="#cb13-181" aria-hidden="true" tabindex="-1"></a><span class="co"># Usage: ggplot(gdp, aes(date, value)) + add_recession_shading() + geom_line()</span></span>
-<span id="cb13-182"><a href="#cb13-182" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-183"><a href="#cb13-183" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-184"><a href="#cb13-184" aria-hidden="true" tabindex="-1"></a><span class="fu">## Fan charts for forecast uncertainty</span></span>
-<span id="cb13-185"><a href="#cb13-185" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-186"><a href="#cb13-186" aria-hidden="true" tabindex="-1"></a>Fan charts are one of the Bank of England's most recognisable contributions to economic communication. Introduced in the 1996 Inflation Report, they show a central forecast surrounded by progressively wider bands representing increasing uncertainty. The visual message is immediate: the further out you look, the less certain we are.</span>
-<span id="cb13-187"><a href="#cb13-187" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-188"><a href="#cb13-188" aria-hidden="true" tabindex="-1"></a>The chart works by stacking <span class="in">`geom_ribbon()`</span> layers, each representing a different confidence interval. The widest band (say, 90%) is drawn first in the lightest shade, then the 75% band, then the 50%, and finally the central forecast line on top. This ordering ensures narrower, darker bands are visible in front of wider, lighter ones.</span>
-<span id="cb13-189"><a href="#cb13-189" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-190"><a href="#cb13-190" aria-hidden="true" tabindex="-1"></a>To demonstrate, we will build a fan chart for UK GDP growth using OBR forecast data. In practice you would pull the OBR's forecast distribution parameters; here we simulate symmetric uncertainty bands around a central path to illustrate the technique.</span>
-<span id="cb13-191"><a href="#cb13-191" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-194"><a href="#cb13-194" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb13-195"><a href="#cb13-195" aria-hidden="true" tabindex="-1"></a><span class="co"># Pull OBR GDP forecast</span></span>
-<span id="cb13-196"><a href="#cb13-196" aria-hidden="true" tabindex="-1"></a>obr_gdp <span class="ot">&lt;-</span> <span class="fu">obr_forecast</span>(<span class="st">"GDP growth"</span>)</span>
-<span id="cb13-197"><a href="#cb13-197" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-198"><a href="#cb13-198" aria-hidden="true" tabindex="-1"></a><span class="co"># For illustration, create expanding uncertainty bands around the central forecast.</span></span>
-<span id="cb13-199"><a href="#cb13-199" aria-hidden="true" tabindex="-1"></a><span class="co"># In a real application you would use the OBR's published forecast distribution.</span></span>
-<span id="cb13-200"><a href="#cb13-200" aria-hidden="true" tabindex="-1"></a>fan_data <span class="ot">&lt;-</span> obr_gdp <span class="sc">|&gt;</span></span>
-<span id="cb13-201"><a href="#cb13-201" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb13-202"><a href="#cb13-202" aria-hidden="true" tabindex="-1"></a>    <span class="at">p90_upper =</span> value <span class="sc">+</span> <span class="fl">2.5</span>,</span>
-<span id="cb13-203"><a href="#cb13-203" aria-hidden="true" tabindex="-1"></a>    <span class="at">p90_lower =</span> value <span class="sc">-</span> <span class="fl">2.5</span>,</span>
-<span id="cb13-204"><a href="#cb13-204" aria-hidden="true" tabindex="-1"></a>    <span class="at">p75_upper =</span> value <span class="sc">+</span> <span class="fl">1.7</span>,</span>
-<span id="cb13-205"><a href="#cb13-205" aria-hidden="true" tabindex="-1"></a>    <span class="at">p75_lower =</span> value <span class="sc">-</span> <span class="fl">1.7</span>,</span>
-<span id="cb13-206"><a href="#cb13-206" aria-hidden="true" tabindex="-1"></a>    <span class="at">p50_upper =</span> value <span class="sc">+</span> <span class="fl">0.9</span>,</span>
-<span id="cb13-207"><a href="#cb13-207" aria-hidden="true" tabindex="-1"></a>    <span class="at">p50_lower =</span> value <span class="sc">-</span> <span class="fl">0.9</span></span>
-<span id="cb13-208"><a href="#cb13-208" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb13-209"><a href="#cb13-209" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-210"><a href="#cb13-210" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fan_data, <span class="fu">aes</span>(<span class="at">x =</span> date)) <span class="sc">+</span></span>
-<span id="cb13-211"><a href="#cb13-211" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> p90_lower, <span class="at">ymax =</span> p90_upper), <span class="at">fill =</span> <span class="st">"#1B5E7B"</span>, <span class="at">alpha =</span> <span class="fl">0.15</span>) <span class="sc">+</span></span>
-<span id="cb13-212"><a href="#cb13-212" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> p75_lower, <span class="at">ymax =</span> p75_upper), <span class="at">fill =</span> <span class="st">"#1B5E7B"</span>, <span class="at">alpha =</span> <span class="fl">0.25</span>) <span class="sc">+</span></span>
-<span id="cb13-213"><a href="#cb13-213" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> p50_lower, <span class="at">ymax =</span> p50_upper), <span class="at">fill =</span> <span class="st">"#1B5E7B"</span>, <span class="at">alpha =</span> <span class="fl">0.40</span>) <span class="sc">+</span></span>
-<span id="cb13-214"><a href="#cb13-214" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> value), <span class="at">colour =</span> <span class="st">"#1B5E7B"</span>, <span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
-<span id="cb13-215"><a href="#cb13-215" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">colour =</span> <span class="st">"#999999"</span>, <span class="at">linewidth =</span> <span class="fl">0.3</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
-<span id="cb13-216"><a href="#cb13-216" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb13-217"><a href="#cb13-217" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"UK GDP Growth Forecast with Uncertainty Bands"</span>,</span>
-<span id="cb13-218"><a href="#cb13-218" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"OBR central forecast, per cent year-on-year"</span>,</span>
-<span id="cb13-219"><a href="#cb13-219" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="cn">NULL</span>,</span>
-<span id="cb13-220"><a href="#cb13-220" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Source: OBR. Shaded areas show 50%, 75%, and 90% confidence intervals."</span></span>
-<span id="cb13-221"><a href="#cb13-221" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb13-222"><a href="#cb13-222" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_macro</span>()</span>
-<span id="cb13-223"><a href="#cb13-223" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-224"><a href="#cb13-224" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-225"><a href="#cb13-225" aria-hidden="true" tabindex="-1"></a>The key design choices here are the use of a single hue with varying transparency rather than multiple colours. This follows the Bank of England convention and avoids the visual noise of a rainbow palette. The dashed zero line provides a reference point — viewers can immediately see when growth is expected to turn negative.</span>
-<span id="cb13-226"><a href="#cb13-226" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-227"><a href="#cb13-227" aria-hidden="true" tabindex="-1"></a>For asymmetric distributions (where risks are tilted to the upside or downside), you would use different widths above and below the central forecast. The Bank of England's fan charts are famously asymmetric, reflecting the MPC's assessment of the balance of risks. The mechanics in ggplot2 are identical — you simply set different upper and lower bounds for each ribbon.</span>
-<span id="cb13-228"><a href="#cb13-228" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-229"><a href="#cb13-229" aria-hidden="true" tabindex="-1"></a><span class="fu">## Small multiples for cross-country comparison</span></span>
-<span id="cb13-230"><a href="#cb13-230" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-231"><a href="#cb13-231" aria-hidden="true" tabindex="-1"></a>Small multiples — the same chart repeated for different categories — are one of the most effective ways to compare economic trends across countries. Edward Tufte called them "the best design solution for a wide range of problems in data display," and they are ubiquitous in institutional economics: the ECB's Economic Bulletin, the IMF's World Economic Outlook, and the OECD's Economic Surveys all use them extensively.</span>
-<span id="cb13-232"><a href="#cb13-232" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-233"><a href="#cb13-233" aria-hidden="true" tabindex="-1"></a>In ggplot2, small multiples are built with <span class="in">`facet_wrap()`</span> or <span class="in">`facet_grid()`</span>. The approach works particularly well with the <span class="in">`readecb`</span> package, which returns tidy data frames with a country or reference area column ready for faceting.</span>
-<span id="cb13-234"><a href="#cb13-234" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-235"><a href="#cb13-235" aria-hidden="true" tabindex="-1"></a>Let us plot HICP inflation for the four largest euro area economies. The ECB publishes harmonised consumer price indices for all member states, making cross-country comparison straightforward because the methodology is consistent.</span>
-<span id="cb13-236"><a href="#cb13-236" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-239"><a href="#cb13-239" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb13-240"><a href="#cb13-240" aria-hidden="true" tabindex="-1"></a>countries <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"DE"</span>, <span class="st">"FR"</span>, <span class="st">"IT"</span>, <span class="st">"ES"</span>)</span>
-<span id="cb13-241"><a href="#cb13-241" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-242"><a href="#cb13-242" aria-hidden="true" tabindex="-1"></a>hicp_data <span class="ot">&lt;-</span> <span class="fu">lapply</span>(countries, <span class="cf">function</span>(cc) {</span>
-<span id="cb13-243"><a href="#cb13-243" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ecb_hicp</span>(<span class="at">geo =</span> cc) <span class="sc">|&gt;</span></span>
-<span id="cb13-244"><a href="#cb13-244" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">country =</span> cc)</span>
-<span id="cb13-245"><a href="#cb13-245" aria-hidden="true" tabindex="-1"></a>}) <span class="sc">|&gt;</span></span>
-<span id="cb13-246"><a href="#cb13-246" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>()</span>
-<span id="cb13-247"><a href="#cb13-247" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-248"><a href="#cb13-248" aria-hidden="true" tabindex="-1"></a><span class="co"># Map country codes to readable names</span></span>
-<span id="cb13-249"><a href="#cb13-249" aria-hidden="true" tabindex="-1"></a>country_names <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb13-250"><a href="#cb13-250" aria-hidden="true" tabindex="-1"></a>  <span class="at">DE =</span> <span class="st">"Germany"</span>, <span class="at">FR =</span> <span class="st">"France"</span>,</span>
-<span id="cb13-251"><a href="#cb13-251" aria-hidden="true" tabindex="-1"></a>  <span class="at">IT =</span> <span class="st">"Italy"</span>,   <span class="at">ES =</span> <span class="st">"Spain"</span></span>
-<span id="cb13-252"><a href="#cb13-252" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb13-253"><a href="#cb13-253" aria-hidden="true" tabindex="-1"></a>hicp_data <span class="ot">&lt;-</span> hicp_data <span class="sc">|&gt;</span></span>
-<span id="cb13-254"><a href="#cb13-254" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">country =</span> country_names[country])</span>
-<span id="cb13-255"><a href="#cb13-255" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-256"><a href="#cb13-256" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(hicp_data, <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> value)) <span class="sc">+</span></span>
-<span id="cb13-257"><a href="#cb13-257" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">colour =</span> <span class="st">"#1B5E7B"</span>, <span class="at">linewidth =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
-<span id="cb13-258"><a href="#cb13-258" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> country, <span class="at">ncol =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb13-259"><a href="#cb13-259" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb13-260"><a href="#cb13-260" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"HICP Inflation Across the Euro Area"</span>,</span>
-<span id="cb13-261"><a href="#cb13-261" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Annual rate of change, per cent"</span>,</span>
-<span id="cb13-262"><a href="#cb13-262" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="cn">NULL</span>,</span>
-<span id="cb13-263"><a href="#cb13-263" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Source: ECB"</span></span>
-<span id="cb13-264"><a href="#cb13-264" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb13-265"><a href="#cb13-265" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_macro</span>() <span class="sc">+</span></span>
-<span id="cb13-266"><a href="#cb13-266" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">strip.text =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="fu">rel</span>(<span class="fl">0.95</span>)))</span>
-<span id="cb13-267"><a href="#cb13-267" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-268"><a href="#cb13-268" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-269"><a href="#cb13-269" aria-hidden="true" tabindex="-1"></a>Several design choices make this chart work. First, all four panels share the same y-axis scale (the default in <span class="in">`facet_wrap()`</span>), which allows genuine comparison of levels. If one country's inflation was persistently higher, it would be immediately visible. Second, we use a single colour because the facet labels already identify each country — adding colour would be redundant. Third, the panels are arranged in a 2x2 grid, which keeps each panel wide enough for the time axis to remain legible.</span>
-<span id="cb13-270"><a href="#cb13-270" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-271"><a href="#cb13-271" aria-hidden="true" tabindex="-1"></a>If the scales are very different across countries — for example, when comparing GDP levels rather than growth rates — you can use <span class="in">`facet_wrap(~ country, scales = "free_y")`</span>. But use this sparingly, because it makes it harder to compare magnitudes across panels. A note in the subtitle or caption is essential when scales differ.</span>
-<span id="cb13-272"><a href="#cb13-272" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-273"><a href="#cb13-273" aria-hidden="true" tabindex="-1"></a><span class="fu">## Yield curve snapshots</span></span>
-<span id="cb13-274"><a href="#cb13-274" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-275"><a href="#cb13-275" aria-hidden="true" tabindex="-1"></a>The yield curve — the relationship between government bond yields and their maturity — is one of the most closely watched indicators in finance and macroeconomics. Its shape carries information about market expectations for interest rates, inflation, and growth. An inverted yield curve, where short-term yields exceed long-term yields, has preceded every US recession since the 1960s.</span>
-<span id="cb13-276"><a href="#cb13-276" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-277"><a href="#cb13-277" aria-hidden="true" tabindex="-1"></a>Plotting multiple yield curves on the same chart at different points in time shows how expectations have shifted. This is far more informative than a single snapshot. The <span class="in">`boe_yield_curve()`</span> function from the <span class="in">`boe`</span> package returns gilt yields at various maturities, making it straightforward to build these overlays.</span>
-<span id="cb13-278"><a href="#cb13-278" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-281"><a href="#cb13-281" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb13-282"><a href="#cb13-282" aria-hidden="true" tabindex="-1"></a><span class="co"># Pull yield curve data for selected dates</span></span>
-<span id="cb13-283"><a href="#cb13-283" aria-hidden="true" tabindex="-1"></a>yield_data <span class="ot">&lt;-</span> <span class="fu">boe_yield_curve</span>(<span class="at">from =</span> <span class="st">"2019-01"</span>)</span>
-<span id="cb13-284"><a href="#cb13-284" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-285"><a href="#cb13-285" aria-hidden="true" tabindex="-1"></a><span class="co"># Select specific dates to plot</span></span>
-<span id="cb13-286"><a href="#cb13-286" aria-hidden="true" tabindex="-1"></a>snapshot_dates <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(<span class="fu">c</span>(<span class="st">"2019-06-28"</span>, <span class="st">"2020-06-30"</span>, <span class="st">"2022-06-30"</span>, <span class="st">"2024-06-28"</span>))</span>
-<span id="cb13-287"><a href="#cb13-287" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-288"><a href="#cb13-288" aria-hidden="true" tabindex="-1"></a>yield_snapshots <span class="ot">&lt;-</span> yield_data <span class="sc">|&gt;</span></span>
-<span id="cb13-289"><a href="#cb13-289" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">%in%</span> snapshot_dates) <span class="sc">|&gt;</span></span>
-<span id="cb13-290"><a href="#cb13-290" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date_label =</span> <span class="fu">format</span>(date, <span class="st">"%B %Y"</span>))</span>
-<span id="cb13-291"><a href="#cb13-291" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-292"><a href="#cb13-292" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(yield_snapshots, <span class="fu">aes</span>(<span class="at">x =</span> maturity, <span class="at">y =</span> value, <span class="at">colour =</span> date_label)) <span class="sc">+</span></span>
-<span id="cb13-293"><a href="#cb13-293" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
-<span id="cb13-294"><a href="#cb13-294" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">1.5</span>) <span class="sc">+</span></span>
-<span id="cb13-295"><a href="#cb13-295" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_macro</span>() <span class="sc">+</span></span>
-<span id="cb13-296"><a href="#cb13-296" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb13-297"><a href="#cb13-297" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"UK Gilt Yield Curve at Selected Dates"</span>,</span>
-<span id="cb13-298"><a href="#cb13-298" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Nominal spot rates, per cent"</span>,</span>
-<span id="cb13-299"><a href="#cb13-299" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Maturity (years)"</span>, <span class="at">y =</span> <span class="cn">NULL</span>,</span>
-<span id="cb13-300"><a href="#cb13-300" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Source: Bank of England"</span></span>
-<span id="cb13-301"><a href="#cb13-301" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb13-302"><a href="#cb13-302" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_macro</span>()</span>
-<span id="cb13-303"><a href="#cb13-303" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-304"><a href="#cb13-304" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-305"><a href="#cb13-305" aria-hidden="true" tabindex="-1"></a>The chart immediately reveals the story of UK monetary policy across these dates. In mid-2019, the curve was relatively flat, reflecting expectations that rates would remain low. By mid-2022, the curve had shifted sharply upward as inflation surged and the Bank of England tightened policy. Overlaying curves in this way is more effective than plotting a single maturity over time, because it shows the entire term structure at a glance.</span>
-<span id="cb13-306"><a href="#cb13-306" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-307"><a href="#cb13-307" aria-hidden="true" tabindex="-1"></a>When working with yield curve data, pay attention to the x-axis. Maturities are not evenly spaced — there are more data points at the short end (1, 2, 3, 5 years) than the long end (10, 20, 30 years). A linear scale is standard, but the points will cluster at shorter maturities. Adding <span class="in">`geom_point()`</span> helps mark the actual data points and avoids suggesting false precision between observations.</span>
-<span id="cb13-308"><a href="#cb13-308" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-309"><a href="#cb13-309" aria-hidden="true" tabindex="-1"></a><span class="fu">## Annotating key events</span></span>
-<span id="cb13-310"><a href="#cb13-310" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-311"><a href="#cb13-311" aria-hidden="true" tabindex="-1"></a>Time series charts become much more informative when key events are marked directly on the plot. Rather than forcing readers to remember that the UK left the EU on 31 January 2020, or that the Bank of England cut rates to 0.1% in March 2020, you can annotate these events on the chart itself. This is particularly valuable in publications where charts need to be self-contained.</span>
-<span id="cb13-312"><a href="#cb13-312" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-313"><a href="#cb13-313" aria-hidden="true" tabindex="-1"></a>The two main tools are <span class="in">`geom_vline()`</span> for vertical reference lines and <span class="in">`annotate()`</span> for text labels. Vertical lines are best drawn as thin dashed lines in a neutral colour so they do not compete with the data. Text annotations should be brief — a few words at most — and positioned to avoid overlapping the data.</span>
-<span id="cb13-314"><a href="#cb13-314" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-317"><a href="#cb13-317" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb13-318"><a href="#cb13-318" aria-hidden="true" tabindex="-1"></a>bank_rate <span class="ot">&lt;-</span> <span class="fu">boe_bank_rate</span>()</span>
-<span id="cb13-319"><a href="#cb13-319" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-320"><a href="#cb13-320" aria-hidden="true" tabindex="-1"></a>events <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb13-321"><a href="#cb13-321" aria-hidden="true" tabindex="-1"></a>  <span class="at">date =</span> <span class="fu">as.Date</span>(<span class="fu">c</span>(<span class="st">"2016-06-23"</span>, <span class="st">"2020-03-11"</span>, <span class="st">"2021-12-16"</span>)),</span>
-<span id="cb13-322"><a href="#cb13-322" aria-hidden="true" tabindex="-1"></a>  <span class="at">label =</span> <span class="fu">c</span>(<span class="st">"Brexit</span><span class="sc">\n</span><span class="st">referendum"</span>, <span class="st">"COVID-19</span><span class="sc">\n</span><span class="st">rate cut"</span>, <span class="st">"First post-COVID</span><span class="sc">\n</span><span class="st">rate rise"</span>),</span>
-<span id="cb13-323"><a href="#cb13-323" aria-hidden="true" tabindex="-1"></a>  <span class="at">y_pos =</span> <span class="fu">c</span>(<span class="fl">5.5</span>, <span class="fl">5.5</span>, <span class="fl">5.5</span>)</span>
-<span id="cb13-324"><a href="#cb13-324" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb13-325"><a href="#cb13-325" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-326"><a href="#cb13-326" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(bank_rate <span class="sc">|&gt;</span> <span class="fu">filter</span>(date <span class="sc">&gt;=</span> <span class="fu">as.Date</span>(<span class="st">"2005-01-01"</span>)),</span>
-<span id="cb13-327"><a href="#cb13-327" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> value)) <span class="sc">+</span></span>
-<span id="cb13-328"><a href="#cb13-328" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">colour =</span> <span class="st">"#1B5E7B"</span>, <span class="at">linewidth =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
-<span id="cb13-329"><a href="#cb13-329" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(</span>
-<span id="cb13-330"><a href="#cb13-330" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> events, <span class="fu">aes</span>(<span class="at">xintercept =</span> date),</span>
-<span id="cb13-331"><a href="#cb13-331" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="st">"#C0392B"</span>, <span class="at">linewidth =</span> <span class="fl">0.3</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span></span>
-<span id="cb13-332"><a href="#cb13-332" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb13-333"><a href="#cb13-333" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(</span>
-<span id="cb13-334"><a href="#cb13-334" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> events,</span>
-<span id="cb13-335"><a href="#cb13-335" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> y_pos, <span class="at">label =</span> label),</span>
-<span id="cb13-336"><a href="#cb13-336" aria-hidden="true" tabindex="-1"></a>    <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.1</span>, <span class="at">vjust =</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="fl">2.8</span>, <span class="at">colour =</span> <span class="st">"#C0392B"</span>,</span>
-<span id="cb13-337"><a href="#cb13-337" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="st">"Helvetica"</span>, <span class="at">lineheight =</span> <span class="fl">0.9</span></span>
-<span id="cb13-338"><a href="#cb13-338" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb13-339"><a href="#cb13-339" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb13-340"><a href="#cb13-340" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"Bank of England Bank Rate"</span>,</span>
-<span id="cb13-341"><a href="#cb13-341" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Per cent"</span>,</span>
-<span id="cb13-342"><a href="#cb13-342" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="cn">NULL</span>,</span>
-<span id="cb13-343"><a href="#cb13-343" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Source: Bank of England"</span></span>
-<span id="cb13-344"><a href="#cb13-344" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb13-345"><a href="#cb13-345" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_macro</span>()</span>
-<span id="cb13-346"><a href="#cb13-346" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-347"><a href="#cb13-347" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-348"><a href="#cb13-348" aria-hidden="true" tabindex="-1"></a>A few practical tips for annotations. First, use <span class="in">`\n`</span> in label text to break long labels across two lines rather than letting them run off the chart. Second, <span class="in">`hjust`</span> and <span class="in">`vjust`</span> control the anchor point — <span class="in">`hjust = -0.1`</span> places the text just to the right of the vertical line, which is the conventional position. Third, keep annotation text short and factual. The chart should prompt the reader to think, not do their thinking for them.</span>
-<span id="cb13-349"><a href="#cb13-349" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-350"><a href="#cb13-350" aria-hidden="true" tabindex="-1"></a>For charts with many events, consider using <span class="in">`ggrepel::geom_text_repel()`</span> to automatically avoid overlapping labels. This is especially useful for dense time series where multiple events cluster together.</span>
-<span id="cb13-351"><a href="#cb13-351" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-354"><a href="#cb13-354" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb13-355"><a href="#cb13-355" aria-hidden="true" tabindex="-1"></a><span class="co"># Alternative with ggrepel for automatic label placement</span></span>
-<span id="cb13-356"><a href="#cb13-356" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggrepel)</span>
-<span id="cb13-357"><a href="#cb13-357" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-358"><a href="#cb13-358" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(bank_rate <span class="sc">|&gt;</span> <span class="fu">filter</span>(date <span class="sc">&gt;=</span> <span class="fu">as.Date</span>(<span class="st">"2005-01-01"</span>)),</span>
-<span id="cb13-359"><a href="#cb13-359" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> value)) <span class="sc">+</span></span>
-<span id="cb13-360"><a href="#cb13-360" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">colour =</span> <span class="st">"#1B5E7B"</span>, <span class="at">linewidth =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
-<span id="cb13-361"><a href="#cb13-361" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(</span>
-<span id="cb13-362"><a href="#cb13-362" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> events, <span class="fu">aes</span>(<span class="at">xintercept =</span> date),</span>
-<span id="cb13-363"><a href="#cb13-363" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="st">"#C0392B"</span>, <span class="at">linewidth =</span> <span class="fl">0.3</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span></span>
-<span id="cb13-364"><a href="#cb13-364" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb13-365"><a href="#cb13-365" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(</span>
-<span id="cb13-366"><a href="#cb13-366" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> bank_rate <span class="sc">|&gt;</span> <span class="fu">filter</span>(date <span class="sc">%in%</span> events<span class="sc">$</span>date),</span>
-<span id="cb13-367"><a href="#cb13-367" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="st">"#C0392B"</span>, <span class="at">size =</span> <span class="dv">2</span></span>
-<span id="cb13-368"><a href="#cb13-368" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb13-369"><a href="#cb13-369" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text_repel</span>(</span>
-<span id="cb13-370"><a href="#cb13-370" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> events,</span>
-<span id="cb13-371"><a href="#cb13-371" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> y_pos, <span class="at">label =</span> label),</span>
-<span id="cb13-372"><a href="#cb13-372" aria-hidden="true" tabindex="-1"></a>    <span class="at">size =</span> <span class="fl">2.8</span>, <span class="at">colour =</span> <span class="st">"#C0392B"</span>,</span>
-<span id="cb13-373"><a href="#cb13-373" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="st">"Helvetica"</span>, <span class="at">lineheight =</span> <span class="fl">0.9</span>,</span>
-<span id="cb13-374"><a href="#cb13-374" aria-hidden="true" tabindex="-1"></a>    <span class="at">nudge_y =</span> <span class="fl">0.5</span>, <span class="at">segment.colour =</span> <span class="st">"#C0392B"</span>, <span class="at">segment.size =</span> <span class="fl">0.2</span></span>
-<span id="cb13-375"><a href="#cb13-375" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb13-376"><a href="#cb13-376" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb13-377"><a href="#cb13-377" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"Bank of England Bank Rate"</span>,</span>
-<span id="cb13-378"><a href="#cb13-378" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Per cent"</span>,</span>
-<span id="cb13-379"><a href="#cb13-379" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="cn">NULL</span>,</span>
-<span id="cb13-380"><a href="#cb13-380" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Source: Bank of England"</span></span>
-<span id="cb13-381"><a href="#cb13-381" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb13-382"><a href="#cb13-382" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_macro</span>()</span>
-<span id="cb13-383"><a href="#cb13-383" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-384"><a href="#cb13-384" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-385"><a href="#cb13-385" aria-hidden="true" tabindex="-1"></a>::: {.callout-warning}</span>
-<span id="cb13-386"><a href="#cb13-386" aria-hidden="true" tabindex="-1"></a><span class="fu">## A note on dual-axis charts</span></span>
-<span id="cb13-387"><a href="#cb13-387" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-388"><a href="#cb13-388" aria-hidden="true" tabindex="-1"></a>Dual-axis charts — where the left and right y-axes show different scales — are common in financial journalism but widely criticised by statisticians. The problem is that the visual relationship between two series on a dual-axis chart is entirely determined by the arbitrary choice of axis scales. By adjusting the ranges, you can make any two series appear to be correlated, uncorrelated, or inversely correlated.</span>
-<span id="cb13-389"><a href="#cb13-389" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-390"><a href="#cb13-390" aria-hidden="true" tabindex="-1"></a>A better approach is to use facets: plot each series in its own panel with an independent y-axis. The reader can still compare timing and direction, but the chart does not imply a spurious quantitative relationship. <span class="in">`facet_wrap(scales = "free_y")`</span> handles this cleanly.</span>
-<span id="cb13-391"><a href="#cb13-391" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb13-392"><a href="#cb13-392" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-393"><a href="#cb13-393" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises</span></span>
-<span id="cb13-394"><a href="#cb13-394" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-395"><a href="#cb13-395" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Build a chart of UK GDP growth with recession periods shaded in grey. Calculate quarter-on-quarter growth rates from <span class="in">`ons_gdp()`</span> and overlay the recession bands from this chapter. Add a horizontal dashed line at zero.</span>
-<span id="cb13-396"><a href="#cb13-396" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-397"><a href="#cb13-397" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Create a fan chart showing the OBR's GDP growth forecast with uncertainty bands. Experiment with different colour palettes — try a warm palette (reds/oranges) alongside the blue version from the chapter. Which is more readable?</span>
-<span id="cb13-398"><a href="#cb13-398" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-399"><a href="#cb13-399" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Plot HICP inflation for Germany, France, Italy, and Spain as small multiples using <span class="in">`facet_wrap()`</span>. Add a horizontal reference line at 2% (the ECB's target) to each panel.</span>
-<span id="cb13-400"><a href="#cb13-400" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-401"><a href="#cb13-401" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Pull yield curve data from the Bank of England for the first business day of each quarter in 2023. Overlay all four curves on a single chart and describe what the changing shape tells you about market expectations.</span>
-<span id="cb13-402"><a href="#cb13-402" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-403"><a href="#cb13-403" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Take any time series chart from this chapter and annotate at least three macroeconomic events of your choice. Practice positioning the labels so they do not overlap the data.</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb62" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a><span class="co">  eval: true</span></span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a><span class="fu"># Publication-Quality Economic Charts {#sec-charts}</span></span>
+<span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-8"><a href="#cb62-8" aria-hidden="true" tabindex="-1"></a>A good chart can carry an argument. Central bank reports, budget documents, and think tank publications all rely on a small set of chart types — done well, with clean design and careful annotation.</span>
+<span id="cb62-9"><a href="#cb62-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-10"><a href="#cb62-10" aria-hidden="true" tabindex="-1"></a>This chapter builds a toolkit for the charts macro practitioners actually use. We start by defining a reusable house style, then work through the specific chart types you will encounter most often: recession-shaded time series, fan charts, small multiples, yield curve snapshots, and annotated event charts.</span>
+<span id="cb62-11"><a href="#cb62-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-14"><a href="#cb62-14" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb62-15"><a href="#cb62-15" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb62-16"><a href="#cb62-16" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb62-17"><a href="#cb62-17" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb62-18"><a href="#cb62-18" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb62-19"><a href="#cb62-19" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ons)</span>
+<span id="cb62-20"><a href="#cb62-20" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(boe)</span>
+<span id="cb62-21"><a href="#cb62-21" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readecb)</span>
+<span id="cb62-22"><a href="#cb62-22" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(obr)</span>
+<span id="cb62-23"><a href="#cb62-23" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb62-24"><a href="#cb62-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-25"><a href="#cb62-25" aria-hidden="true" tabindex="-1"></a><span class="fu">## A house style for economics</span></span>
+<span id="cb62-26"><a href="#cb62-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-27"><a href="#cb62-27" aria-hidden="true" tabindex="-1"></a>Every central bank, government department, and economic think tank has a house style. The Bank of England uses a clean sans-serif look with minimal gridlines. The Economist favours bold colours and a red accent. The FT uses a cream background with a distinctive serif typeface. What they all share is restraint: no 3D effects, no heavy borders, no unnecessary decoration.</span>
+<span id="cb62-28"><a href="#cb62-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-29"><a href="#cb62-29" aria-hidden="true" tabindex="-1"></a>A well-designed <span class="in">`theme_macro()`</span> function lets you apply a consistent style to every chart in your analysis with a single line. The theme below draws on the common elements of institutional economic charts: a white background, light horizontal gridlines to aid reading values off the y-axis, no vertical gridlines (which add clutter to time series), and a clean sans-serif font. The axis text is sized for readability when charts are exported at typical report dimensions.</span>
+<span id="cb62-30"><a href="#cb62-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-33"><a href="#cb62-33" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb62-34"><a href="#cb62-34" aria-hidden="true" tabindex="-1"></a>theme_macro <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">base_size =</span> <span class="dv">12</span>, <span class="at">base_family =</span> <span class="st">"Helvetica"</span>) {</span>
+<span id="cb62-35"><a href="#cb62-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> base_size, <span class="at">base_family =</span> base_family) <span class="sc">%+replace%</span></span>
+<span id="cb62-36"><a href="#cb62-36" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
+<span id="cb62-37"><a href="#cb62-37" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Background</span></span>
+<span id="cb62-38"><a href="#cb62-38" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot.background   =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"white"</span>, <span class="at">colour =</span> <span class="cn">NA</span>),</span>
+<span id="cb62-39"><a href="#cb62-39" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.background  =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"white"</span>, <span class="at">colour =</span> <span class="cn">NA</span>),</span>
+<span id="cb62-40"><a href="#cb62-40" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.border      =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb62-41"><a href="#cb62-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-42"><a href="#cb62-42" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Gridlines: light horizontal only</span></span>
+<span id="cb62-43"><a href="#cb62-43" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.major.y =</span> <span class="fu">element_line</span>(<span class="at">colour =</span> <span class="st">"#D9D9D9"</span>, <span class="at">linewidth =</span> <span class="fl">0.3</span>),</span>
+<span id="cb62-44"><a href="#cb62-44" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.major.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb62-45"><a href="#cb62-45" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.minor   =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb62-46"><a href="#cb62-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-47"><a href="#cb62-47" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Axes</span></span>
+<span id="cb62-48"><a href="#cb62-48" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.line.x  =</span> <span class="fu">element_line</span>(<span class="at">colour =</span> <span class="st">"#333333"</span>, <span class="at">linewidth =</span> <span class="fl">0.4</span>),</span>
+<span id="cb62-49"><a href="#cb62-49" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.ticks.x =</span> <span class="fu">element_line</span>(<span class="at">colour =</span> <span class="st">"#333333"</span>, <span class="at">linewidth =</span> <span class="fl">0.3</span>),</span>
+<span id="cb62-50"><a href="#cb62-50" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.ticks.y =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb62-51"><a href="#cb62-51" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.title   =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="fu">rel</span>(<span class="fl">0.9</span>), <span class="at">colour =</span> <span class="st">"#333333"</span>),</span>
+<span id="cb62-52"><a href="#cb62-52" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.text    =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="fu">rel</span>(<span class="fl">0.85</span>), <span class="at">colour =</span> <span class="st">"#555555"</span>),</span>
+<span id="cb62-53"><a href="#cb62-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-54"><a href="#cb62-54" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Title and caption</span></span>
+<span id="cb62-55"><a href="#cb62-55" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot.title    =</span> <span class="fu">element_text</span>(</span>
+<span id="cb62-56"><a href="#cb62-56" aria-hidden="true" tabindex="-1"></a>        <span class="at">size =</span> <span class="fu">rel</span>(<span class="fl">1.2</span>), <span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">colour =</span> <span class="st">"#1A1A1A"</span>,</span>
+<span id="cb62-57"><a href="#cb62-57" aria-hidden="true" tabindex="-1"></a>        <span class="at">hjust =</span> <span class="dv">0</span>, <span class="at">margin =</span> <span class="fu">margin</span>(<span class="at">b =</span> <span class="dv">8</span>)</span>
+<span id="cb62-58"><a href="#cb62-58" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb62-59"><a href="#cb62-59" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(</span>
+<span id="cb62-60"><a href="#cb62-60" aria-hidden="true" tabindex="-1"></a>        <span class="at">size =</span> <span class="fu">rel</span>(<span class="fl">0.95</span>), <span class="at">colour =</span> <span class="st">"#555555"</span>,</span>
+<span id="cb62-61"><a href="#cb62-61" aria-hidden="true" tabindex="-1"></a>        <span class="at">hjust =</span> <span class="dv">0</span>, <span class="at">margin =</span> <span class="fu">margin</span>(<span class="at">b =</span> <span class="dv">12</span>)</span>
+<span id="cb62-62"><a href="#cb62-62" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb62-63"><a href="#cb62-63" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot.caption  =</span> <span class="fu">element_text</span>(</span>
+<span id="cb62-64"><a href="#cb62-64" aria-hidden="true" tabindex="-1"></a>        <span class="at">size =</span> <span class="fu">rel</span>(<span class="fl">0.75</span>), <span class="at">colour =</span> <span class="st">"#999999"</span>,</span>
+<span id="cb62-65"><a href="#cb62-65" aria-hidden="true" tabindex="-1"></a>        <span class="at">hjust =</span> <span class="dv">1</span>, <span class="at">margin =</span> <span class="fu">margin</span>(<span class="at">t =</span> <span class="dv">10</span>)</span>
+<span id="cb62-66"><a href="#cb62-66" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb62-67"><a href="#cb62-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-68"><a href="#cb62-68" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Legend</span></span>
+<span id="cb62-69"><a href="#cb62-69" aria-hidden="true" tabindex="-1"></a>      <span class="at">legend.position  =</span> <span class="st">"top"</span>,</span>
+<span id="cb62-70"><a href="#cb62-70" aria-hidden="true" tabindex="-1"></a>      <span class="at">legend.direction =</span> <span class="st">"horizontal"</span>,</span>
+<span id="cb62-71"><a href="#cb62-71" aria-hidden="true" tabindex="-1"></a>      <span class="at">legend.title     =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb62-72"><a href="#cb62-72" aria-hidden="true" tabindex="-1"></a>      <span class="at">legend.text      =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="fu">rel</span>(<span class="fl">0.85</span>)),</span>
+<span id="cb62-73"><a href="#cb62-73" aria-hidden="true" tabindex="-1"></a>      <span class="at">legend.key       =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="cn">NA</span>),</span>
+<span id="cb62-74"><a href="#cb62-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-75"><a href="#cb62-75" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Margins</span></span>
+<span id="cb62-76"><a href="#cb62-76" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot.margin =</span> <span class="fu">margin</span>(<span class="dv">12</span>, <span class="dv">16</span>, <span class="dv">8</span>, <span class="dv">12</span>)</span>
+<span id="cb62-77"><a href="#cb62-77" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb62-78"><a href="#cb62-78" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb62-79"><a href="#cb62-79" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb62-80"><a href="#cb62-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-81"><a href="#cb62-81" aria-hidden="true" tabindex="-1"></a>With the theme defined, you can apply it to any ggplot by adding <span class="in">`+ theme_macro()`</span>. It is worth defining a matching colour palette too. A small, curated set of colours is more useful than a rainbow — most economic charts use two or three series at most.</span>
+<span id="cb62-82"><a href="#cb62-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-85"><a href="#cb62-85" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb62-86"><a href="#cb62-86" aria-hidden="true" tabindex="-1"></a>macro_colours <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb62-87"><a href="#cb62-87" aria-hidden="true" tabindex="-1"></a>  <span class="st">"#1B5E7B"</span>,</span>
+<span id="cb62-88"><a href="#cb62-88" aria-hidden="true" tabindex="-1"></a>  <span class="st">"#C0392B"</span>,</span>
+<span id="cb62-89"><a href="#cb62-89" aria-hidden="true" tabindex="-1"></a>  <span class="st">"#27AE60"</span>,</span>
+<span id="cb62-90"><a href="#cb62-90" aria-hidden="true" tabindex="-1"></a>  <span class="st">"#F39C12"</span>,</span>
+<span id="cb62-91"><a href="#cb62-91" aria-hidden="true" tabindex="-1"></a>  <span class="st">"#8E44AD"</span>,</span>
+<span id="cb62-92"><a href="#cb62-92" aria-hidden="true" tabindex="-1"></a>  <span class="st">"#2C3E50"</span></span>
+<span id="cb62-93"><a href="#cb62-93" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb62-94"><a href="#cb62-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-95"><a href="#cb62-95" aria-hidden="true" tabindex="-1"></a>scale_colour_macro <span class="ot">&lt;-</span> <span class="cf">function</span>(...) {</span>
+<span id="cb62-96"><a href="#cb62-96" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> macro_colours, ...)</span>
+<span id="cb62-97"><a href="#cb62-97" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb62-98"><a href="#cb62-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-99"><a href="#cb62-99" aria-hidden="true" tabindex="-1"></a>scale_fill_macro <span class="ot">&lt;-</span> <span class="cf">function</span>(...) {</span>
+<span id="cb62-100"><a href="#cb62-100" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> macro_colours, ...)</span>
+<span id="cb62-101"><a href="#cb62-101" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb62-102"><a href="#cb62-102" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb62-103"><a href="#cb62-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-104"><a href="#cb62-104" aria-hidden="true" tabindex="-1"></a>Let us put the theme to work with a simple example. The chart below plots CPI inflation — a single time series with a clean title, source caption, and no visual clutter.</span>
+<span id="cb62-105"><a href="#cb62-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-108"><a href="#cb62-108" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb62-109"><a href="#cb62-109" aria-hidden="true" tabindex="-1"></a>cpi <span class="ot">&lt;-</span> <span class="fu">ons_cpi</span>()</span>
+<span id="cb62-110"><a href="#cb62-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-111"><a href="#cb62-111" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(cpi, <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> value)) <span class="sc">+</span></span>
+<span id="cb62-112"><a href="#cb62-112" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">colour =</span> <span class="st">"#1B5E7B"</span>, <span class="at">linewidth =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb62-113"><a href="#cb62-113" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb62-114"><a href="#cb62-114" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"UK Consumer Price Inflation"</span>,</span>
+<span id="cb62-115"><a href="#cb62-115" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"CPI, annual rate (%)"</span>,</span>
+<span id="cb62-116"><a href="#cb62-116" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="cn">NULL</span>,</span>
+<span id="cb62-117"><a href="#cb62-117" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Source: ONS"</span></span>
+<span id="cb62-118"><a href="#cb62-118" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb62-119"><a href="#cb62-119" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_macro</span>()</span>
+<span id="cb62-120"><a href="#cb62-120" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb62-121"><a href="#cb62-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-122"><a href="#cb62-122" aria-hidden="true" tabindex="-1"></a><span class="fu">## Time series with recession shading</span></span>
+<span id="cb62-123"><a href="#cb62-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-124"><a href="#cb62-124" aria-hidden="true" tabindex="-1"></a>Recession shading is the single most requested feature for macro charts. Overlaying grey bands on periods of economic contraction gives immediate visual context — was a spike in unemployment driven by a recession, or did it happen during an expansion? The technique is straightforward: define the recession periods as a data frame of start and end dates, then draw them with <span class="in">`geom_rect()`</span>.</span>
+<span id="cb62-125"><a href="#cb62-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-126"><a href="#cb62-126" aria-hidden="true" tabindex="-1"></a>For the United Kingdom, there is no single official recession chronology like the NBER produces for the United States. The conventional definition is two consecutive quarters of negative GDP growth. The dates below cover the major post-war recessions that are widely agreed upon by the ONS and Bank of England.</span>
+<span id="cb62-127"><a href="#cb62-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-130"><a href="#cb62-130" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb62-131"><a href="#cb62-131" aria-hidden="true" tabindex="-1"></a>uk_recessions <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb62-132"><a href="#cb62-132" aria-hidden="true" tabindex="-1"></a>  <span class="at">start =</span> <span class="fu">as.Date</span>(<span class="fu">c</span>(</span>
+<span id="cb62-133"><a href="#cb62-133" aria-hidden="true" tabindex="-1"></a>    <span class="st">"1973-08-01"</span>, <span class="st">"1980-01-01"</span>, <span class="st">"1990-07-01"</span>, <span class="st">"2008-04-01"</span>, <span class="st">"2020-01-01"</span></span>
+<span id="cb62-134"><a href="#cb62-134" aria-hidden="true" tabindex="-1"></a>  )),</span>
+<span id="cb62-135"><a href="#cb62-135" aria-hidden="true" tabindex="-1"></a>  <span class="at">end =</span> <span class="fu">as.Date</span>(<span class="fu">c</span>(</span>
+<span id="cb62-136"><a href="#cb62-136" aria-hidden="true" tabindex="-1"></a>    <span class="st">"1975-04-01"</span>, <span class="st">"1981-05-01"</span>, <span class="st">"1992-04-01"</span>, <span class="st">"2009-06-01"</span>, <span class="st">"2020-06-01"</span></span>
+<span id="cb62-137"><a href="#cb62-137" aria-hidden="true" tabindex="-1"></a>  )),</span>
+<span id="cb62-138"><a href="#cb62-138" aria-hidden="true" tabindex="-1"></a>  <span class="at">label =</span> <span class="fu">c</span>(</span>
+<span id="cb62-139"><a href="#cb62-139" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Oil crisis"</span>, <span class="st">"Early 1980s"</span>, <span class="st">"Early 1990s"</span>,</span>
+<span id="cb62-140"><a href="#cb62-140" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Global financial crisis"</span>, <span class="st">"COVID-19"</span></span>
+<span id="cb62-141"><a href="#cb62-141" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb62-142"><a href="#cb62-142" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb62-143"><a href="#cb62-143" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb62-144"><a href="#cb62-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-145"><a href="#cb62-145" aria-hidden="true" tabindex="-1"></a>To apply the shading, add a <span class="in">`geom_rect()`</span> layer *before* the main data layer so the shading sits behind the line. Setting <span class="in">`ymin`</span> and <span class="in">`ymax`</span> to <span class="in">`-Inf`</span> and <span class="in">`Inf`</span> ensures the bands stretch across the full y-axis range regardless of the data.</span>
+<span id="cb62-146"><a href="#cb62-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-149"><a href="#cb62-149" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb62-150"><a href="#cb62-150" aria-hidden="true" tabindex="-1"></a>gdp <span class="ot">&lt;-</span> <span class="fu">ons_gdp</span>()</span>
+<span id="cb62-151"><a href="#cb62-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-152"><a href="#cb62-152" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(gdp, <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> value)) <span class="sc">+</span></span>
+<span id="cb62-153"><a href="#cb62-153" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_rect</span>(</span>
+<span id="cb62-154"><a href="#cb62-154" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> uk_recessions,</span>
+<span id="cb62-155"><a href="#cb62-155" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">xmin =</span> start, <span class="at">xmax =</span> end, <span class="at">ymin =</span> <span class="sc">-</span><span class="cn">Inf</span>, <span class="at">ymax =</span> <span class="cn">Inf</span>),</span>
+<span id="cb62-156"><a href="#cb62-156" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"#D5D8DC"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>,</span>
+<span id="cb62-157"><a href="#cb62-157" aria-hidden="true" tabindex="-1"></a>    <span class="at">inherit.aes =</span> <span class="cn">FALSE</span></span>
+<span id="cb62-158"><a href="#cb62-158" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb62-159"><a href="#cb62-159" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">colour =</span> <span class="st">"#1B5E7B"</span>, <span class="at">linewidth =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb62-160"><a href="#cb62-160" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb62-161"><a href="#cb62-161" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"UK Gross Domestic Product"</span>,</span>
+<span id="cb62-162"><a href="#cb62-162" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Chained volume measure, seasonally adjusted"</span>,</span>
+<span id="cb62-163"><a href="#cb62-163" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="cn">NULL</span>,</span>
+<span id="cb62-164"><a href="#cb62-164" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Source: ONS. Shaded areas indicate recessions."</span></span>
+<span id="cb62-165"><a href="#cb62-165" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb62-166"><a href="#cb62-166" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_macro</span>()</span>
+<span id="cb62-167"><a href="#cb62-167" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb62-168"><a href="#cb62-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-169"><a href="#cb62-169" aria-hidden="true" tabindex="-1"></a>The <span class="in">`inherit.aes = FALSE`</span> argument is important. Without it, ggplot will try to map the recession data frame to the aesthetic mappings defined in the main <span class="in">`ggplot()`</span> call, which will fail because the recession data has different columns. This is a common source of confusion when layering different data frames in ggplot2.</span>
+<span id="cb62-170"><a href="#cb62-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-171"><a href="#cb62-171" aria-hidden="true" tabindex="-1"></a>You can reuse the <span class="in">`uk_recessions`</span> data frame across every chart in your analysis. Some practitioners wrap the recession layer into a helper function to keep their plotting code concise:</span>
+<span id="cb62-172"><a href="#cb62-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-175"><a href="#cb62-175" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb62-176"><a href="#cb62-176" aria-hidden="true" tabindex="-1"></a>add_recession_shading <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">recessions =</span> uk_recessions,</span>
+<span id="cb62-177"><a href="#cb62-177" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">fill =</span> <span class="st">"#D5D8DC"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>) {</span>
+<span id="cb62-178"><a href="#cb62-178" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_rect</span>(</span>
+<span id="cb62-179"><a href="#cb62-179" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> recessions,</span>
+<span id="cb62-180"><a href="#cb62-180" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">xmin =</span> start, <span class="at">xmax =</span> end, <span class="at">ymin =</span> <span class="sc">-</span><span class="cn">Inf</span>, <span class="at">ymax =</span> <span class="cn">Inf</span>),</span>
+<span id="cb62-181"><a href="#cb62-181" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> fill, <span class="at">alpha =</span> alpha,</span>
+<span id="cb62-182"><a href="#cb62-182" aria-hidden="true" tabindex="-1"></a>    <span class="at">inherit.aes =</span> <span class="cn">FALSE</span></span>
+<span id="cb62-183"><a href="#cb62-183" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb62-184"><a href="#cb62-184" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb62-185"><a href="#cb62-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-186"><a href="#cb62-186" aria-hidden="true" tabindex="-1"></a><span class="co"># Usage: ggplot(gdp, aes(date, value)) + add_recession_shading() + geom_line()</span></span>
+<span id="cb62-187"><a href="#cb62-187" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb62-188"><a href="#cb62-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-189"><a href="#cb62-189" aria-hidden="true" tabindex="-1"></a><span class="fu">## Fan charts for forecast uncertainty</span></span>
+<span id="cb62-190"><a href="#cb62-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-191"><a href="#cb62-191" aria-hidden="true" tabindex="-1"></a>Fan charts are one of the Bank of England's most recognisable contributions to economic communication. Introduced in the 1996 Inflation Report, they show a central forecast surrounded by progressively wider bands representing increasing uncertainty. The visual message is immediate: the further out you look, the less certain we are.</span>
+<span id="cb62-192"><a href="#cb62-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-193"><a href="#cb62-193" aria-hidden="true" tabindex="-1"></a>The chart works by stacking <span class="in">`geom_ribbon()`</span> layers, each representing a different confidence interval. The widest band (say, 90%) is drawn first in the lightest shade, then the 75% band, then the 50%, and finally the central forecast line on top. This ordering ensures narrower, darker bands are visible in front of wider, lighter ones.</span>
+<span id="cb62-194"><a href="#cb62-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-195"><a href="#cb62-195" aria-hidden="true" tabindex="-1"></a>To demonstrate, we will build a fan chart for UK GDP growth using OBR forecast data. In practice you would pull the OBR's forecast distribution parameters; here we simulate symmetric uncertainty bands around a central path to illustrate the technique.</span>
+<span id="cb62-196"><a href="#cb62-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-199"><a href="#cb62-199" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb62-200"><a href="#cb62-200" aria-hidden="true" tabindex="-1"></a><span class="co"># Pull OBR GDP forecast — keep only the latest vintage</span></span>
+<span id="cb62-201"><a href="#cb62-201" aria-hidden="true" tabindex="-1"></a>obr_gdp <span class="ot">&lt;-</span> <span class="fu">get_forecasts</span>(<span class="st">"real_GDP"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb62-202"><a href="#cb62-202" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(forecast_date <span class="sc">==</span> <span class="fu">max</span>(forecast_date)) <span class="sc">|&gt;</span></span>
+<span id="cb62-203"><a href="#cb62-203" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date =</span> <span class="fu">as.Date</span>(<span class="fu">paste0</span>(fiscal_year, <span class="st">"-01-01"</span>)))</span>
+<span id="cb62-204"><a href="#cb62-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-205"><a href="#cb62-205" aria-hidden="true" tabindex="-1"></a><span class="co"># For illustration, create expanding uncertainty bands around the central forecast.</span></span>
+<span id="cb62-206"><a href="#cb62-206" aria-hidden="true" tabindex="-1"></a><span class="co"># In a real application you would use the OBR's published forecast distribution.</span></span>
+<span id="cb62-207"><a href="#cb62-207" aria-hidden="true" tabindex="-1"></a>fan_data <span class="ot">&lt;-</span> obr_gdp <span class="sc">|&gt;</span></span>
+<span id="cb62-208"><a href="#cb62-208" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb62-209"><a href="#cb62-209" aria-hidden="true" tabindex="-1"></a>    <span class="at">p90_upper =</span> value <span class="sc">+</span> <span class="fl">2.5</span>,</span>
+<span id="cb62-210"><a href="#cb62-210" aria-hidden="true" tabindex="-1"></a>    <span class="at">p90_lower =</span> value <span class="sc">-</span> <span class="fl">2.5</span>,</span>
+<span id="cb62-211"><a href="#cb62-211" aria-hidden="true" tabindex="-1"></a>    <span class="at">p75_upper =</span> value <span class="sc">+</span> <span class="fl">1.7</span>,</span>
+<span id="cb62-212"><a href="#cb62-212" aria-hidden="true" tabindex="-1"></a>    <span class="at">p75_lower =</span> value <span class="sc">-</span> <span class="fl">1.7</span>,</span>
+<span id="cb62-213"><a href="#cb62-213" aria-hidden="true" tabindex="-1"></a>    <span class="at">p50_upper =</span> value <span class="sc">+</span> <span class="fl">0.9</span>,</span>
+<span id="cb62-214"><a href="#cb62-214" aria-hidden="true" tabindex="-1"></a>    <span class="at">p50_lower =</span> value <span class="sc">-</span> <span class="fl">0.9</span></span>
+<span id="cb62-215"><a href="#cb62-215" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb62-216"><a href="#cb62-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-217"><a href="#cb62-217" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fan_data, <span class="fu">aes</span>(<span class="at">x =</span> date)) <span class="sc">+</span></span>
+<span id="cb62-218"><a href="#cb62-218" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> p90_lower, <span class="at">ymax =</span> p90_upper), <span class="at">fill =</span> <span class="st">"#1B5E7B"</span>, <span class="at">alpha =</span> <span class="fl">0.15</span>) <span class="sc">+</span></span>
+<span id="cb62-219"><a href="#cb62-219" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> p75_lower, <span class="at">ymax =</span> p75_upper), <span class="at">fill =</span> <span class="st">"#1B5E7B"</span>, <span class="at">alpha =</span> <span class="fl">0.25</span>) <span class="sc">+</span></span>
+<span id="cb62-220"><a href="#cb62-220" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> p50_lower, <span class="at">ymax =</span> p50_upper), <span class="at">fill =</span> <span class="st">"#1B5E7B"</span>, <span class="at">alpha =</span> <span class="fl">0.40</span>) <span class="sc">+</span></span>
+<span id="cb62-221"><a href="#cb62-221" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> value), <span class="at">colour =</span> <span class="st">"#1B5E7B"</span>, <span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb62-222"><a href="#cb62-222" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">colour =</span> <span class="st">"#999999"</span>, <span class="at">linewidth =</span> <span class="fl">0.3</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb62-223"><a href="#cb62-223" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb62-224"><a href="#cb62-224" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"UK GDP Growth Forecast with Uncertainty Bands"</span>,</span>
+<span id="cb62-225"><a href="#cb62-225" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"OBR central forecast, per cent year-on-year"</span>,</span>
+<span id="cb62-226"><a href="#cb62-226" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="cn">NULL</span>,</span>
+<span id="cb62-227"><a href="#cb62-227" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Source: OBR. Shaded areas show 50%, 75%, and 90% confidence intervals."</span></span>
+<span id="cb62-228"><a href="#cb62-228" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb62-229"><a href="#cb62-229" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_macro</span>()</span>
+<span id="cb62-230"><a href="#cb62-230" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb62-231"><a href="#cb62-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-232"><a href="#cb62-232" aria-hidden="true" tabindex="-1"></a>The key design choices here are the use of a single hue with varying transparency rather than multiple colours. This follows the Bank of England convention and avoids the visual noise of a rainbow palette. The dashed zero line provides a reference point — viewers can immediately see when growth is expected to turn negative.</span>
+<span id="cb62-233"><a href="#cb62-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-234"><a href="#cb62-234" aria-hidden="true" tabindex="-1"></a>For asymmetric distributions (where risks are tilted to the upside or downside), you would use different widths above and below the central forecast. The Bank of England's fan charts are famously asymmetric, reflecting the MPC's assessment of the balance of risks. The mechanics in ggplot2 are identical — you simply set different upper and lower bounds for each ribbon.</span>
+<span id="cb62-235"><a href="#cb62-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-236"><a href="#cb62-236" aria-hidden="true" tabindex="-1"></a><span class="fu">## Small multiples for cross-country comparison</span></span>
+<span id="cb62-237"><a href="#cb62-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-238"><a href="#cb62-238" aria-hidden="true" tabindex="-1"></a>Small multiples — the same chart repeated for different categories — are one of the most effective ways to compare economic trends across countries. Edward Tufte called them "the best design solution for a wide range of problems in data display," and they are ubiquitous in institutional economics: the ECB's Economic Bulletin, the IMF's World Economic Outlook, and the OECD's Economic Surveys all use them extensively.</span>
+<span id="cb62-239"><a href="#cb62-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-240"><a href="#cb62-240" aria-hidden="true" tabindex="-1"></a>In ggplot2, small multiples are built with <span class="in">`facet_wrap()`</span> or <span class="in">`facet_grid()`</span>. The approach works particularly well with the <span class="in">`readecb`</span> package, which returns tidy data frames with a country or reference area column ready for faceting.</span>
+<span id="cb62-241"><a href="#cb62-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-242"><a href="#cb62-242" aria-hidden="true" tabindex="-1"></a>Let us plot HICP inflation for the four largest euro area economies. The ECB publishes harmonised consumer price indices for all member states, making cross-country comparison straightforward because the methodology is consistent.</span>
+<span id="cb62-243"><a href="#cb62-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-246"><a href="#cb62-246" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb62-247"><a href="#cb62-247" aria-hidden="true" tabindex="-1"></a>countries <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"DE"</span>, <span class="st">"FR"</span>, <span class="st">"IT"</span>, <span class="st">"ES"</span>)</span>
+<span id="cb62-248"><a href="#cb62-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-249"><a href="#cb62-249" aria-hidden="true" tabindex="-1"></a>hicp_data <span class="ot">&lt;-</span> <span class="fu">lapply</span>(countries, <span class="cf">function</span>(cc) {</span>
+<span id="cb62-250"><a href="#cb62-250" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ecb_hicp</span>(<span class="at">country =</span> cc)</span>
+<span id="cb62-251"><a href="#cb62-251" aria-hidden="true" tabindex="-1"></a>}) <span class="sc">|&gt;</span></span>
+<span id="cb62-252"><a href="#cb62-252" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>()</span>
+<span id="cb62-253"><a href="#cb62-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-254"><a href="#cb62-254" aria-hidden="true" tabindex="-1"></a><span class="co"># Map country codes to readable names</span></span>
+<span id="cb62-255"><a href="#cb62-255" aria-hidden="true" tabindex="-1"></a>country_names <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb62-256"><a href="#cb62-256" aria-hidden="true" tabindex="-1"></a>  <span class="at">DE =</span> <span class="st">"Germany"</span>, <span class="at">FR =</span> <span class="st">"France"</span>,</span>
+<span id="cb62-257"><a href="#cb62-257" aria-hidden="true" tabindex="-1"></a>  <span class="at">IT =</span> <span class="st">"Italy"</span>,   <span class="at">ES =</span> <span class="st">"Spain"</span></span>
+<span id="cb62-258"><a href="#cb62-258" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb62-259"><a href="#cb62-259" aria-hidden="true" tabindex="-1"></a>hicp_data <span class="ot">&lt;-</span> hicp_data <span class="sc">|&gt;</span></span>
+<span id="cb62-260"><a href="#cb62-260" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">country =</span> country_names[country])</span>
+<span id="cb62-261"><a href="#cb62-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-262"><a href="#cb62-262" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(hicp_data, <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> value)) <span class="sc">+</span></span>
+<span id="cb62-263"><a href="#cb62-263" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">colour =</span> <span class="st">"#1B5E7B"</span>, <span class="at">linewidth =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb62-264"><a href="#cb62-264" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> country, <span class="at">ncol =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb62-265"><a href="#cb62-265" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb62-266"><a href="#cb62-266" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"HICP Inflation Across the Euro Area"</span>,</span>
+<span id="cb62-267"><a href="#cb62-267" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Annual rate of change, per cent"</span>,</span>
+<span id="cb62-268"><a href="#cb62-268" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="cn">NULL</span>,</span>
+<span id="cb62-269"><a href="#cb62-269" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Source: ECB"</span></span>
+<span id="cb62-270"><a href="#cb62-270" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb62-271"><a href="#cb62-271" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_macro</span>() <span class="sc">+</span></span>
+<span id="cb62-272"><a href="#cb62-272" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">strip.text =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="fu">rel</span>(<span class="fl">0.95</span>)))</span>
+<span id="cb62-273"><a href="#cb62-273" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb62-274"><a href="#cb62-274" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-275"><a href="#cb62-275" aria-hidden="true" tabindex="-1"></a>Several design choices make this chart work. First, all four panels share the same y-axis scale (the default in <span class="in">`facet_wrap()`</span>), which allows genuine comparison of levels. If one country's inflation was persistently higher, it would be immediately visible. Second, we use a single colour because the facet labels already identify each country — adding colour would be redundant. Third, the panels are arranged in a 2x2 grid, which keeps each panel wide enough for the time axis to remain legible.</span>
+<span id="cb62-276"><a href="#cb62-276" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-277"><a href="#cb62-277" aria-hidden="true" tabindex="-1"></a>If the scales are very different across countries — for example, when comparing GDP levels rather than growth rates — you can use <span class="in">`facet_wrap(~ country, scales = "free_y")`</span>. But use this sparingly, because it makes it harder to compare magnitudes across panels. A note in the subtitle or caption is essential when scales differ.</span>
+<span id="cb62-278"><a href="#cb62-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-279"><a href="#cb62-279" aria-hidden="true" tabindex="-1"></a><span class="fu">## Yield curve snapshots</span></span>
+<span id="cb62-280"><a href="#cb62-280" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-281"><a href="#cb62-281" aria-hidden="true" tabindex="-1"></a>The yield curve — the relationship between government bond yields and their maturity — is one of the most closely watched indicators in finance and macroeconomics. Its shape carries information about market expectations for interest rates, inflation, and growth. An inverted yield curve, where short-term yields exceed long-term yields, has preceded every US recession since the 1960s.</span>
+<span id="cb62-282"><a href="#cb62-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-283"><a href="#cb62-283" aria-hidden="true" tabindex="-1"></a>Plotting multiple yield curves on the same chart at different points in time shows how expectations have shifted. This is far more informative than a single snapshot. The <span class="in">`boe_yield_curve()`</span> function from the <span class="in">`boe`</span> package returns gilt yields at various maturities, making it straightforward to build these overlays.</span>
+<span id="cb62-284"><a href="#cb62-284" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-287"><a href="#cb62-287" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb62-288"><a href="#cb62-288" aria-hidden="true" tabindex="-1"></a><span class="co"># Pull yield curve data for selected dates</span></span>
+<span id="cb62-289"><a href="#cb62-289" aria-hidden="true" tabindex="-1"></a>yield_data <span class="ot">&lt;-</span> <span class="fu">boe_yield_curve</span>(<span class="at">from =</span> <span class="st">"2019-01-01"</span>)</span>
+<span id="cb62-290"><a href="#cb62-290" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-291"><a href="#cb62-291" aria-hidden="true" tabindex="-1"></a><span class="co"># Select specific dates to plot</span></span>
+<span id="cb62-292"><a href="#cb62-292" aria-hidden="true" tabindex="-1"></a>snapshot_dates <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(<span class="fu">c</span>(<span class="st">"2019-06-28"</span>, <span class="st">"2020-06-30"</span>, <span class="st">"2022-06-30"</span>, <span class="st">"2024-06-28"</span>))</span>
+<span id="cb62-293"><a href="#cb62-293" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-294"><a href="#cb62-294" aria-hidden="true" tabindex="-1"></a>yield_snapshots <span class="ot">&lt;-</span> yield_data <span class="sc">|&gt;</span></span>
+<span id="cb62-295"><a href="#cb62-295" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">%in%</span> snapshot_dates) <span class="sc">|&gt;</span></span>
+<span id="cb62-296"><a href="#cb62-296" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date_label =</span> <span class="fu">format</span>(date, <span class="st">"%B %Y"</span>))</span>
+<span id="cb62-297"><a href="#cb62-297" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-298"><a href="#cb62-298" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(yield_snapshots, <span class="fu">aes</span>(<span class="at">x =</span> maturity, <span class="at">y =</span> yield_pct, <span class="at">colour =</span> date_label, <span class="at">group =</span> date_label)) <span class="sc">+</span></span>
+<span id="cb62-299"><a href="#cb62-299" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb62-300"><a href="#cb62-300" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">1.5</span>) <span class="sc">+</span></span>
+<span id="cb62-301"><a href="#cb62-301" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_macro</span>() <span class="sc">+</span></span>
+<span id="cb62-302"><a href="#cb62-302" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb62-303"><a href="#cb62-303" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"UK Gilt Yield Curve at Selected Dates"</span>,</span>
+<span id="cb62-304"><a href="#cb62-304" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Nominal spot rates, per cent"</span>,</span>
+<span id="cb62-305"><a href="#cb62-305" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Maturity (years)"</span>, <span class="at">y =</span> <span class="cn">NULL</span>,</span>
+<span id="cb62-306"><a href="#cb62-306" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Source: Bank of England"</span></span>
+<span id="cb62-307"><a href="#cb62-307" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb62-308"><a href="#cb62-308" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_macro</span>()</span>
+<span id="cb62-309"><a href="#cb62-309" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb62-310"><a href="#cb62-310" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-311"><a href="#cb62-311" aria-hidden="true" tabindex="-1"></a>The chart immediately reveals the story of UK monetary policy across these dates. In mid-2019, the curve was relatively flat, reflecting expectations that rates would remain low. By mid-2022, the curve had shifted sharply upward as inflation surged and the Bank of England tightened policy. Overlaying curves in this way is more effective than plotting a single maturity over time, because it shows the entire term structure at a glance.</span>
+<span id="cb62-312"><a href="#cb62-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-313"><a href="#cb62-313" aria-hidden="true" tabindex="-1"></a>When working with yield curve data, pay attention to the x-axis. Maturities are not evenly spaced — there are more data points at the short end (1, 2, 3, 5 years) than the long end (10, 20, 30 years). A linear scale is standard, but the points will cluster at shorter maturities. Adding <span class="in">`geom_point()`</span> helps mark the actual data points and avoids suggesting false precision between observations.</span>
+<span id="cb62-314"><a href="#cb62-314" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-315"><a href="#cb62-315" aria-hidden="true" tabindex="-1"></a><span class="fu">## Annotating key events</span></span>
+<span id="cb62-316"><a href="#cb62-316" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-317"><a href="#cb62-317" aria-hidden="true" tabindex="-1"></a>Time series charts become much more informative when key events are marked directly on the plot. Rather than forcing readers to remember that the UK left the EU on 31 January 2020, or that the Bank of England cut rates to 0.1% in March 2020, you can annotate these events on the chart itself. This is particularly valuable in publications where charts need to be self-contained.</span>
+<span id="cb62-318"><a href="#cb62-318" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-319"><a href="#cb62-319" aria-hidden="true" tabindex="-1"></a>The two main tools are <span class="in">`geom_vline()`</span> for vertical reference lines and <span class="in">`annotate()`</span> for text labels. Vertical lines are best drawn as thin dashed lines in a neutral colour so they do not compete with the data. Text annotations should be brief — a few words at most — and positioned to avoid overlapping the data.</span>
+<span id="cb62-320"><a href="#cb62-320" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-323"><a href="#cb62-323" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb62-324"><a href="#cb62-324" aria-hidden="true" tabindex="-1"></a>bank_rate <span class="ot">&lt;-</span> <span class="fu">boe_bank_rate</span>()</span>
+<span id="cb62-325"><a href="#cb62-325" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-326"><a href="#cb62-326" aria-hidden="true" tabindex="-1"></a>events <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb62-327"><a href="#cb62-327" aria-hidden="true" tabindex="-1"></a>  <span class="at">date =</span> <span class="fu">as.Date</span>(<span class="fu">c</span>(<span class="st">"2016-06-23"</span>, <span class="st">"2020-03-11"</span>, <span class="st">"2021-12-16"</span>)),</span>
+<span id="cb62-328"><a href="#cb62-328" aria-hidden="true" tabindex="-1"></a>  <span class="at">label =</span> <span class="fu">c</span>(<span class="st">"Brexit</span><span class="sc">\n</span><span class="st">referendum"</span>, <span class="st">"COVID-19</span><span class="sc">\n</span><span class="st">rate cut"</span>, <span class="st">"First post-COVID</span><span class="sc">\n</span><span class="st">rate rise"</span>),</span>
+<span id="cb62-329"><a href="#cb62-329" aria-hidden="true" tabindex="-1"></a>  <span class="at">y_pos =</span> <span class="fu">c</span>(<span class="fl">5.5</span>, <span class="fl">5.5</span>, <span class="fl">5.5</span>)</span>
+<span id="cb62-330"><a href="#cb62-330" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb62-331"><a href="#cb62-331" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-332"><a href="#cb62-332" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(bank_rate <span class="sc">|&gt;</span> <span class="fu">filter</span>(date <span class="sc">&gt;=</span> <span class="fu">as.Date</span>(<span class="st">"2005-01-01"</span>)),</span>
+<span id="cb62-333"><a href="#cb62-333" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> rate_pct)) <span class="sc">+</span></span>
+<span id="cb62-334"><a href="#cb62-334" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">colour =</span> <span class="st">"#1B5E7B"</span>, <span class="at">linewidth =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb62-335"><a href="#cb62-335" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(</span>
+<span id="cb62-336"><a href="#cb62-336" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> events, <span class="fu">aes</span>(<span class="at">xintercept =</span> date),</span>
+<span id="cb62-337"><a href="#cb62-337" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="st">"#C0392B"</span>, <span class="at">linewidth =</span> <span class="fl">0.3</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span></span>
+<span id="cb62-338"><a href="#cb62-338" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb62-339"><a href="#cb62-339" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(</span>
+<span id="cb62-340"><a href="#cb62-340" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> events,</span>
+<span id="cb62-341"><a href="#cb62-341" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> y_pos, <span class="at">label =</span> label),</span>
+<span id="cb62-342"><a href="#cb62-342" aria-hidden="true" tabindex="-1"></a>    <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.1</span>, <span class="at">vjust =</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="fl">2.8</span>, <span class="at">colour =</span> <span class="st">"#C0392B"</span>,</span>
+<span id="cb62-343"><a href="#cb62-343" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="st">"Helvetica"</span>, <span class="at">lineheight =</span> <span class="fl">0.9</span></span>
+<span id="cb62-344"><a href="#cb62-344" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb62-345"><a href="#cb62-345" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb62-346"><a href="#cb62-346" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"Bank of England Bank Rate"</span>,</span>
+<span id="cb62-347"><a href="#cb62-347" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Per cent"</span>,</span>
+<span id="cb62-348"><a href="#cb62-348" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="cn">NULL</span>,</span>
+<span id="cb62-349"><a href="#cb62-349" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Source: Bank of England"</span></span>
+<span id="cb62-350"><a href="#cb62-350" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb62-351"><a href="#cb62-351" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_macro</span>()</span>
+<span id="cb62-352"><a href="#cb62-352" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb62-353"><a href="#cb62-353" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-354"><a href="#cb62-354" aria-hidden="true" tabindex="-1"></a>A few practical tips for annotations. First, use <span class="in">`\n`</span> in label text to break long labels across two lines rather than letting them run off the chart. Second, <span class="in">`hjust`</span> and <span class="in">`vjust`</span> control the anchor point — <span class="in">`hjust = -0.1`</span> places the text just to the right of the vertical line, which is the conventional position. Third, keep annotation text short and factual. The chart should prompt the reader to think, not do their thinking for them.</span>
+<span id="cb62-355"><a href="#cb62-355" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-356"><a href="#cb62-356" aria-hidden="true" tabindex="-1"></a>For charts with many events, consider using <span class="in">`ggrepel::geom_text_repel()`</span> to automatically avoid overlapping labels. This is especially useful for dense time series where multiple events cluster together.</span>
+<span id="cb62-357"><a href="#cb62-357" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-360"><a href="#cb62-360" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb62-361"><a href="#cb62-361" aria-hidden="true" tabindex="-1"></a><span class="co"># Alternative with ggrepel for automatic label placement</span></span>
+<span id="cb62-362"><a href="#cb62-362" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggrepel)</span>
+<span id="cb62-363"><a href="#cb62-363" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-364"><a href="#cb62-364" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(bank_rate <span class="sc">|&gt;</span> <span class="fu">filter</span>(date <span class="sc">&gt;=</span> <span class="fu">as.Date</span>(<span class="st">"2005-01-01"</span>)),</span>
+<span id="cb62-365"><a href="#cb62-365" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> rate_pct)) <span class="sc">+</span></span>
+<span id="cb62-366"><a href="#cb62-366" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">colour =</span> <span class="st">"#1B5E7B"</span>, <span class="at">linewidth =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb62-367"><a href="#cb62-367" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(</span>
+<span id="cb62-368"><a href="#cb62-368" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> events, <span class="fu">aes</span>(<span class="at">xintercept =</span> date),</span>
+<span id="cb62-369"><a href="#cb62-369" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="st">"#C0392B"</span>, <span class="at">linewidth =</span> <span class="fl">0.3</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span></span>
+<span id="cb62-370"><a href="#cb62-370" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb62-371"><a href="#cb62-371" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(</span>
+<span id="cb62-372"><a href="#cb62-372" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> bank_rate <span class="sc">|&gt;</span> <span class="fu">filter</span>(date <span class="sc">%in%</span> events<span class="sc">$</span>date),</span>
+<span id="cb62-373"><a href="#cb62-373" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> rate_pct),</span>
+<span id="cb62-374"><a href="#cb62-374" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="st">"#C0392B"</span>, <span class="at">size =</span> <span class="dv">2</span>,</span>
+<span id="cb62-375"><a href="#cb62-375" aria-hidden="true" tabindex="-1"></a>    <span class="at">inherit.aes =</span> <span class="cn">FALSE</span></span>
+<span id="cb62-376"><a href="#cb62-376" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb62-377"><a href="#cb62-377" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text_repel</span>(</span>
+<span id="cb62-378"><a href="#cb62-378" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> events,</span>
+<span id="cb62-379"><a href="#cb62-379" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> y_pos, <span class="at">label =</span> label),</span>
+<span id="cb62-380"><a href="#cb62-380" aria-hidden="true" tabindex="-1"></a>    <span class="at">size =</span> <span class="fl">2.8</span>, <span class="at">colour =</span> <span class="st">"#C0392B"</span>,</span>
+<span id="cb62-381"><a href="#cb62-381" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="st">"Helvetica"</span>, <span class="at">lineheight =</span> <span class="fl">0.9</span>,</span>
+<span id="cb62-382"><a href="#cb62-382" aria-hidden="true" tabindex="-1"></a>    <span class="at">nudge_y =</span> <span class="fl">0.5</span>, <span class="at">segment.colour =</span> <span class="st">"#C0392B"</span>, <span class="at">segment.size =</span> <span class="fl">0.2</span></span>
+<span id="cb62-383"><a href="#cb62-383" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb62-384"><a href="#cb62-384" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb62-385"><a href="#cb62-385" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"Bank of England Bank Rate"</span>,</span>
+<span id="cb62-386"><a href="#cb62-386" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Per cent"</span>,</span>
+<span id="cb62-387"><a href="#cb62-387" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="cn">NULL</span>,</span>
+<span id="cb62-388"><a href="#cb62-388" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Source: Bank of England"</span></span>
+<span id="cb62-389"><a href="#cb62-389" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb62-390"><a href="#cb62-390" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_macro</span>()</span>
+<span id="cb62-391"><a href="#cb62-391" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb62-392"><a href="#cb62-392" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-393"><a href="#cb62-393" aria-hidden="true" tabindex="-1"></a>::: {.callout-warning}</span>
+<span id="cb62-394"><a href="#cb62-394" aria-hidden="true" tabindex="-1"></a><span class="fu">## A note on dual-axis charts</span></span>
+<span id="cb62-395"><a href="#cb62-395" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-396"><a href="#cb62-396" aria-hidden="true" tabindex="-1"></a>Dual-axis charts — where the left and right y-axes show different scales — are common in financial journalism but widely criticised by statisticians. The problem is that the visual relationship between two series on a dual-axis chart is entirely determined by the arbitrary choice of axis scales. By adjusting the ranges, you can make any two series appear to be correlated, uncorrelated, or inversely correlated.</span>
+<span id="cb62-397"><a href="#cb62-397" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-398"><a href="#cb62-398" aria-hidden="true" tabindex="-1"></a>A better approach is to use facets: plot each series in its own panel with an independent y-axis. The reader can still compare timing and direction, but the chart does not imply a spurious quantitative relationship. <span class="in">`facet_wrap(scales = "free_y")`</span> handles this cleanly.</span>
+<span id="cb62-399"><a href="#cb62-399" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb62-400"><a href="#cb62-400" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-401"><a href="#cb62-401" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises</span></span>
+<span id="cb62-402"><a href="#cb62-402" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-403"><a href="#cb62-403" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Build a chart of UK GDP growth with recession periods shaded in grey. Calculate quarter-on-quarter growth rates from <span class="in">`ons_gdp()`</span> and overlay the recession bands from this chapter. Add a horizontal dashed line at zero.</span>
+<span id="cb62-404"><a href="#cb62-404" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-405"><a href="#cb62-405" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Create a fan chart showing the OBR's GDP growth forecast with uncertainty bands. Experiment with different colour palettes — try a warm palette (reds/oranges) alongside the blue version from the chapter. Which is more readable?</span>
+<span id="cb62-406"><a href="#cb62-406" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-407"><a href="#cb62-407" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Plot HICP inflation for Germany, France, Italy, and Spain as small multiples using <span class="in">`facet_wrap()`</span>. Add a horizontal reference line at 2% (the ECB's target) to each panel.</span>
+<span id="cb62-408"><a href="#cb62-408" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-409"><a href="#cb62-409" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Pull yield curve data from the Bank of England for the first business day of each quarter in 2023. Overlay all four curves on a single chart and describe what the changing shape tells you about market expectations.</span>
+<span id="cb62-410"><a href="#cb62-410" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-411"><a href="#cb62-411" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Take any time series chart from this chapter and annotate at least three macroeconomic events of your choice. Practice positioning the labels so they do not overlap the data.</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

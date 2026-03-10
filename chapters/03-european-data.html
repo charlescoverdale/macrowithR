@@ -310,10 +310,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li>
 <a href="#the-oecd" id="toc-the-oecd" class="nav-link" data-scroll-target="#the-oecd"><span class="header-section-number">3.2</span> The OECD</a>
   <ul class="collapse">
-<li><a href="#composite-leading-indicators" id="toc-composite-leading-indicators" class="nav-link" data-scroll-target="#composite-leading-indicators"><span class="header-section-number">3.2.1</span> Composite leading indicators</a></li>
-  <li><a href="#gdp-by-expenditure" id="toc-gdp-by-expenditure" class="nav-link" data-scroll-target="#gdp-by-expenditure"><span class="header-section-number">3.2.2</span> GDP by expenditure</a></li>
+<li><a href="#gdp" id="toc-gdp" class="nav-link" data-scroll-target="#gdp"><span class="header-section-number">3.2.1</span> GDP</a></li>
+  <li><a href="#unemployment" id="toc-unemployment" class="nav-link" data-scroll-target="#unemployment"><span class="header-section-number">3.2.2</span> Unemployment</a></li>
   <li><a href="#inflation" id="toc-inflation" class="nav-link" data-scroll-target="#inflation"><span class="header-section-number">3.2.3</span> Inflation</a></li>
-  <li><a href="#discovering-oecd-datasets" id="toc-discovering-oecd-datasets" class="nav-link" data-scroll-target="#discovering-oecd-datasets"><span class="header-section-number">3.2.4</span> Discovering OECD datasets</a></li>
+  <li><a href="#discovering-oecd-countries" id="toc-discovering-oecd-countries" class="nav-link" data-scroll-target="#discovering-oecd-countries"><span class="header-section-number">3.2.4</span> Discovering OECD countries</a></li>
   </ul>
 </li>
   <li>
@@ -357,15 +357,32 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span class="header-section-number">3.1.1</span> Policy rates</h3>
 <p>The ECB sets three key interest rates: the main refinancing rate (the rate at which banks can borrow from the ECB for one week), the marginal lending facility rate (overnight borrowing), and the deposit facility rate (overnight deposits). Since September 2024, the deposit facility rate has been the primary instrument for steering monetary policy.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">rates</span> <span class="op">&lt;-</span> <span class="fu">ecb_policy_rates</span><span class="op">(</span>from <span class="op">=</span> <span class="st">"1999-01"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">rates</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">rates</span> <span class="op">&lt;-</span> <span class="fu">ecb_policy_rates</span><span class="op">(</span>from <span class="op">=</span> <span class="st">"1999-01"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ℹ Fetching ECB policy rates</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>✔ Fetching ECB policy rates [109ms]</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">rates</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        date                  rate value
+1 1999-01-01 Deposit facility rate   2.0
+2 1999-01-01 Main refinancing rate   3.0
+3 1999-01-01 Marginal lending rate   4.5
+4 1999-01-02 Deposit facility rate   2.0
+5 1999-01-02 Main refinancing rate   3.0
+6 1999-01-02 Marginal lending rate   4.5</code></pre>
+</div>
 </div>
 <p>The resulting data frame contains one row per date on which rates changed, with columns for each of the three rates. To plot the full history of ECB rates since the euro’s introduction, you can pass this directly to <code>ggplot2</code>.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">rates</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">value</span>, colour <span class="op">=</span> <span class="va">series</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">rates</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">value</span>, colour <span class="op">=</span> <span class="va">rate</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_step</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">labs</span><span class="op">(</span></span>
 <span>    title <span class="op">=</span> <span class="st">"ECB policy rates"</span>,</span>
@@ -373,21 +390,52 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>    colour <span class="op">=</span> <span class="cn">NULL</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="03-european-data_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
 </div>
 </section><section id="inflation-across-the-euro-area" class="level3" data-number="3.1.2"><h3 data-number="3.1.2" class="anchored" data-anchor-id="inflation-across-the-euro-area">
 <span class="header-section-number">3.1.2</span> Inflation across the euro area</h3>
 <p>The Harmonised Index of Consumer Prices (HICP) is the ECB’s target measure of inflation. Unlike national CPI measures, HICP uses a common methodology across all EU member states, making it the right choice for cross-country inflation comparisons within Europe.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">hicp</span> <span class="op">&lt;-</span> <span class="fu">ecb_hicp</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"DE"</span>, <span class="st">"FR"</span>, <span class="st">"IT"</span>, <span class="st">"ES"</span><span class="op">)</span>, from <span class="op">=</span> <span class="st">"2020-01"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">hicp</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">hicp</span> <span class="op">&lt;-</span> <span class="fu">ecb_hicp</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"DE"</span>, <span class="st">"FR"</span>, <span class="st">"IT"</span>, <span class="st">"ES"</span><span class="op">)</span>, from <span class="op">=</span> <span class="st">"2020-01"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ℹ Fetching HICP data</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>✔ Fetching HICP data [10ms]</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">hicp</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        date country value
+1 2020-01-01      DE   1.6
+2 2020-02-01      DE   1.7
+3 2020-03-01      DE   1.3
+4 2020-04-01      DE   0.8
+5 2020-05-01      DE   0.5
+6 2020-06-01      DE   0.8</code></pre>
+</div>
 </div>
 <p>You can pass ISO 2-letter country codes to <code>ecb_hicp()</code> to pull HICP for individual member states. Omitting the country code returns the aggregate euro area HICP. This is the series that the ECB targets at 2 per cent over the medium term.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Euro area aggregate</span></span>
-<span><span class="va">hicp_ea</span> <span class="op">&lt;-</span> <span class="fu">ecb_hicp</span><span class="op">(</span>from <span class="op">=</span> <span class="st">"2020-01"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">hicp_ea</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Euro area aggregate</span></span>
+<span><span class="va">hicp_ea</span> <span class="op">&lt;-</span> <span class="fu">ecb_hicp</span><span class="op">(</span>from <span class="op">=</span> <span class="st">"2020-01"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ℹ Fetching HICP data</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>✔ Fetching HICP data [14ms]</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">hicp_ea</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_line</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_hline</span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fl">2</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, colour <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">labs</span><span class="op">(</span></span>
@@ -396,35 +444,140 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>    x <span class="op">=</span> <span class="cn">NULL</span>, y <span class="op">=</span> <span class="st">"Per cent"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="03-european-data_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
 </div>
 </section><section id="exchange-rates" class="level3" data-number="3.1.3"><h3 data-number="3.1.3" class="anchored" data-anchor-id="exchange-rates">
 <span class="header-section-number">3.1.3</span> Exchange rates</h3>
 <p>The ECB publishes daily reference exchange rates for approximately 30 currencies against the euro. These are mid-market rates set at 14:15 CET each business day and are widely used as a benchmark.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">fx</span> <span class="op">&lt;-</span> <span class="fu">ecb_exchange_rate</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"USD"</span>, <span class="st">"GBP"</span><span class="op">)</span>, from <span class="op">=</span> <span class="st">"2020-01"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">fx</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">fx</span> <span class="op">&lt;-</span> <span class="fu">ecb_exchange_rate</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"USD"</span>, <span class="st">"GBP"</span><span class="op">)</span>, from <span class="op">=</span> <span class="st">"2020-01"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ℹ Fetching ECB exchange rates</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>✔ Fetching ECB exchange rates [7ms]</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">fx</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        date currency     value
+1 2020-01-01      GBP 0.8492727
+2 2020-02-01      GBP 0.8409460
+3 2020-03-01      GBP 0.8945955
+4 2020-04-01      GBP 0.8754690
+5 2020-05-01      GBP 0.8868530
+6 2020-06-01      GBP 0.8987814</code></pre>
+</div>
 </div>
 <p>To see all available currency pairs, use <code>list_exchange_rates()</code>, which returns a data frame of currency codes and names.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">list_exchange_rates</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">list_exchange_rates</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   code              currency
+1   USD             US dollar
+2   JPY          Japanese yen
+3   GBP        Pound sterling
+4   CHF           Swiss franc
+5   AUD     Australian dollar
+6   CAD       Canadian dollar
+7   SEK         Swedish krona
+8   NOK       Norwegian krone
+9   DKK          Danish krone
+10  NZD    New Zealand dollar
+11  CNY Chinese yuan renminbi
+12  HKD      Hong Kong dollar
+13  SGD      Singapore dollar
+14  KRW      South Korean won
+15  THB             Thai baht
+16  MYR     Malaysian ringgit
+17  PHP       Philippine peso
+18  IDR     Indonesian rupiah
+19  INR          Indian rupee
+20  BRL        Brazilian real
+21  MXN          Mexican peso
+22  ZAR    South African rand
+23  TRY          Turkish lira
+24  PLN          Polish zloty
+25  CZK          Czech koruna
+26  HUF      Hungarian forint
+27  BGN         Bulgarian lev
+28  RON          Romanian leu
+29  HRK         Croatian kuna
+30  ISK       Icelandic krona
+31  ILS        Israeli shekel
+32  RUB        Russian rouble</code></pre>
+</div>
 </div>
 </section><section id="yield-curves" class="level3" data-number="3.1.4"><h3 data-number="3.1.4" class="anchored" data-anchor-id="yield-curves">
 <span class="header-section-number">3.1.4</span> Yield curves</h3>
 <p>Government bond yields are essential for understanding financial conditions and market expectations. The ECB publishes estimated yield curves for euro area sovereign bonds at various maturities.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">yields</span> <span class="op">&lt;-</span> <span class="fu">ecb_yield_curve</span><span class="op">(</span><span class="st">"10Y"</span>, from <span class="op">=</span> <span class="st">"2005-01"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">yields</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">yields</span> <span class="op">&lt;-</span> <span class="fu">ecb_yield_curve</span><span class="op">(</span><span class="st">"10Y"</span>, from <span class="op">=</span> <span class="st">"2005-01"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ℹ Fetching yield curve data</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>✔ Fetching yield curve data [24ms]</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">yields</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        date tenor    value
+1 2005-01-03   10Y 3.661840
+2 2005-01-04   10Y 3.668323
+3 2005-01-05   10Y 3.695968
+4 2005-01-06   10Y 3.652554
+5 2005-01-07   10Y 3.621110
+6 2005-01-10   10Y 3.621085</code></pre>
+</div>
 </div>
 <p>A particularly useful exercise is to compare short- and long-term yields to construct a yield curve slope measure. An inverted yield curve — where short-term rates exceed long-term rates — has historically been a recession predictor.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">short</span> <span class="op">&lt;-</span> <span class="fu">ecb_yield_curve</span><span class="op">(</span><span class="st">"2Y"</span>, from <span class="op">=</span> <span class="st">"2005-01"</span><span class="op">)</span></span>
-<span><span class="va">long</span> <span class="op">&lt;-</span> <span class="fu">ecb_yield_curve</span><span class="op">(</span><span class="st">"10Y"</span>, from <span class="op">=</span> <span class="st">"2005-01"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">spread</span> <span class="op">&lt;-</span> <span class="fu">inner_join</span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">short</span> <span class="op">&lt;-</span> <span class="fu">ecb_yield_curve</span><span class="op">(</span><span class="st">"2Y"</span>, from <span class="op">=</span> <span class="st">"2005-01"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ℹ Fetching yield curve data</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>✔ Fetching yield curve data [25ms]</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">long</span> <span class="op">&lt;-</span> <span class="fu">ecb_yield_curve</span><span class="op">(</span><span class="st">"10Y"</span>, from <span class="op">=</span> <span class="st">"2005-01"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ℹ Fetching yield curve data</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>✔ Fetching yield curve data [16ms]</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'dplyr'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:stats':
+
+    filter, lag</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb46"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">spread</span> <span class="op">&lt;-</span> <span class="fu">inner_join</span><span class="op">(</span></span>
 <span>  <span class="va">short</span> <span class="op">|&gt;</span> <span class="fu">select</span><span class="op">(</span><span class="va">date</span>, short <span class="op">=</span> <span class="va">value</span><span class="op">)</span>,</span>
 <span>  <span class="va">long</span> <span class="op">|&gt;</span> <span class="fu">select</span><span class="op">(</span><span class="va">date</span>, long <span class="op">=</span> <span class="va">value</span><span class="op">)</span>,</span>
 <span>  by <span class="op">=</span> <span class="st">"date"</span></span>
@@ -439,91 +592,130 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>    x <span class="op">=</span> <span class="cn">NULL</span>, y <span class="op">=</span> <span class="st">"Percentage points"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="03-european-data_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
 </div>
 </section><section id="other-ecb-series" class="level3" data-number="3.1.5"><h3 data-number="3.1.5" class="anchored" data-anchor-id="other-ecb-series">
 <span class="header-section-number">3.1.5</span> Other ECB series</h3>
 <p>The <code>readecb</code> package also provides functions for EURIBOR (<code>ecb_euribor()</code>), the euro short-term rate (<code>ecb_estr()</code>), money supply (<code>ecb_money_supply()</code>), GDP (<code>ecb_gdp()</code>), unemployment (<code>ecb_unemployment()</code>), and government debt (<code>ecb_government_debt()</code>). The general-purpose <code>ecb_get()</code> function can retrieve any series from the ECB Data Portal if you know the dataflow and series key.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Euro area M3 money supply</span></span>
-<span><span class="va">m3</span> <span class="op">&lt;-</span> <span class="fu">ecb_money_supply</span><span class="op">(</span><span class="st">"M3"</span>, from <span class="op">=</span> <span class="st">"2000-01"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Euro area GDP growth</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb47"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Euro area M3 money supply</span></span>
+<span><span class="va">m3</span> <span class="op">&lt;-</span> <span class="fu">ecb_money_supply</span><span class="op">(</span><span class="st">"M3"</span>, from <span class="op">=</span> <span class="st">"2000-01"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ℹ Fetching M3 data</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>✔ Fetching M3 data [8ms]</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb51"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Euro area GDP growth</span></span>
 <span><span class="va">gdp_ea</span> <span class="op">&lt;-</span> <span class="fu">ecb_gdp</span><span class="op">(</span>from <span class="op">=</span> <span class="st">"2000-01"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ℹ Fetching euro area GDP</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>✔ Fetching euro area GDP [9ms]</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
 </div>
 </section></section><section id="the-oecd" class="level2" data-number="3.2"><h2 data-number="3.2" class="anchored" data-anchor-id="the-oecd">
 <span class="header-section-number">3.2</span> The OECD</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">readoecd</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb55"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">readoecd</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>The Organisation for Economic Co-operation and Development publishes harmonised data across its 38 member countries, plus key partner economies. The OECD’s great strength is comparability: its statisticians take national data and apply consistent definitions and methodologies, making it the natural choice for cross-country analysis.</p>
-<p>The <code>readoecd</code> package wraps the OECD’s SDMX REST API, providing both dedicated functions for popular datasets and a flexible <code>oecd_get()</code> function for direct access to any OECD dataflow.</p>
-<section id="composite-leading-indicators" class="level3" data-number="3.2.1"><h3 data-number="3.2.1" class="anchored" data-anchor-id="composite-leading-indicators">
-<span class="header-section-number">3.2.1</span> Composite leading indicators</h3>
-<p>The OECD’s Composite Leading Indicators (CLI) are designed to provide early signals of turning points in business cycles. They combine a variety of forward-looking indicators — order books, building permits, share prices, interest rate spreads — into a single index calibrated so that 100 represents trend growth. Values above 100 suggest expansion; below 100, contraction.</p>
+<p>The <code>readoecd</code> package wraps the OECD’s SDMX REST API, providing dedicated functions for popular datasets including GDP, CPI, unemployment, and more.</p>
+<section id="gdp" class="level3" data-number="3.2.1"><h3 data-number="3.2.1" class="anchored" data-anchor-id="gdp">
+<span class="header-section-number">3.2.1</span> GDP</h3>
+<p>The OECD publishes GDP data on a comparable basis across member countries, making it the natural choice for cross-country growth comparisons. The <code>get_oecd_gdp()</code> function returns GDP in PPP-adjusted terms for the countries you specify.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">cli</span> <span class="op">&lt;-</span> <span class="fu">oecd_get</span><span class="op">(</span></span>
-<span>  dataset <span class="op">=</span> <span class="st">"MEI_CLI"</span>,</span>
-<span>  filter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
-<span>    location <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"GBR"</span>, <span class="st">"USA"</span>, <span class="st">"DEU"</span>, <span class="st">"JPN"</span><span class="op">)</span>,</span>
-<span>    subject <span class="op">=</span> <span class="st">"LOLITOAA"</span>,</span>
-<span>    measure <span class="op">=</span> <span class="st">"STSA"</span>,</span>
-<span>    frequency <span class="op">=</span> <span class="st">"M"</span></span>
-<span>  <span class="op">)</span>,</span>
-<span>  start_period <span class="op">=</span> <span class="st">"2015-01"</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb56"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gdp_oecd</span> <span class="op">&lt;-</span> <span class="fu">get_oecd_gdp</span><span class="op">(</span></span>
+<span>  countries <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"GBR"</span>, <span class="st">"USA"</span>, <span class="st">"DEU"</span>, <span class="st">"JPN"</span><span class="op">)</span>,</span>
+<span>  start_year <span class="op">=</span> <span class="fl">2000</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">cli</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">gdp_oecd</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   country country_name year series   value                             unit
+77     DEU      Germany 2000    GDP 2258652 Millions USD PPP, current prices
+80     DEU      Germany 2001    GDP 2361314 Millions USD PPP, current prices
+56     DEU      Germany 2002    GDP 2434538 Millions USD PPP, current prices
+83     DEU      Germany 2003    GDP 2500900 Millions USD PPP, current prices
+86     DEU      Germany 2004    GDP 2620152 Millions USD PPP, current prices
+58     DEU      Germany 2005    GDP 2664894 Millions USD PPP, current prices</code></pre>
 </div>
-<p>The CLI is particularly useful for identifying where different economies are in the cycle. If the UK CLI is falling while the US CLI is rising, that divergence has implications for exchange rates, relative monetary policy, and trade.</p>
+</div>
+</section><section id="unemployment" class="level3" data-number="3.2.2"><h3 data-number="3.2.2" class="anchored" data-anchor-id="unemployment">
+<span class="header-section-number">3.2.2</span> Unemployment</h3>
+<p>Cross-country unemployment comparisons are straightforward with harmonised OECD data. National definitions of unemployment vary slightly, but the OECD applies a consistent ILO-based methodology.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">cli</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">value</span>, colour <span class="op">=</span> <span class="va">location</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb58"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">unemp_oecd</span> <span class="op">&lt;-</span> <span class="fu">get_oecd_unemployment</span><span class="op">(</span></span>
+<span>  countries <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"GBR"</span>, <span class="st">"USA"</span>, <span class="st">"DEU"</span>, <span class="st">"JPN"</span><span class="op">)</span>,</span>
+<span>  start_year <span class="op">=</span> <span class="fl">2015</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">unemp_oecd</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    country country_name  period            series value              unit
+397     DEU      Germany 2015-01 Unemployment rate   4.5 % of labour force
+398     DEU      Germany 2015-02 Unemployment rate   4.5 % of labour force
+399     DEU      Germany 2015-03 Unemployment rate   4.5 % of labour force
+400     DEU      Germany 2015-04 Unemployment rate   4.4 % of labour force
+401     DEU      Germany 2015-05 Unemployment rate   4.4 % of labour force
+402     DEU      Germany 2015-06 Unemployment rate   4.4 % of labour force</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb60"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">unemp_oecd</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">period</span>, y <span class="op">=</span> <span class="va">value</span>, colour <span class="op">=</span> <span class="va">country_name</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_line</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_hline</span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fl">100</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">labs</span><span class="op">(</span></span>
-<span>    title <span class="op">=</span> <span class="st">"OECD Composite Leading Indicators"</span>,</span>
-<span>    x <span class="op">=</span> <span class="cn">NULL</span>, y <span class="op">=</span> <span class="st">"Index (100 = trend)"</span>,</span>
+<span>    title <span class="op">=</span> <span class="st">"Unemployment rate: cross-country comparison"</span>,</span>
+<span>    subtitle <span class="op">=</span> <span class="st">"OECD harmonised rate, per cent"</span>,</span>
+<span>    x <span class="op">=</span> <span class="cn">NULL</span>, y <span class="op">=</span> <span class="st">"Per cent"</span>,</span>
 <span>    colour <span class="op">=</span> <span class="st">"Country"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_line()`: Each group consists of only one observation.
+ℹ Do you need to adjust the group aesthetic?</code></pre>
 </div>
-</section><section id="gdp-by-expenditure" class="level3" data-number="3.2.2"><h3 data-number="3.2.2" class="anchored" data-anchor-id="gdp-by-expenditure">
-<span class="header-section-number">3.2.2</span> GDP by expenditure</h3>
-<p>The OECD’s Quarterly National Accounts provide GDP broken down by expenditure component — consumption, investment, government spending, and net exports — on a comparable basis across countries. This is invaluable when you want to understand not just how fast an economy is growing, but what is driving that growth.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gdp_exp</span> <span class="op">&lt;-</span> <span class="fu">oecd_get</span><span class="op">(</span></span>
-<span>  dataset <span class="op">=</span> <span class="st">"QNA"</span>,</span>
-<span>  filter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
-<span>    location <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"GBR"</span>, <span class="st">"USA"</span>, <span class="st">"DEU"</span><span class="op">)</span>,</span>
-<span>    subject <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"B1_GE"</span>, <span class="st">"P3"</span>, <span class="st">"P5"</span>, <span class="st">"P6"</span>, <span class="st">"P7"</span><span class="op">)</span>,</span>
-<span>    measure <span class="op">=</span> <span class="st">"VPVOBARSA"</span>,</span>
-<span>    frequency <span class="op">=</span> <span class="st">"Q"</span></span>
-<span>  <span class="op">)</span>,</span>
-<span>  start_period <span class="op">=</span> <span class="st">"2010-Q1"</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">gdp_exp</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="03-european-data_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
-<p>The subject codes here are: <code>B1_GE</code> (GDP), <code>P3</code> (final consumption), <code>P5</code> (gross capital formation), <code>P6</code> (exports), and <code>P7</code> (imports). The measure <code>VPVOBARSA</code> gives volume estimates in national currency, seasonally adjusted and annualised.</p>
+</div>
+</div>
 </section><section id="inflation" class="level3" data-number="3.2.3"><h3 data-number="3.2.3" class="anchored" data-anchor-id="inflation">
 <span class="header-section-number">3.2.3</span> Inflation</h3>
 <p>The OECD publishes CPI data using a consistent methodology, making it straightforward to compare inflation across countries that use different national indices. This is especially useful when comparing the UK (which uses CPI and CPIH) with the US (which uses CPI-U and PCE) and the euro area (which uses HICP).</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">cpi_oecd</span> <span class="op">&lt;-</span> <span class="fu">oecd_get</span><span class="op">(</span></span>
-<span>  dataset <span class="op">=</span> <span class="st">"PRICES_CPI"</span>,</span>
-<span>  filter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
-<span>    location <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"GBR"</span>, <span class="st">"USA"</span>, <span class="st">"DEU"</span>, <span class="st">"JPN"</span><span class="op">)</span>,</span>
-<span>    subject <span class="op">=</span> <span class="st">"CPALTT01"</span>,</span>
-<span>    measure <span class="op">=</span> <span class="st">"GY"</span>,</span>
-<span>    frequency <span class="op">=</span> <span class="st">"M"</span></span>
-<span>  <span class="op">)</span>,</span>
-<span>  start_period <span class="op">=</span> <span class="st">"2015-01"</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb62"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">cpi_oecd</span> <span class="op">&lt;-</span> <span class="fu">get_oecd_cpi</span><span class="op">(</span></span>
+<span>  countries <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"GBR"</span>, <span class="st">"USA"</span>, <span class="st">"DEU"</span>, <span class="st">"JPN"</span><span class="op">)</span>,</span>
+<span>  start_year <span class="op">=</span> <span class="fl">2015</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">cpi_oecd</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   country country_name year        series     value                   unit
+33     DEU      Germany 2015 CPI_INFLATION 0.5144210 % change, year-on-year
+32     DEU      Germany 2016 CPI_INFLATION 0.4917486 % change, year-on-year
+31     DEU      Germany 2017 CPI_INFLATION 1.5094970 % change, year-on-year
+30     DEU      Germany 2018 CPI_INFLATION 1.7321680 % change, year-on-year
+29     DEU      Germany 2019 CPI_INFLATION 1.4456670 % change, year-on-year
+28     DEU      Germany 2020 CPI_INFLATION 0.1448705 % change, year-on-year</code></pre>
 </div>
-<p>The measure <code>GY</code> gives the year-on-year growth rate directly, saving you from having to compute it yourself. The subject <code>CPALTT01</code> is CPI for all items.</p>
+</div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">cpi_oecd</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">value</span>, colour <span class="op">=</span> <span class="va">location</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb64"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">cpi_oecd</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">year</span>, y <span class="op">=</span> <span class="va">value</span>, colour <span class="op">=</span> <span class="va">country_name</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_line</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">labs</span><span class="op">(</span></span>
 <span>    title <span class="op">=</span> <span class="st">"CPI inflation: cross-country comparison"</span>,</span>
@@ -532,21 +724,64 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>    colour <span class="op">=</span> <span class="st">"Country"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="03-european-data_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
-</section><section id="discovering-oecd-datasets" class="level3" data-number="3.2.4"><h3 data-number="3.2.4" class="anchored" data-anchor-id="discovering-oecd-datasets">
-<span class="header-section-number">3.2.4</span> Discovering OECD datasets</h3>
-<p>The OECD publishes hundreds of datasets. To explore what is available, use <code>list_oecd_dataflows()</code>, which returns a searchable catalogue.</p>
+</div>
+</div>
+</section><section id="discovering-oecd-countries" class="level3" data-number="3.2.4"><h3 data-number="3.2.4" class="anchored" data-anchor-id="discovering-oecd-countries">
+<span class="header-section-number">3.2.4</span> Discovering OECD countries</h3>
+<p>To see which countries are available in the <code>readoecd</code> package, use <code>list_oecd_countries()</code>:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">flows</span> <span class="op">&lt;-</span> <span class="fu">list_oecd_dataflows</span><span class="op">(</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Search for datasets related to labour</span></span>
-<span><span class="va">flows</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">grepl</a></span><span class="op">(</span><span class="st">"labour|employment"</span>, <span class="va">name</span>, ignore.case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb65"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">list_oecd_countries</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   iso3            name
+1   AUS       Australia
+2   AUT         Austria
+3   BEL         Belgium
+4   CAN          Canada
+5   CHL           Chile
+6   COL        Colombia
+7   CRI      Costa Rica
+8   CZE  Czech Republic
+9   DNK         Denmark
+10  EST         Estonia
+11  FIN         Finland
+12  FRA          France
+13  DEU         Germany
+14  GRC          Greece
+15  HUN         Hungary
+16  ISL         Iceland
+17  IRL         Ireland
+18  ISR          Israel
+19  ITA           Italy
+20  JPN           Japan
+21  KOR           Korea
+22  LVA          Latvia
+23  LTU       Lithuania
+24  LUX      Luxembourg
+25  MEX          Mexico
+26  NLD     Netherlands
+27  NZL     New Zealand
+28  NOR          Norway
+29  POL          Poland
+30  PRT        Portugal
+31  SVK Slovak Republic
+32  SVN        Slovenia
+33  ESP           Spain
+34  SWE          Sweden
+35  CHE     Switzerland
+36  TUR         Turkiye
+37  GBR  United Kingdom
+38  USA   United States</code></pre>
+</div>
 </div>
 </section></section><section id="the-world-bank" class="level2" data-number="3.3"><h2 data-number="3.3" class="anchored" data-anchor-id="the-world-bank">
 <span class="header-section-number">3.3</span> The World Bank</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://vincentarelbundock.github.io/WDI/">WDI</a></span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb67"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://vincentarelbundock.github.io/WDI/">WDI</a></span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>For broader international comparisons — especially involving emerging and developing economies — the World Bank’s World Development Indicators (WDI) are unmatched. The WDI covers over 200 countries and territories with more than 1,600 indicators spanning income, health, education, infrastructure, and the environment. The data often extends back to the 1960s, making it the best source for long historical series.</p>
 <p>The <code>WDI</code> package on CRAN provides a clean interface to the World Bank API. The key function is <code>WDI()</code>, which takes an indicator code, a list of countries, and a date range.</p>
@@ -554,7 +789,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span class="header-section-number">3.3.1</span> GDP per capita (PPP)</h3>
 <p>Purchasing power parity (PPP) adjustments account for differences in price levels across countries, making GDP per capita figures more meaningful for comparing living standards. The World Bank publishes GDP per capita in constant 2021 international dollars, which controls for both inflation and price-level differences.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gdp_pc</span> <span class="op">&lt;-</span> <span class="fu">WDI</span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb68"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gdp_pc</span> <span class="op">&lt;-</span> <span class="fu">WDI</span><span class="op">(</span></span>
 <span>  indicator <span class="op">=</span> <span class="st">"NY.GDP.PCAP.PP.KD"</span>,</span>
 <span>  country <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"GB"</span>, <span class="st">"US"</span>, <span class="st">"DE"</span>, <span class="st">"FR"</span>, <span class="st">"JP"</span>, <span class="st">"CA"</span>, <span class="st">"IT"</span><span class="op">)</span>,</span>
 <span>  start <span class="op">=</span> <span class="fl">2000</span>,</span>
@@ -562,16 +797,33 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">gdp_pc</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  country iso2c iso3c year NY.GDP.PCAP.PP.KD
+1  Canada    CA   CAN 2024          56706.82
+2  Canada    CA   CAN 2023          57517.44
+3  Canada    CA   CAN 2022          58321.06
+4  Canada    CA   CAN 2021          56995.12
+5  Canada    CA   CAN 2020          54092.88
+6  Canada    CA   CAN 2019          57583.85</code></pre>
+</div>
 </div>
 <p>The indicator code <code>NY.GDP.PCAP.PP.KD</code> stands for GDP per capita, PPP, in constant 2021 international dollars. These codes are not intuitive, but you can search for them using <code>WDIsearch()</code>.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">WDIsearch</span><span class="op">(</span><span class="st">"gdp per capita.*ppp"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb70"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">WDIsearch</span><span class="op">(</span><span class="st">"gdp per capita.*ppp"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                 indicator                                                 name
+692     6.0.GDPpc_constant GDP per capita, PPP (constant 2011 international $) 
+13792    NY.GDP.PCAP.PP.CD        GDP per capita, PPP (current international $)
+13793    NY.GDP.PCAP.PP.KD  GDP per capita, PPP (constant 2021 international $)
+13794 NY.GDP.PCAP.PP.KD.87  GDP per capita, PPP (constant 1987 international $)
+13795 NY.GDP.PCAP.PP.KD.ZG                GDP per capita, PPP annual growth (%)</code></pre>
+</div>
 </div>
 </section><section id="population" class="level3" data-number="3.3.2"><h3 data-number="3.3.2" class="anchored" data-anchor-id="population">
 <span class="header-section-number">3.3.2</span> Population</h3>
 <p>Population data is essential for computing per-capita measures and for understanding the demographic context of economic performance. The World Bank’s population series is one of the most comprehensive available.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">pop</span> <span class="op">&lt;-</span> <span class="fu">WDI</span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb72"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">pop</span> <span class="op">&lt;-</span> <span class="fu">WDI</span><span class="op">(</span></span>
 <span>  indicator <span class="op">=</span> <span class="st">"SP.POP.TOTL"</span>,</span>
 <span>  country <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"GB"</span>, <span class="st">"US"</span>, <span class="st">"CN"</span>, <span class="st">"IN"</span>, <span class="st">"DE"</span><span class="op">)</span>,</span>
 <span>  start <span class="op">=</span> <span class="fl">1960</span>,</span>
@@ -586,12 +838,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>    colour <span class="op">=</span> <span class="st">"Country"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="03-european-data_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
 </div>
 </section><section id="development-indicators" class="level3" data-number="3.3.3"><h3 data-number="3.3.3" class="anchored" data-anchor-id="development-indicators">
 <span class="header-section-number">3.3.3</span> Development indicators</h3>
 <p>The WDI’s greatest strength is its breadth. Beyond GDP and population, you can pull indicators on poverty rates, educational attainment, life expectancy, CO<sub>2</sub> emissions, internet penetration, and hundreds more. This makes it the natural source for the cross-country analysis in <a href="14-cross-country.html" class="quarto-xref"><span>Chapter 14</span></a>.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Life expectancy at birth</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb73"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Life expectancy at birth</span></span>
 <span><span class="va">life_exp</span> <span class="op">&lt;-</span> <span class="fu">WDI</span><span class="op">(</span></span>
 <span>  indicator <span class="op">=</span> <span class="st">"SP.DYN.LE00.IN"</span>,</span>
 <span>  country <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"GB"</span>, <span class="st">"US"</span>, <span class="st">"DE"</span>, <span class="st">"JP"</span>, <span class="st">"CN"</span>, <span class="st">"IN"</span>, <span class="st">"BR"</span><span class="op">)</span>,</span>
@@ -599,9 +857,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  end <span class="op">=</span> <span class="fl">2024</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># CO2 emissions per capita (metric tonnes)</span></span>
+<span><span class="co"># CO2 emissions per capita (tonnes CO2 equivalent)</span></span>
 <span><span class="va">co2</span> <span class="op">&lt;-</span> <span class="fu">WDI</span><span class="op">(</span></span>
-<span>  indicator <span class="op">=</span> <span class="st">"EN.ATM.CO2E.PC"</span>,</span>
+<span>  indicator <span class="op">=</span> <span class="st">"EN.GHG.CO2.PC.CE.AR5"</span>,</span>
 <span>  country <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"GB"</span>, <span class="st">"US"</span>, <span class="st">"DE"</span>, <span class="st">"CN"</span>, <span class="st">"IN"</span><span class="op">)</span>,</span>
 <span>  start <span class="op">=</span> <span class="fl">1990</span>,</span>
 <span>  end <span class="op">=</span> <span class="fl">2024</span></span>
@@ -1136,356 +1394,333 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># European and International Data {#sec-european-data}</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>Macroeconomics rarely stops at national borders. Comparing inflation across the euro area, tracking ECB policy alongside the Fed, or benchmarking UK growth against the G7 — all of these require international data.</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>This chapter covers three major sources: the ECB Data Portal for euro area data, the OECD for harmonised cross-country statistics, and the World Bank for global development indicators. Each serves a different purpose, and knowing when to reach for which source is a skill in itself.</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="fu">## The European Central Bank</span></span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readecb)</span>
-<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>The European Central Bank publishes a vast statistical warehouse covering monetary policy, financial markets, and macroeconomic aggregates for the euro area and its member states. The <span class="in">`readecb`</span> package provides access to the ECB Data Portal API, with dedicated functions for the most commonly used series and a flexible <span class="in">`ecb_get()`</span> function for everything else.</span>
-<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>The ECB's data is particularly strong on high-frequency financial and monetary series — policy rates updated in real time, daily exchange rates, and monthly monetary aggregates. For macroeconomic variables like GDP and unemployment, the ECB also publishes Eurostat data, though for cross-country comparisons the OECD is often more convenient (more on this below).</span>
-<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a><span class="fu">### Policy rates</span></span>
-<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>The ECB sets three key interest rates: the main refinancing rate (the rate at which banks can borrow from the ECB for one week), the marginal lending facility rate (overnight borrowing), and the deposit facility rate (overnight deposits). Since September 2024, the deposit facility rate has been the primary instrument for steering monetary policy.</span>
-<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a>rates <span class="ot">&lt;-</span> <span class="fu">ecb_policy_rates</span>(<span class="at">from =</span> <span class="st">"1999-01"</span>)</span>
-<span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(rates)</span>
-<span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-31"><a href="#cb23-31" aria-hidden="true" tabindex="-1"></a>The resulting data frame contains one row per date on which rates changed, with columns for each of the three rates. To plot the full history of ECB rates since the euro's introduction, you can pass this directly to <span class="in">`ggplot2`</span>.</span>
-<span id="cb23-32"><a href="#cb23-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-35"><a href="#cb23-35" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-36"><a href="#cb23-36" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb23-37"><a href="#cb23-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-38"><a href="#cb23-38" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(rates, <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> value, <span class="at">colour =</span> series)) <span class="sc">+</span></span>
-<span id="cb23-39"><a href="#cb23-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_step</span>() <span class="sc">+</span></span>
-<span id="cb23-40"><a href="#cb23-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb23-41"><a href="#cb23-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"ECB policy rates"</span>,</span>
-<span id="cb23-42"><a href="#cb23-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Per cent"</span>,</span>
-<span id="cb23-43"><a href="#cb23-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="cn">NULL</span></span>
-<span id="cb23-44"><a href="#cb23-44" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb23-45"><a href="#cb23-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb23-46"><a href="#cb23-46" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb23-47"><a href="#cb23-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-48"><a href="#cb23-48" aria-hidden="true" tabindex="-1"></a><span class="fu">### Inflation across the euro area</span></span>
-<span id="cb23-49"><a href="#cb23-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-50"><a href="#cb23-50" aria-hidden="true" tabindex="-1"></a>The Harmonised Index of Consumer Prices (HICP) is the ECB's target measure of inflation. Unlike national CPI measures, HICP uses a common methodology across all EU member states, making it the right choice for cross-country inflation comparisons within Europe.</span>
-<span id="cb23-51"><a href="#cb23-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-54"><a href="#cb23-54" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-55"><a href="#cb23-55" aria-hidden="true" tabindex="-1"></a>hicp <span class="ot">&lt;-</span> <span class="fu">ecb_hicp</span>(<span class="fu">c</span>(<span class="st">"DE"</span>, <span class="st">"FR"</span>, <span class="st">"IT"</span>, <span class="st">"ES"</span>), <span class="at">from =</span> <span class="st">"2020-01"</span>)</span>
-<span id="cb23-56"><a href="#cb23-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-57"><a href="#cb23-57" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(hicp)</span>
-<span id="cb23-58"><a href="#cb23-58" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb23-59"><a href="#cb23-59" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-60"><a href="#cb23-60" aria-hidden="true" tabindex="-1"></a>You can pass ISO 2-letter country codes to <span class="in">`ecb_hicp()`</span> to pull HICP for individual member states. Omitting the country code returns the aggregate euro area HICP. This is the series that the ECB targets at 2 per cent over the medium term.</span>
-<span id="cb23-61"><a href="#cb23-61" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-64"><a href="#cb23-64" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-65"><a href="#cb23-65" aria-hidden="true" tabindex="-1"></a><span class="co"># Euro area aggregate</span></span>
-<span id="cb23-66"><a href="#cb23-66" aria-hidden="true" tabindex="-1"></a>hicp_ea <span class="ot">&lt;-</span> <span class="fu">ecb_hicp</span>(<span class="at">from =</span> <span class="st">"2020-01"</span>)</span>
-<span id="cb23-67"><a href="#cb23-67" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-68"><a href="#cb23-68" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(hicp_ea, <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> value)) <span class="sc">+</span></span>
-<span id="cb23-69"><a href="#cb23-69" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb23-70"><a href="#cb23-70" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">2</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">colour =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
-<span id="cb23-71"><a href="#cb23-71" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb23-72"><a href="#cb23-72" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Euro area HICP inflation"</span>,</span>
-<span id="cb23-73"><a href="#cb23-73" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Year-on-year percentage change"</span>,</span>
-<span id="cb23-74"><a href="#cb23-74" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Per cent"</span></span>
-<span id="cb23-75"><a href="#cb23-75" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb23-76"><a href="#cb23-76" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb23-77"><a href="#cb23-77" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb23-78"><a href="#cb23-78" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-79"><a href="#cb23-79" aria-hidden="true" tabindex="-1"></a><span class="fu">### Exchange rates</span></span>
-<span id="cb23-80"><a href="#cb23-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-81"><a href="#cb23-81" aria-hidden="true" tabindex="-1"></a>The ECB publishes daily reference exchange rates for approximately 30 currencies against the euro. These are mid-market rates set at 14:15 CET each business day and are widely used as a benchmark.</span>
-<span id="cb23-82"><a href="#cb23-82" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-85"><a href="#cb23-85" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-86"><a href="#cb23-86" aria-hidden="true" tabindex="-1"></a>fx <span class="ot">&lt;-</span> <span class="fu">ecb_exchange_rate</span>(<span class="fu">c</span>(<span class="st">"USD"</span>, <span class="st">"GBP"</span>), <span class="at">from =</span> <span class="st">"2020-01"</span>)</span>
-<span id="cb23-87"><a href="#cb23-87" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-88"><a href="#cb23-88" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(fx)</span>
-<span id="cb23-89"><a href="#cb23-89" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb23-90"><a href="#cb23-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-91"><a href="#cb23-91" aria-hidden="true" tabindex="-1"></a>To see all available currency pairs, use <span class="in">`list_exchange_rates()`</span>, which returns a data frame of currency codes and names.</span>
-<span id="cb23-92"><a href="#cb23-92" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-95"><a href="#cb23-95" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-96"><a href="#cb23-96" aria-hidden="true" tabindex="-1"></a><span class="fu">list_exchange_rates</span>()</span>
-<span id="cb23-97"><a href="#cb23-97" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb23-98"><a href="#cb23-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-99"><a href="#cb23-99" aria-hidden="true" tabindex="-1"></a><span class="fu">### Yield curves</span></span>
-<span id="cb23-100"><a href="#cb23-100" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-101"><a href="#cb23-101" aria-hidden="true" tabindex="-1"></a>Government bond yields are essential for understanding financial conditions and market expectations. The ECB publishes estimated yield curves for euro area sovereign bonds at various maturities.</span>
-<span id="cb23-102"><a href="#cb23-102" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-105"><a href="#cb23-105" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-106"><a href="#cb23-106" aria-hidden="true" tabindex="-1"></a>yields <span class="ot">&lt;-</span> <span class="fu">ecb_yield_curve</span>(<span class="st">"10Y"</span>, <span class="at">from =</span> <span class="st">"2005-01"</span>)</span>
-<span id="cb23-107"><a href="#cb23-107" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-108"><a href="#cb23-108" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(yields)</span>
-<span id="cb23-109"><a href="#cb23-109" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb23-110"><a href="#cb23-110" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-111"><a href="#cb23-111" aria-hidden="true" tabindex="-1"></a>A particularly useful exercise is to compare short- and long-term yields to construct a yield curve slope measure. An inverted yield curve — where short-term rates exceed long-term rates — has historically been a recession predictor.</span>
-<span id="cb23-112"><a href="#cb23-112" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-115"><a href="#cb23-115" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-116"><a href="#cb23-116" aria-hidden="true" tabindex="-1"></a>short <span class="ot">&lt;-</span> <span class="fu">ecb_yield_curve</span>(<span class="st">"2Y"</span>, <span class="at">from =</span> <span class="st">"2005-01"</span>)</span>
-<span id="cb23-117"><a href="#cb23-117" aria-hidden="true" tabindex="-1"></a>long <span class="ot">&lt;-</span> <span class="fu">ecb_yield_curve</span>(<span class="st">"10Y"</span>, <span class="at">from =</span> <span class="st">"2005-01"</span>)</span>
-<span id="cb23-118"><a href="#cb23-118" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-119"><a href="#cb23-119" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb23-120"><a href="#cb23-120" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-121"><a href="#cb23-121" aria-hidden="true" tabindex="-1"></a>spread <span class="ot">&lt;-</span> <span class="fu">inner_join</span>(</span>
-<span id="cb23-122"><a href="#cb23-122" aria-hidden="true" tabindex="-1"></a>  short <span class="sc">|&gt;</span> <span class="fu">select</span>(date, <span class="at">short =</span> value),</span>
-<span id="cb23-123"><a href="#cb23-123" aria-hidden="true" tabindex="-1"></a>  long <span class="sc">|&gt;</span> <span class="fu">select</span>(date, <span class="at">long =</span> value),</span>
-<span id="cb23-124"><a href="#cb23-124" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="st">"date"</span></span>
-<span id="cb23-125"><a href="#cb23-125" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
-<span id="cb23-126"><a href="#cb23-126" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">spread =</span> long <span class="sc">-</span> short)</span>
-<span id="cb23-127"><a href="#cb23-127" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-128"><a href="#cb23-128" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(spread, <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> spread)) <span class="sc">+</span></span>
-<span id="cb23-129"><a href="#cb23-129" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb23-130"><a href="#cb23-130" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
-<span id="cb23-131"><a href="#cb23-131" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb23-132"><a href="#cb23-132" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Euro area 10Y-2Y yield spread"</span>,</span>
-<span id="cb23-133"><a href="#cb23-133" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Percentage points"</span></span>
-<span id="cb23-134"><a href="#cb23-134" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb23-135"><a href="#cb23-135" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb23-136"><a href="#cb23-136" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb23-137"><a href="#cb23-137" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-138"><a href="#cb23-138" aria-hidden="true" tabindex="-1"></a><span class="fu">### Other ECB series</span></span>
-<span id="cb23-139"><a href="#cb23-139" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-140"><a href="#cb23-140" aria-hidden="true" tabindex="-1"></a>The <span class="in">`readecb`</span> package also provides functions for EURIBOR (<span class="in">`ecb_euribor()`</span>), the euro short-term rate (<span class="in">`ecb_estr()`</span>), money supply (<span class="in">`ecb_money_supply()`</span>), GDP (<span class="in">`ecb_gdp()`</span>), unemployment (<span class="in">`ecb_unemployment()`</span>), and government debt (<span class="in">`ecb_government_debt()`</span>). The general-purpose <span class="in">`ecb_get()`</span> function can retrieve any series from the ECB Data Portal if you know the dataflow and series key.</span>
-<span id="cb23-141"><a href="#cb23-141" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-144"><a href="#cb23-144" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-145"><a href="#cb23-145" aria-hidden="true" tabindex="-1"></a><span class="co"># Euro area M3 money supply</span></span>
-<span id="cb23-146"><a href="#cb23-146" aria-hidden="true" tabindex="-1"></a>m3 <span class="ot">&lt;-</span> <span class="fu">ecb_money_supply</span>(<span class="st">"M3"</span>, <span class="at">from =</span> <span class="st">"2000-01"</span>)</span>
-<span id="cb23-147"><a href="#cb23-147" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-148"><a href="#cb23-148" aria-hidden="true" tabindex="-1"></a><span class="co"># Euro area GDP growth</span></span>
-<span id="cb23-149"><a href="#cb23-149" aria-hidden="true" tabindex="-1"></a>gdp_ea <span class="ot">&lt;-</span> <span class="fu">ecb_gdp</span>(<span class="at">from =</span> <span class="st">"2000-01"</span>)</span>
-<span id="cb23-150"><a href="#cb23-150" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb23-151"><a href="#cb23-151" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-152"><a href="#cb23-152" aria-hidden="true" tabindex="-1"></a><span class="fu">## The OECD</span></span>
-<span id="cb23-153"><a href="#cb23-153" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-156"><a href="#cb23-156" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-157"><a href="#cb23-157" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readoecd)</span>
-<span id="cb23-158"><a href="#cb23-158" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb23-159"><a href="#cb23-159" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-160"><a href="#cb23-160" aria-hidden="true" tabindex="-1"></a>The Organisation for Economic Co-operation and Development publishes harmonised data across its 38 member countries, plus key partner economies. The OECD's great strength is comparability: its statisticians take national data and apply consistent definitions and methodologies, making it the natural choice for cross-country analysis.</span>
-<span id="cb23-161"><a href="#cb23-161" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-162"><a href="#cb23-162" aria-hidden="true" tabindex="-1"></a>The <span class="in">`readoecd`</span> package wraps the OECD's SDMX REST API, providing both dedicated functions for popular datasets and a flexible <span class="in">`oecd_get()`</span> function for direct access to any OECD dataflow.</span>
-<span id="cb23-163"><a href="#cb23-163" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-164"><a href="#cb23-164" aria-hidden="true" tabindex="-1"></a><span class="fu">### Composite leading indicators</span></span>
-<span id="cb23-165"><a href="#cb23-165" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-166"><a href="#cb23-166" aria-hidden="true" tabindex="-1"></a>The OECD's Composite Leading Indicators (CLI) are designed to provide early signals of turning points in business cycles. They combine a variety of forward-looking indicators — order books, building permits, share prices, interest rate spreads — into a single index calibrated so that 100 represents trend growth. Values above 100 suggest expansion; below 100, contraction.</span>
-<span id="cb23-167"><a href="#cb23-167" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-170"><a href="#cb23-170" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-171"><a href="#cb23-171" aria-hidden="true" tabindex="-1"></a>cli <span class="ot">&lt;-</span> <span class="fu">oecd_get</span>(</span>
-<span id="cb23-172"><a href="#cb23-172" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataset =</span> <span class="st">"MEI_CLI"</span>,</span>
-<span id="cb23-173"><a href="#cb23-173" aria-hidden="true" tabindex="-1"></a>  <span class="at">filter =</span> <span class="fu">list</span>(</span>
-<span id="cb23-174"><a href="#cb23-174" aria-hidden="true" tabindex="-1"></a>    <span class="at">location =</span> <span class="fu">c</span>(<span class="st">"GBR"</span>, <span class="st">"USA"</span>, <span class="st">"DEU"</span>, <span class="st">"JPN"</span>),</span>
-<span id="cb23-175"><a href="#cb23-175" aria-hidden="true" tabindex="-1"></a>    <span class="at">subject =</span> <span class="st">"LOLITOAA"</span>,</span>
-<span id="cb23-176"><a href="#cb23-176" aria-hidden="true" tabindex="-1"></a>    <span class="at">measure =</span> <span class="st">"STSA"</span>,</span>
-<span id="cb23-177"><a href="#cb23-177" aria-hidden="true" tabindex="-1"></a>    <span class="at">frequency =</span> <span class="st">"M"</span></span>
-<span id="cb23-178"><a href="#cb23-178" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb23-179"><a href="#cb23-179" aria-hidden="true" tabindex="-1"></a>  <span class="at">start_period =</span> <span class="st">"2015-01"</span></span>
-<span id="cb23-180"><a href="#cb23-180" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb23-181"><a href="#cb23-181" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-182"><a href="#cb23-182" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(cli)</span>
-<span id="cb23-183"><a href="#cb23-183" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb23-184"><a href="#cb23-184" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-185"><a href="#cb23-185" aria-hidden="true" tabindex="-1"></a>The CLI is particularly useful for identifying where different economies are in the cycle. If the UK CLI is falling while the US CLI is rising, that divergence has implications for exchange rates, relative monetary policy, and trade.</span>
-<span id="cb23-186"><a href="#cb23-186" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-189"><a href="#cb23-189" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-190"><a href="#cb23-190" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(cli, <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> value, <span class="at">colour =</span> location)) <span class="sc">+</span></span>
-<span id="cb23-191"><a href="#cb23-191" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb23-192"><a href="#cb23-192" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">100</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
-<span id="cb23-193"><a href="#cb23-193" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb23-194"><a href="#cb23-194" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"OECD Composite Leading Indicators"</span>,</span>
-<span id="cb23-195"><a href="#cb23-195" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Index (100 = trend)"</span>,</span>
-<span id="cb23-196"><a href="#cb23-196" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="st">"Country"</span></span>
-<span id="cb23-197"><a href="#cb23-197" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb23-198"><a href="#cb23-198" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb23-199"><a href="#cb23-199" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb23-200"><a href="#cb23-200" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-201"><a href="#cb23-201" aria-hidden="true" tabindex="-1"></a><span class="fu">### GDP by expenditure</span></span>
-<span id="cb23-202"><a href="#cb23-202" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-203"><a href="#cb23-203" aria-hidden="true" tabindex="-1"></a>The OECD's Quarterly National Accounts provide GDP broken down by expenditure component — consumption, investment, government spending, and net exports — on a comparable basis across countries. This is invaluable when you want to understand not just how fast an economy is growing, but what is driving that growth.</span>
-<span id="cb23-204"><a href="#cb23-204" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-207"><a href="#cb23-207" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-208"><a href="#cb23-208" aria-hidden="true" tabindex="-1"></a>gdp_exp <span class="ot">&lt;-</span> <span class="fu">oecd_get</span>(</span>
-<span id="cb23-209"><a href="#cb23-209" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataset =</span> <span class="st">"QNA"</span>,</span>
-<span id="cb23-210"><a href="#cb23-210" aria-hidden="true" tabindex="-1"></a>  <span class="at">filter =</span> <span class="fu">list</span>(</span>
-<span id="cb23-211"><a href="#cb23-211" aria-hidden="true" tabindex="-1"></a>    <span class="at">location =</span> <span class="fu">c</span>(<span class="st">"GBR"</span>, <span class="st">"USA"</span>, <span class="st">"DEU"</span>),</span>
-<span id="cb23-212"><a href="#cb23-212" aria-hidden="true" tabindex="-1"></a>    <span class="at">subject =</span> <span class="fu">c</span>(<span class="st">"B1_GE"</span>, <span class="st">"P3"</span>, <span class="st">"P5"</span>, <span class="st">"P6"</span>, <span class="st">"P7"</span>),</span>
-<span id="cb23-213"><a href="#cb23-213" aria-hidden="true" tabindex="-1"></a>    <span class="at">measure =</span> <span class="st">"VPVOBARSA"</span>,</span>
-<span id="cb23-214"><a href="#cb23-214" aria-hidden="true" tabindex="-1"></a>    <span class="at">frequency =</span> <span class="st">"Q"</span></span>
-<span id="cb23-215"><a href="#cb23-215" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb23-216"><a href="#cb23-216" aria-hidden="true" tabindex="-1"></a>  <span class="at">start_period =</span> <span class="st">"2010-Q1"</span></span>
-<span id="cb23-217"><a href="#cb23-217" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb23-218"><a href="#cb23-218" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-219"><a href="#cb23-219" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(gdp_exp)</span>
-<span id="cb23-220"><a href="#cb23-220" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb23-221"><a href="#cb23-221" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-222"><a href="#cb23-222" aria-hidden="true" tabindex="-1"></a>The subject codes here are: <span class="in">`B1_GE`</span> (GDP), <span class="in">`P3`</span> (final consumption), <span class="in">`P5`</span> (gross capital formation), <span class="in">`P6`</span> (exports), and <span class="in">`P7`</span> (imports). The measure <span class="in">`VPVOBARSA`</span> gives volume estimates in national currency, seasonally adjusted and annualised.</span>
-<span id="cb23-223"><a href="#cb23-223" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-224"><a href="#cb23-224" aria-hidden="true" tabindex="-1"></a><span class="fu">### Inflation</span></span>
-<span id="cb23-225"><a href="#cb23-225" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-226"><a href="#cb23-226" aria-hidden="true" tabindex="-1"></a>The OECD publishes CPI data using a consistent methodology, making it straightforward to compare inflation across countries that use different national indices. This is especially useful when comparing the UK (which uses CPI and CPIH) with the US (which uses CPI-U and PCE) and the euro area (which uses HICP).</span>
-<span id="cb23-227"><a href="#cb23-227" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-230"><a href="#cb23-230" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-231"><a href="#cb23-231" aria-hidden="true" tabindex="-1"></a>cpi_oecd <span class="ot">&lt;-</span> <span class="fu">oecd_get</span>(</span>
-<span id="cb23-232"><a href="#cb23-232" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataset =</span> <span class="st">"PRICES_CPI"</span>,</span>
-<span id="cb23-233"><a href="#cb23-233" aria-hidden="true" tabindex="-1"></a>  <span class="at">filter =</span> <span class="fu">list</span>(</span>
-<span id="cb23-234"><a href="#cb23-234" aria-hidden="true" tabindex="-1"></a>    <span class="at">location =</span> <span class="fu">c</span>(<span class="st">"GBR"</span>, <span class="st">"USA"</span>, <span class="st">"DEU"</span>, <span class="st">"JPN"</span>),</span>
-<span id="cb23-235"><a href="#cb23-235" aria-hidden="true" tabindex="-1"></a>    <span class="at">subject =</span> <span class="st">"CPALTT01"</span>,</span>
-<span id="cb23-236"><a href="#cb23-236" aria-hidden="true" tabindex="-1"></a>    <span class="at">measure =</span> <span class="st">"GY"</span>,</span>
-<span id="cb23-237"><a href="#cb23-237" aria-hidden="true" tabindex="-1"></a>    <span class="at">frequency =</span> <span class="st">"M"</span></span>
-<span id="cb23-238"><a href="#cb23-238" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb23-239"><a href="#cb23-239" aria-hidden="true" tabindex="-1"></a>  <span class="at">start_period =</span> <span class="st">"2015-01"</span></span>
-<span id="cb23-240"><a href="#cb23-240" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb23-241"><a href="#cb23-241" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-242"><a href="#cb23-242" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(cpi_oecd)</span>
-<span id="cb23-243"><a href="#cb23-243" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb23-244"><a href="#cb23-244" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-245"><a href="#cb23-245" aria-hidden="true" tabindex="-1"></a>The measure <span class="in">`GY`</span> gives the year-on-year growth rate directly, saving you from having to compute it yourself. The subject <span class="in">`CPALTT01`</span> is CPI for all items.</span>
-<span id="cb23-246"><a href="#cb23-246" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-249"><a href="#cb23-249" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-250"><a href="#cb23-250" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(cpi_oecd, <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> value, <span class="at">colour =</span> location)) <span class="sc">+</span></span>
-<span id="cb23-251"><a href="#cb23-251" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb23-252"><a href="#cb23-252" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb23-253"><a href="#cb23-253" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"CPI inflation: cross-country comparison"</span>,</span>
-<span id="cb23-254"><a href="#cb23-254" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Year-on-year percentage change, OECD harmonised"</span>,</span>
-<span id="cb23-255"><a href="#cb23-255" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Per cent"</span>,</span>
-<span id="cb23-256"><a href="#cb23-256" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="st">"Country"</span></span>
-<span id="cb23-257"><a href="#cb23-257" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb23-258"><a href="#cb23-258" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb23-259"><a href="#cb23-259" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb23-260"><a href="#cb23-260" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-261"><a href="#cb23-261" aria-hidden="true" tabindex="-1"></a><span class="fu">### Discovering OECD datasets</span></span>
-<span id="cb23-262"><a href="#cb23-262" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-263"><a href="#cb23-263" aria-hidden="true" tabindex="-1"></a>The OECD publishes hundreds of datasets. To explore what is available, use <span class="in">`list_oecd_dataflows()`</span>, which returns a searchable catalogue.</span>
-<span id="cb23-264"><a href="#cb23-264" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-267"><a href="#cb23-267" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-268"><a href="#cb23-268" aria-hidden="true" tabindex="-1"></a>flows <span class="ot">&lt;-</span> <span class="fu">list_oecd_dataflows</span>()</span>
-<span id="cb23-269"><a href="#cb23-269" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-270"><a href="#cb23-270" aria-hidden="true" tabindex="-1"></a><span class="co"># Search for datasets related to labour</span></span>
-<span id="cb23-271"><a href="#cb23-271" aria-hidden="true" tabindex="-1"></a>flows <span class="sc">|&gt;</span></span>
-<span id="cb23-272"><a href="#cb23-272" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">grepl</span>(<span class="st">"labour|employment"</span>, name, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb23-273"><a href="#cb23-273" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb23-274"><a href="#cb23-274" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-275"><a href="#cb23-275" aria-hidden="true" tabindex="-1"></a><span class="fu">## The World Bank</span></span>
-<span id="cb23-276"><a href="#cb23-276" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-279"><a href="#cb23-279" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-280"><a href="#cb23-280" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(WDI)</span>
-<span id="cb23-281"><a href="#cb23-281" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb23-282"><a href="#cb23-282" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-283"><a href="#cb23-283" aria-hidden="true" tabindex="-1"></a>For broader international comparisons — especially involving emerging and developing economies — the World Bank's World Development Indicators (WDI) are unmatched. The WDI covers over 200 countries and territories with more than 1,600 indicators spanning income, health, education, infrastructure, and the environment. The data often extends back to the 1960s, making it the best source for long historical series.</span>
-<span id="cb23-284"><a href="#cb23-284" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-285"><a href="#cb23-285" aria-hidden="true" tabindex="-1"></a>The <span class="in">`WDI`</span> package on CRAN provides a clean interface to the World Bank API. The key function is <span class="in">`WDI()`</span>, which takes an indicator code, a list of countries, and a date range.</span>
-<span id="cb23-286"><a href="#cb23-286" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-287"><a href="#cb23-287" aria-hidden="true" tabindex="-1"></a><span class="fu">### GDP per capita (PPP)</span></span>
-<span id="cb23-288"><a href="#cb23-288" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-289"><a href="#cb23-289" aria-hidden="true" tabindex="-1"></a>Purchasing power parity (PPP) adjustments account for differences in price levels across countries, making GDP per capita figures more meaningful for comparing living standards. The World Bank publishes GDP per capita in constant 2021 international dollars, which controls for both inflation and price-level differences.</span>
-<span id="cb23-290"><a href="#cb23-290" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-293"><a href="#cb23-293" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-294"><a href="#cb23-294" aria-hidden="true" tabindex="-1"></a>gdp_pc <span class="ot">&lt;-</span> <span class="fu">WDI</span>(</span>
-<span id="cb23-295"><a href="#cb23-295" aria-hidden="true" tabindex="-1"></a>  <span class="at">indicator =</span> <span class="st">"NY.GDP.PCAP.PP.KD"</span>,</span>
-<span id="cb23-296"><a href="#cb23-296" aria-hidden="true" tabindex="-1"></a>  <span class="at">country =</span> <span class="fu">c</span>(<span class="st">"GB"</span>, <span class="st">"US"</span>, <span class="st">"DE"</span>, <span class="st">"FR"</span>, <span class="st">"JP"</span>, <span class="st">"CA"</span>, <span class="st">"IT"</span>),</span>
-<span id="cb23-297"><a href="#cb23-297" aria-hidden="true" tabindex="-1"></a>  <span class="at">start =</span> <span class="dv">2000</span>,</span>
-<span id="cb23-298"><a href="#cb23-298" aria-hidden="true" tabindex="-1"></a>  <span class="at">end =</span> <span class="dv">2024</span></span>
-<span id="cb23-299"><a href="#cb23-299" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb23-300"><a href="#cb23-300" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-301"><a href="#cb23-301" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(gdp_pc)</span>
-<span id="cb23-302"><a href="#cb23-302" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb23-303"><a href="#cb23-303" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-304"><a href="#cb23-304" aria-hidden="true" tabindex="-1"></a>The indicator code <span class="in">`NY.GDP.PCAP.PP.KD`</span> stands for GDP per capita, PPP, in constant 2021 international dollars. These codes are not intuitive, but you can search for them using <span class="in">`WDIsearch()`</span>.</span>
-<span id="cb23-305"><a href="#cb23-305" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-308"><a href="#cb23-308" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-309"><a href="#cb23-309" aria-hidden="true" tabindex="-1"></a><span class="fu">WDIsearch</span>(<span class="st">"gdp per capita.*ppp"</span>)</span>
-<span id="cb23-310"><a href="#cb23-310" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb23-311"><a href="#cb23-311" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-312"><a href="#cb23-312" aria-hidden="true" tabindex="-1"></a><span class="fu">### Population</span></span>
-<span id="cb23-313"><a href="#cb23-313" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-314"><a href="#cb23-314" aria-hidden="true" tabindex="-1"></a>Population data is essential for computing per-capita measures and for understanding the demographic context of economic performance. The World Bank's population series is one of the most comprehensive available.</span>
-<span id="cb23-315"><a href="#cb23-315" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-318"><a href="#cb23-318" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-319"><a href="#cb23-319" aria-hidden="true" tabindex="-1"></a>pop <span class="ot">&lt;-</span> <span class="fu">WDI</span>(</span>
-<span id="cb23-320"><a href="#cb23-320" aria-hidden="true" tabindex="-1"></a>  <span class="at">indicator =</span> <span class="st">"SP.POP.TOTL"</span>,</span>
-<span id="cb23-321"><a href="#cb23-321" aria-hidden="true" tabindex="-1"></a>  <span class="at">country =</span> <span class="fu">c</span>(<span class="st">"GB"</span>, <span class="st">"US"</span>, <span class="st">"CN"</span>, <span class="st">"IN"</span>, <span class="st">"DE"</span>),</span>
-<span id="cb23-322"><a href="#cb23-322" aria-hidden="true" tabindex="-1"></a>  <span class="at">start =</span> <span class="dv">1960</span>,</span>
-<span id="cb23-323"><a href="#cb23-323" aria-hidden="true" tabindex="-1"></a>  <span class="at">end =</span> <span class="dv">2024</span></span>
-<span id="cb23-324"><a href="#cb23-324" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb23-325"><a href="#cb23-325" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-326"><a href="#cb23-326" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pop, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> SP.POP.TOTL <span class="sc">/</span> <span class="fl">1e6</span>, <span class="at">colour =</span> country)) <span class="sc">+</span></span>
-<span id="cb23-327"><a href="#cb23-327" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb23-328"><a href="#cb23-328" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb23-329"><a href="#cb23-329" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Population (millions)"</span>,</span>
-<span id="cb23-330"><a href="#cb23-330" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Millions"</span>,</span>
-<span id="cb23-331"><a href="#cb23-331" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="st">"Country"</span></span>
-<span id="cb23-332"><a href="#cb23-332" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb23-333"><a href="#cb23-333" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb23-334"><a href="#cb23-334" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb23-335"><a href="#cb23-335" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-336"><a href="#cb23-336" aria-hidden="true" tabindex="-1"></a><span class="fu">### Development indicators</span></span>
-<span id="cb23-337"><a href="#cb23-337" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-338"><a href="#cb23-338" aria-hidden="true" tabindex="-1"></a>The WDI's greatest strength is its breadth. Beyond GDP and population, you can pull indicators on poverty rates, educational attainment, life expectancy, CO~2~ emissions, internet penetration, and hundreds more. This makes it the natural source for the cross-country analysis in @sec-cross-country.</span>
-<span id="cb23-339"><a href="#cb23-339" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-342"><a href="#cb23-342" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb23-343"><a href="#cb23-343" aria-hidden="true" tabindex="-1"></a><span class="co"># Life expectancy at birth</span></span>
-<span id="cb23-344"><a href="#cb23-344" aria-hidden="true" tabindex="-1"></a>life_exp <span class="ot">&lt;-</span> <span class="fu">WDI</span>(</span>
-<span id="cb23-345"><a href="#cb23-345" aria-hidden="true" tabindex="-1"></a>  <span class="at">indicator =</span> <span class="st">"SP.DYN.LE00.IN"</span>,</span>
-<span id="cb23-346"><a href="#cb23-346" aria-hidden="true" tabindex="-1"></a>  <span class="at">country =</span> <span class="fu">c</span>(<span class="st">"GB"</span>, <span class="st">"US"</span>, <span class="st">"DE"</span>, <span class="st">"JP"</span>, <span class="st">"CN"</span>, <span class="st">"IN"</span>, <span class="st">"BR"</span>),</span>
-<span id="cb23-347"><a href="#cb23-347" aria-hidden="true" tabindex="-1"></a>  <span class="at">start =</span> <span class="dv">1990</span>,</span>
-<span id="cb23-348"><a href="#cb23-348" aria-hidden="true" tabindex="-1"></a>  <span class="at">end =</span> <span class="dv">2024</span></span>
-<span id="cb23-349"><a href="#cb23-349" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb23-350"><a href="#cb23-350" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-351"><a href="#cb23-351" aria-hidden="true" tabindex="-1"></a><span class="co"># CO2 emissions per capita (metric tonnes)</span></span>
-<span id="cb23-352"><a href="#cb23-352" aria-hidden="true" tabindex="-1"></a>co2 <span class="ot">&lt;-</span> <span class="fu">WDI</span>(</span>
-<span id="cb23-353"><a href="#cb23-353" aria-hidden="true" tabindex="-1"></a>  <span class="at">indicator =</span> <span class="st">"EN.ATM.CO2E.PC"</span>,</span>
-<span id="cb23-354"><a href="#cb23-354" aria-hidden="true" tabindex="-1"></a>  <span class="at">country =</span> <span class="fu">c</span>(<span class="st">"GB"</span>, <span class="st">"US"</span>, <span class="st">"DE"</span>, <span class="st">"CN"</span>, <span class="st">"IN"</span>),</span>
-<span id="cb23-355"><a href="#cb23-355" aria-hidden="true" tabindex="-1"></a>  <span class="at">start =</span> <span class="dv">1990</span>,</span>
-<span id="cb23-356"><a href="#cb23-356" aria-hidden="true" tabindex="-1"></a>  <span class="at">end =</span> <span class="dv">2024</span></span>
-<span id="cb23-357"><a href="#cb23-357" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb23-358"><a href="#cb23-358" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb23-359"><a href="#cb23-359" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-360"><a href="#cb23-360" aria-hidden="true" tabindex="-1"></a><span class="fu">## Choosing the right source {#sec-choosing-source}</span></span>
-<span id="cb23-361"><a href="#cb23-361" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-362"><a href="#cb23-362" aria-hidden="true" tabindex="-1"></a>For many macroeconomic variables — GDP, inflation, unemployment — the same data is published by multiple organisations. Choosing the right source depends on what you are trying to do.</span>
-<span id="cb23-363"><a href="#cb23-363" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-364"><a href="#cb23-364" aria-hidden="true" tabindex="-1"></a>**The ECB** is the best source for euro area financial and monetary data. It publishes daily exchange rates, real-time policy rate changes, and high-frequency money and credit aggregates. If you need euro area HICP inflation, government bond yields, or bank lending rates, the ECB is the primary source. Its data is timely and granular but covers only the euro area and EU member states.</span>
-<span id="cb23-365"><a href="#cb23-365" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-366"><a href="#cb23-366" aria-hidden="true" tabindex="-1"></a>**The OECD** excels at cross-country comparisons among advanced economies. Because OECD statisticians harmonise national data to common definitions, you can meaningfully compare UK CPI with US CPI or German GDP growth with Japanese GDP growth. The OECD also publishes useful composite indicators (like the CLI) that are not available elsewhere. The trade-off is that OECD data is often published with a longer lag than national sources, and it covers only OECD member countries plus a handful of partners.</span>
-<span id="cb23-367"><a href="#cb23-367" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-368"><a href="#cb23-368" aria-hidden="true" tabindex="-1"></a>**The World Bank** is the right choice for global coverage and long time series. It covers over 200 countries, including emerging and developing economies that neither the ECB nor the OECD cover well. Its development indicators span topics well beyond traditional macro. The drawback is lower frequency (mostly annual) and longer publication lags.</span>
-<span id="cb23-369"><a href="#cb23-369" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-370"><a href="#cb23-370" aria-hidden="true" tabindex="-1"></a>The table below summarises when to use each source:</span>
-<span id="cb23-371"><a href="#cb23-371" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-372"><a href="#cb23-372" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Variable <span class="pp">|</span> ECB <span class="pp">|</span> OECD <span class="pp">|</span> World Bank <span class="pp">|</span></span>
-<span id="cb23-373"><a href="#cb23-373" aria-hidden="true" tabindex="-1"></a><span class="pp">|:---|:---|:---|:---|</span></span>
-<span id="cb23-374"><a href="#cb23-374" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Euro area GDP <span class="pp">|</span> High-frequency, quarterly <span class="pp">|</span> Cross-country comparison with G7 <span class="pp">|</span> Long historical series, annual <span class="pp">|</span></span>
-<span id="cb23-375"><a href="#cb23-375" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Inflation <span class="pp">|</span> HICP for euro area members <span class="pp">|</span> Harmonised CPI for 38+ countries <span class="pp">|</span> CPI for 200+ countries, annual <span class="pp">|</span></span>
-<span id="cb23-376"><a href="#cb23-376" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Interest rates <span class="pp">|</span> Daily policy rates, yields <span class="pp">|</span> Policy rates (monthly) <span class="pp">|</span> Lending rates (annual) <span class="pp">|</span></span>
-<span id="cb23-377"><a href="#cb23-377" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Exchange rates <span class="pp">|</span> Daily ECB reference rates <span class="pp">|</span> Monthly averages <span class="pp">|</span> Annual averages <span class="pp">|</span></span>
-<span id="cb23-378"><a href="#cb23-378" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Development indicators <span class="pp">|</span> Not available <span class="pp">|</span> Limited <span class="pp">|</span> Comprehensive (1,600+ indicators) <span class="pp">|</span></span>
-<span id="cb23-379"><a href="#cb23-379" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-380"><a href="#cb23-380" aria-hidden="true" tabindex="-1"></a>As a rule of thumb: use the **national source** (ONS, ECB) for the highest-frequency, most timely data on a single country or area; use the **OECD** for comparing a handful of advanced economies on a like-for-like basis; and use the **World Bank** for global coverage or development-oriented analysis.</span>
-<span id="cb23-381"><a href="#cb23-381" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-382"><a href="#cb23-382" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises</span></span>
-<span id="cb23-383"><a href="#cb23-383" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-384"><a href="#cb23-384" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Using <span class="in">`readecb`</span>, compare HICP inflation in Germany, France, Italy, and Spain since 2020. Which country had the highest peak inflation?</span>
-<span id="cb23-385"><a href="#cb23-385" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-386"><a href="#cb23-386" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Pull the EUR/USD exchange rate with <span class="in">`ecb_exchange_rate("USD")`</span> and plot it alongside ECB policy rate changes. Do you see a relationship?</span>
-<span id="cb23-387"><a href="#cb23-387" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-388"><a href="#cb23-388" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Using <span class="in">`readoecd`</span>, download the OECD Composite Leading Indicator for the G7 countries from 2018 onwards. Plot all seven on the same chart. Which country's CLI fell furthest during the Covid-19 pandemic?</span>
-<span id="cb23-389"><a href="#cb23-389" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-390"><a href="#cb23-390" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Using <span class="in">`WDI`</span>, download GDP per capita (PPP) for the G7 countries from 2000 to the latest available year. Which country has the highest GDP per capita? Has the ranking changed over the period?</span>
-<span id="cb23-391"><a href="#cb23-391" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-392"><a href="#cb23-392" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Download euro area CPI inflation from both the ECB (<span class="in">`ecb_hicp()`</span>) and the OECD. Compare the two series. Are there differences? Why might they arise?</span>
-<span id="cb23-393"><a href="#cb23-393" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-394"><a href="#cb23-394" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>Using the World Bank, download life expectancy at birth for ten countries of your choice over the period 1990--2024. How did the Covid-19 pandemic show up in the data?</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb74" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a><span class="co">  eval: true</span></span>
+<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb74-5"><a href="#cb74-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-6"><a href="#cb74-6" aria-hidden="true" tabindex="-1"></a><span class="fu"># European and International Data {#sec-european-data}</span></span>
+<span id="cb74-7"><a href="#cb74-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-8"><a href="#cb74-8" aria-hidden="true" tabindex="-1"></a>Macroeconomics rarely stops at national borders. Comparing inflation across the euro area, tracking ECB policy alongside the Fed, or benchmarking UK growth against the G7 — all of these require international data.</span>
+<span id="cb74-9"><a href="#cb74-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-10"><a href="#cb74-10" aria-hidden="true" tabindex="-1"></a>This chapter covers three major sources: the ECB Data Portal for euro area data, the OECD for harmonised cross-country statistics, and the World Bank for global development indicators. Each serves a different purpose, and knowing when to reach for which source is a skill in itself.</span>
+<span id="cb74-11"><a href="#cb74-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-12"><a href="#cb74-12" aria-hidden="true" tabindex="-1"></a><span class="fu">## The European Central Bank</span></span>
+<span id="cb74-13"><a href="#cb74-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-16"><a href="#cb74-16" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb74-17"><a href="#cb74-17" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readecb)</span>
+<span id="cb74-18"><a href="#cb74-18" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-19"><a href="#cb74-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-20"><a href="#cb74-20" aria-hidden="true" tabindex="-1"></a>The European Central Bank publishes a vast statistical warehouse covering monetary policy, financial markets, and macroeconomic aggregates for the euro area and its member states. The <span class="in">`readecb`</span> package provides access to the ECB Data Portal API, with dedicated functions for the most commonly used series and a flexible <span class="in">`ecb_get()`</span> function for everything else.</span>
+<span id="cb74-21"><a href="#cb74-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-22"><a href="#cb74-22" aria-hidden="true" tabindex="-1"></a>The ECB's data is particularly strong on high-frequency financial and monetary series — policy rates updated in real time, daily exchange rates, and monthly monetary aggregates. For macroeconomic variables like GDP and unemployment, the ECB also publishes Eurostat data, though for cross-country comparisons the OECD is often more convenient (more on this below).</span>
+<span id="cb74-23"><a href="#cb74-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-24"><a href="#cb74-24" aria-hidden="true" tabindex="-1"></a><span class="fu">### Policy rates</span></span>
+<span id="cb74-25"><a href="#cb74-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-26"><a href="#cb74-26" aria-hidden="true" tabindex="-1"></a>The ECB sets three key interest rates: the main refinancing rate (the rate at which banks can borrow from the ECB for one week), the marginal lending facility rate (overnight borrowing), and the deposit facility rate (overnight deposits). Since September 2024, the deposit facility rate has been the primary instrument for steering monetary policy.</span>
+<span id="cb74-27"><a href="#cb74-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-30"><a href="#cb74-30" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb74-31"><a href="#cb74-31" aria-hidden="true" tabindex="-1"></a>rates <span class="ot">&lt;-</span> <span class="fu">ecb_policy_rates</span>(<span class="at">from =</span> <span class="st">"1999-01"</span>)</span>
+<span id="cb74-32"><a href="#cb74-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-33"><a href="#cb74-33" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(rates)</span>
+<span id="cb74-34"><a href="#cb74-34" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-35"><a href="#cb74-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-36"><a href="#cb74-36" aria-hidden="true" tabindex="-1"></a>The resulting data frame contains one row per date on which rates changed, with columns for each of the three rates. To plot the full history of ECB rates since the euro's introduction, you can pass this directly to <span class="in">`ggplot2`</span>.</span>
+<span id="cb74-37"><a href="#cb74-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-40"><a href="#cb74-40" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb74-41"><a href="#cb74-41" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb74-42"><a href="#cb74-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-43"><a href="#cb74-43" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(rates, <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> value, <span class="at">colour =</span> rate)) <span class="sc">+</span></span>
+<span id="cb74-44"><a href="#cb74-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_step</span>() <span class="sc">+</span></span>
+<span id="cb74-45"><a href="#cb74-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb74-46"><a href="#cb74-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"ECB policy rates"</span>,</span>
+<span id="cb74-47"><a href="#cb74-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Per cent"</span>,</span>
+<span id="cb74-48"><a href="#cb74-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="cn">NULL</span></span>
+<span id="cb74-49"><a href="#cb74-49" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb74-50"><a href="#cb74-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb74-51"><a href="#cb74-51" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-52"><a href="#cb74-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-53"><a href="#cb74-53" aria-hidden="true" tabindex="-1"></a><span class="fu">### Inflation across the euro area</span></span>
+<span id="cb74-54"><a href="#cb74-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-55"><a href="#cb74-55" aria-hidden="true" tabindex="-1"></a>The Harmonised Index of Consumer Prices (HICP) is the ECB's target measure of inflation. Unlike national CPI measures, HICP uses a common methodology across all EU member states, making it the right choice for cross-country inflation comparisons within Europe.</span>
+<span id="cb74-56"><a href="#cb74-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-59"><a href="#cb74-59" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb74-60"><a href="#cb74-60" aria-hidden="true" tabindex="-1"></a>hicp <span class="ot">&lt;-</span> <span class="fu">ecb_hicp</span>(<span class="fu">c</span>(<span class="st">"DE"</span>, <span class="st">"FR"</span>, <span class="st">"IT"</span>, <span class="st">"ES"</span>), <span class="at">from =</span> <span class="st">"2020-01"</span>)</span>
+<span id="cb74-61"><a href="#cb74-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-62"><a href="#cb74-62" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(hicp)</span>
+<span id="cb74-63"><a href="#cb74-63" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-64"><a href="#cb74-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-65"><a href="#cb74-65" aria-hidden="true" tabindex="-1"></a>You can pass ISO 2-letter country codes to <span class="in">`ecb_hicp()`</span> to pull HICP for individual member states. Omitting the country code returns the aggregate euro area HICP. This is the series that the ECB targets at 2 per cent over the medium term.</span>
+<span id="cb74-66"><a href="#cb74-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-69"><a href="#cb74-69" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb74-70"><a href="#cb74-70" aria-hidden="true" tabindex="-1"></a><span class="co"># Euro area aggregate</span></span>
+<span id="cb74-71"><a href="#cb74-71" aria-hidden="true" tabindex="-1"></a>hicp_ea <span class="ot">&lt;-</span> <span class="fu">ecb_hicp</span>(<span class="at">from =</span> <span class="st">"2020-01"</span>)</span>
+<span id="cb74-72"><a href="#cb74-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-73"><a href="#cb74-73" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(hicp_ea, <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> value)) <span class="sc">+</span></span>
+<span id="cb74-74"><a href="#cb74-74" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb74-75"><a href="#cb74-75" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">2</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">colour =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb74-76"><a href="#cb74-76" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb74-77"><a href="#cb74-77" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Euro area HICP inflation"</span>,</span>
+<span id="cb74-78"><a href="#cb74-78" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Year-on-year percentage change"</span>,</span>
+<span id="cb74-79"><a href="#cb74-79" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Per cent"</span></span>
+<span id="cb74-80"><a href="#cb74-80" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb74-81"><a href="#cb74-81" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb74-82"><a href="#cb74-82" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-83"><a href="#cb74-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-84"><a href="#cb74-84" aria-hidden="true" tabindex="-1"></a><span class="fu">### Exchange rates</span></span>
+<span id="cb74-85"><a href="#cb74-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-86"><a href="#cb74-86" aria-hidden="true" tabindex="-1"></a>The ECB publishes daily reference exchange rates for approximately 30 currencies against the euro. These are mid-market rates set at 14:15 CET each business day and are widely used as a benchmark.</span>
+<span id="cb74-87"><a href="#cb74-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-90"><a href="#cb74-90" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb74-91"><a href="#cb74-91" aria-hidden="true" tabindex="-1"></a>fx <span class="ot">&lt;-</span> <span class="fu">ecb_exchange_rate</span>(<span class="fu">c</span>(<span class="st">"USD"</span>, <span class="st">"GBP"</span>), <span class="at">from =</span> <span class="st">"2020-01"</span>)</span>
+<span id="cb74-92"><a href="#cb74-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-93"><a href="#cb74-93" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(fx)</span>
+<span id="cb74-94"><a href="#cb74-94" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-95"><a href="#cb74-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-96"><a href="#cb74-96" aria-hidden="true" tabindex="-1"></a>To see all available currency pairs, use <span class="in">`list_exchange_rates()`</span>, which returns a data frame of currency codes and names.</span>
+<span id="cb74-97"><a href="#cb74-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-100"><a href="#cb74-100" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb74-101"><a href="#cb74-101" aria-hidden="true" tabindex="-1"></a><span class="fu">list_exchange_rates</span>()</span>
+<span id="cb74-102"><a href="#cb74-102" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-103"><a href="#cb74-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-104"><a href="#cb74-104" aria-hidden="true" tabindex="-1"></a><span class="fu">### Yield curves</span></span>
+<span id="cb74-105"><a href="#cb74-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-106"><a href="#cb74-106" aria-hidden="true" tabindex="-1"></a>Government bond yields are essential for understanding financial conditions and market expectations. The ECB publishes estimated yield curves for euro area sovereign bonds at various maturities.</span>
+<span id="cb74-107"><a href="#cb74-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-110"><a href="#cb74-110" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb74-111"><a href="#cb74-111" aria-hidden="true" tabindex="-1"></a>yields <span class="ot">&lt;-</span> <span class="fu">ecb_yield_curve</span>(<span class="st">"10Y"</span>, <span class="at">from =</span> <span class="st">"2005-01"</span>)</span>
+<span id="cb74-112"><a href="#cb74-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-113"><a href="#cb74-113" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(yields)</span>
+<span id="cb74-114"><a href="#cb74-114" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-115"><a href="#cb74-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-116"><a href="#cb74-116" aria-hidden="true" tabindex="-1"></a>A particularly useful exercise is to compare short- and long-term yields to construct a yield curve slope measure. An inverted yield curve — where short-term rates exceed long-term rates — has historically been a recession predictor.</span>
+<span id="cb74-117"><a href="#cb74-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-120"><a href="#cb74-120" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb74-121"><a href="#cb74-121" aria-hidden="true" tabindex="-1"></a>short <span class="ot">&lt;-</span> <span class="fu">ecb_yield_curve</span>(<span class="st">"2Y"</span>, <span class="at">from =</span> <span class="st">"2005-01"</span>)</span>
+<span id="cb74-122"><a href="#cb74-122" aria-hidden="true" tabindex="-1"></a>long <span class="ot">&lt;-</span> <span class="fu">ecb_yield_curve</span>(<span class="st">"10Y"</span>, <span class="at">from =</span> <span class="st">"2005-01"</span>)</span>
+<span id="cb74-123"><a href="#cb74-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-124"><a href="#cb74-124" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb74-125"><a href="#cb74-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-126"><a href="#cb74-126" aria-hidden="true" tabindex="-1"></a>spread <span class="ot">&lt;-</span> <span class="fu">inner_join</span>(</span>
+<span id="cb74-127"><a href="#cb74-127" aria-hidden="true" tabindex="-1"></a>  short <span class="sc">|&gt;</span> <span class="fu">select</span>(date, <span class="at">short =</span> value),</span>
+<span id="cb74-128"><a href="#cb74-128" aria-hidden="true" tabindex="-1"></a>  long <span class="sc">|&gt;</span> <span class="fu">select</span>(date, <span class="at">long =</span> value),</span>
+<span id="cb74-129"><a href="#cb74-129" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="st">"date"</span></span>
+<span id="cb74-130"><a href="#cb74-130" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb74-131"><a href="#cb74-131" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">spread =</span> long <span class="sc">-</span> short)</span>
+<span id="cb74-132"><a href="#cb74-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-133"><a href="#cb74-133" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(spread, <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> spread)) <span class="sc">+</span></span>
+<span id="cb74-134"><a href="#cb74-134" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb74-135"><a href="#cb74-135" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb74-136"><a href="#cb74-136" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb74-137"><a href="#cb74-137" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Euro area 10Y-2Y yield spread"</span>,</span>
+<span id="cb74-138"><a href="#cb74-138" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Percentage points"</span></span>
+<span id="cb74-139"><a href="#cb74-139" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb74-140"><a href="#cb74-140" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb74-141"><a href="#cb74-141" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-142"><a href="#cb74-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-143"><a href="#cb74-143" aria-hidden="true" tabindex="-1"></a><span class="fu">### Other ECB series</span></span>
+<span id="cb74-144"><a href="#cb74-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-145"><a href="#cb74-145" aria-hidden="true" tabindex="-1"></a>The <span class="in">`readecb`</span> package also provides functions for EURIBOR (<span class="in">`ecb_euribor()`</span>), the euro short-term rate (<span class="in">`ecb_estr()`</span>), money supply (<span class="in">`ecb_money_supply()`</span>), GDP (<span class="in">`ecb_gdp()`</span>), unemployment (<span class="in">`ecb_unemployment()`</span>), and government debt (<span class="in">`ecb_government_debt()`</span>). The general-purpose <span class="in">`ecb_get()`</span> function can retrieve any series from the ECB Data Portal if you know the dataflow and series key.</span>
+<span id="cb74-146"><a href="#cb74-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-149"><a href="#cb74-149" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb74-150"><a href="#cb74-150" aria-hidden="true" tabindex="-1"></a><span class="co"># Euro area M3 money supply</span></span>
+<span id="cb74-151"><a href="#cb74-151" aria-hidden="true" tabindex="-1"></a>m3 <span class="ot">&lt;-</span> <span class="fu">ecb_money_supply</span>(<span class="st">"M3"</span>, <span class="at">from =</span> <span class="st">"2000-01"</span>)</span>
+<span id="cb74-152"><a href="#cb74-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-153"><a href="#cb74-153" aria-hidden="true" tabindex="-1"></a><span class="co"># Euro area GDP growth</span></span>
+<span id="cb74-154"><a href="#cb74-154" aria-hidden="true" tabindex="-1"></a>gdp_ea <span class="ot">&lt;-</span> <span class="fu">ecb_gdp</span>(<span class="at">from =</span> <span class="st">"2000-01"</span>)</span>
+<span id="cb74-155"><a href="#cb74-155" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-156"><a href="#cb74-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-157"><a href="#cb74-157" aria-hidden="true" tabindex="-1"></a><span class="fu">## The OECD</span></span>
+<span id="cb74-158"><a href="#cb74-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-161"><a href="#cb74-161" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb74-162"><a href="#cb74-162" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readoecd)</span>
+<span id="cb74-163"><a href="#cb74-163" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-164"><a href="#cb74-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-165"><a href="#cb74-165" aria-hidden="true" tabindex="-1"></a>The Organisation for Economic Co-operation and Development publishes harmonised data across its 38 member countries, plus key partner economies. The OECD's great strength is comparability: its statisticians take national data and apply consistent definitions and methodologies, making it the natural choice for cross-country analysis.</span>
+<span id="cb74-166"><a href="#cb74-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-167"><a href="#cb74-167" aria-hidden="true" tabindex="-1"></a>The <span class="in">`readoecd`</span> package wraps the OECD's SDMX REST API, providing dedicated functions for popular datasets including GDP, CPI, unemployment, and more.</span>
+<span id="cb74-168"><a href="#cb74-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-169"><a href="#cb74-169" aria-hidden="true" tabindex="-1"></a><span class="fu">### GDP</span></span>
+<span id="cb74-170"><a href="#cb74-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-171"><a href="#cb74-171" aria-hidden="true" tabindex="-1"></a>The OECD publishes GDP data on a comparable basis across member countries, making it the natural choice for cross-country growth comparisons. The <span class="in">`get_oecd_gdp()`</span> function returns GDP in PPP-adjusted terms for the countries you specify.</span>
+<span id="cb74-172"><a href="#cb74-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-175"><a href="#cb74-175" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb74-176"><a href="#cb74-176" aria-hidden="true" tabindex="-1"></a>gdp_oecd <span class="ot">&lt;-</span> <span class="fu">get_oecd_gdp</span>(</span>
+<span id="cb74-177"><a href="#cb74-177" aria-hidden="true" tabindex="-1"></a>  <span class="at">countries =</span> <span class="fu">c</span>(<span class="st">"GBR"</span>, <span class="st">"USA"</span>, <span class="st">"DEU"</span>, <span class="st">"JPN"</span>),</span>
+<span id="cb74-178"><a href="#cb74-178" aria-hidden="true" tabindex="-1"></a>  <span class="at">start_year =</span> <span class="dv">2000</span></span>
+<span id="cb74-179"><a href="#cb74-179" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb74-180"><a href="#cb74-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-181"><a href="#cb74-181" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(gdp_oecd)</span>
+<span id="cb74-182"><a href="#cb74-182" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-183"><a href="#cb74-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-184"><a href="#cb74-184" aria-hidden="true" tabindex="-1"></a><span class="fu">### Unemployment</span></span>
+<span id="cb74-185"><a href="#cb74-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-186"><a href="#cb74-186" aria-hidden="true" tabindex="-1"></a>Cross-country unemployment comparisons are straightforward with harmonised OECD data. National definitions of unemployment vary slightly, but the OECD applies a consistent ILO-based methodology.</span>
+<span id="cb74-187"><a href="#cb74-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-190"><a href="#cb74-190" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb74-191"><a href="#cb74-191" aria-hidden="true" tabindex="-1"></a>unemp_oecd <span class="ot">&lt;-</span> <span class="fu">get_oecd_unemployment</span>(</span>
+<span id="cb74-192"><a href="#cb74-192" aria-hidden="true" tabindex="-1"></a>  <span class="at">countries =</span> <span class="fu">c</span>(<span class="st">"GBR"</span>, <span class="st">"USA"</span>, <span class="st">"DEU"</span>, <span class="st">"JPN"</span>),</span>
+<span id="cb74-193"><a href="#cb74-193" aria-hidden="true" tabindex="-1"></a>  <span class="at">start_year =</span> <span class="dv">2015</span></span>
+<span id="cb74-194"><a href="#cb74-194" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb74-195"><a href="#cb74-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-196"><a href="#cb74-196" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(unemp_oecd)</span>
+<span id="cb74-197"><a href="#cb74-197" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-198"><a href="#cb74-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-201"><a href="#cb74-201" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb74-202"><a href="#cb74-202" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(unemp_oecd, <span class="fu">aes</span>(<span class="at">x =</span> period, <span class="at">y =</span> value, <span class="at">colour =</span> country_name)) <span class="sc">+</span></span>
+<span id="cb74-203"><a href="#cb74-203" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb74-204"><a href="#cb74-204" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb74-205"><a href="#cb74-205" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Unemployment rate: cross-country comparison"</span>,</span>
+<span id="cb74-206"><a href="#cb74-206" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"OECD harmonised rate, per cent"</span>,</span>
+<span id="cb74-207"><a href="#cb74-207" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Per cent"</span>,</span>
+<span id="cb74-208"><a href="#cb74-208" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="st">"Country"</span></span>
+<span id="cb74-209"><a href="#cb74-209" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb74-210"><a href="#cb74-210" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb74-211"><a href="#cb74-211" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-212"><a href="#cb74-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-213"><a href="#cb74-213" aria-hidden="true" tabindex="-1"></a><span class="fu">### Inflation</span></span>
+<span id="cb74-214"><a href="#cb74-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-215"><a href="#cb74-215" aria-hidden="true" tabindex="-1"></a>The OECD publishes CPI data using a consistent methodology, making it straightforward to compare inflation across countries that use different national indices. This is especially useful when comparing the UK (which uses CPI and CPIH) with the US (which uses CPI-U and PCE) and the euro area (which uses HICP).</span>
+<span id="cb74-216"><a href="#cb74-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-219"><a href="#cb74-219" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb74-220"><a href="#cb74-220" aria-hidden="true" tabindex="-1"></a>cpi_oecd <span class="ot">&lt;-</span> <span class="fu">get_oecd_cpi</span>(</span>
+<span id="cb74-221"><a href="#cb74-221" aria-hidden="true" tabindex="-1"></a>  <span class="at">countries =</span> <span class="fu">c</span>(<span class="st">"GBR"</span>, <span class="st">"USA"</span>, <span class="st">"DEU"</span>, <span class="st">"JPN"</span>),</span>
+<span id="cb74-222"><a href="#cb74-222" aria-hidden="true" tabindex="-1"></a>  <span class="at">start_year =</span> <span class="dv">2015</span></span>
+<span id="cb74-223"><a href="#cb74-223" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb74-224"><a href="#cb74-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-225"><a href="#cb74-225" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(cpi_oecd)</span>
+<span id="cb74-226"><a href="#cb74-226" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-227"><a href="#cb74-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-230"><a href="#cb74-230" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb74-231"><a href="#cb74-231" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(cpi_oecd, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> value, <span class="at">colour =</span> country_name)) <span class="sc">+</span></span>
+<span id="cb74-232"><a href="#cb74-232" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb74-233"><a href="#cb74-233" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb74-234"><a href="#cb74-234" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"CPI inflation: cross-country comparison"</span>,</span>
+<span id="cb74-235"><a href="#cb74-235" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Year-on-year percentage change, OECD harmonised"</span>,</span>
+<span id="cb74-236"><a href="#cb74-236" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Per cent"</span>,</span>
+<span id="cb74-237"><a href="#cb74-237" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="st">"Country"</span></span>
+<span id="cb74-238"><a href="#cb74-238" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb74-239"><a href="#cb74-239" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb74-240"><a href="#cb74-240" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-241"><a href="#cb74-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-242"><a href="#cb74-242" aria-hidden="true" tabindex="-1"></a><span class="fu">### Discovering OECD countries</span></span>
+<span id="cb74-243"><a href="#cb74-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-244"><a href="#cb74-244" aria-hidden="true" tabindex="-1"></a>To see which countries are available in the <span class="in">`readoecd`</span> package, use <span class="in">`list_oecd_countries()`</span>:</span>
+<span id="cb74-245"><a href="#cb74-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-248"><a href="#cb74-248" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb74-249"><a href="#cb74-249" aria-hidden="true" tabindex="-1"></a><span class="fu">list_oecd_countries</span>()</span>
+<span id="cb74-250"><a href="#cb74-250" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-251"><a href="#cb74-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-252"><a href="#cb74-252" aria-hidden="true" tabindex="-1"></a><span class="fu">## The World Bank</span></span>
+<span id="cb74-253"><a href="#cb74-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-256"><a href="#cb74-256" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb74-257"><a href="#cb74-257" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(WDI)</span>
+<span id="cb74-258"><a href="#cb74-258" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-259"><a href="#cb74-259" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-260"><a href="#cb74-260" aria-hidden="true" tabindex="-1"></a>For broader international comparisons — especially involving emerging and developing economies — the World Bank's World Development Indicators (WDI) are unmatched. The WDI covers over 200 countries and territories with more than 1,600 indicators spanning income, health, education, infrastructure, and the environment. The data often extends back to the 1960s, making it the best source for long historical series.</span>
+<span id="cb74-261"><a href="#cb74-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-262"><a href="#cb74-262" aria-hidden="true" tabindex="-1"></a>The <span class="in">`WDI`</span> package on CRAN provides a clean interface to the World Bank API. The key function is <span class="in">`WDI()`</span>, which takes an indicator code, a list of countries, and a date range.</span>
+<span id="cb74-263"><a href="#cb74-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-264"><a href="#cb74-264" aria-hidden="true" tabindex="-1"></a><span class="fu">### GDP per capita (PPP)</span></span>
+<span id="cb74-265"><a href="#cb74-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-266"><a href="#cb74-266" aria-hidden="true" tabindex="-1"></a>Purchasing power parity (PPP) adjustments account for differences in price levels across countries, making GDP per capita figures more meaningful for comparing living standards. The World Bank publishes GDP per capita in constant 2021 international dollars, which controls for both inflation and price-level differences.</span>
+<span id="cb74-267"><a href="#cb74-267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-270"><a href="#cb74-270" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb74-271"><a href="#cb74-271" aria-hidden="true" tabindex="-1"></a>gdp_pc <span class="ot">&lt;-</span> <span class="fu">WDI</span>(</span>
+<span id="cb74-272"><a href="#cb74-272" aria-hidden="true" tabindex="-1"></a>  <span class="at">indicator =</span> <span class="st">"NY.GDP.PCAP.PP.KD"</span>,</span>
+<span id="cb74-273"><a href="#cb74-273" aria-hidden="true" tabindex="-1"></a>  <span class="at">country =</span> <span class="fu">c</span>(<span class="st">"GB"</span>, <span class="st">"US"</span>, <span class="st">"DE"</span>, <span class="st">"FR"</span>, <span class="st">"JP"</span>, <span class="st">"CA"</span>, <span class="st">"IT"</span>),</span>
+<span id="cb74-274"><a href="#cb74-274" aria-hidden="true" tabindex="-1"></a>  <span class="at">start =</span> <span class="dv">2000</span>,</span>
+<span id="cb74-275"><a href="#cb74-275" aria-hidden="true" tabindex="-1"></a>  <span class="at">end =</span> <span class="dv">2024</span></span>
+<span id="cb74-276"><a href="#cb74-276" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb74-277"><a href="#cb74-277" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-278"><a href="#cb74-278" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(gdp_pc)</span>
+<span id="cb74-279"><a href="#cb74-279" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-280"><a href="#cb74-280" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-281"><a href="#cb74-281" aria-hidden="true" tabindex="-1"></a>The indicator code <span class="in">`NY.GDP.PCAP.PP.KD`</span> stands for GDP per capita, PPP, in constant 2021 international dollars. These codes are not intuitive, but you can search for them using <span class="in">`WDIsearch()`</span>.</span>
+<span id="cb74-282"><a href="#cb74-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-285"><a href="#cb74-285" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb74-286"><a href="#cb74-286" aria-hidden="true" tabindex="-1"></a><span class="fu">WDIsearch</span>(<span class="st">"gdp per capita.*ppp"</span>)</span>
+<span id="cb74-287"><a href="#cb74-287" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-288"><a href="#cb74-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-289"><a href="#cb74-289" aria-hidden="true" tabindex="-1"></a><span class="fu">### Population</span></span>
+<span id="cb74-290"><a href="#cb74-290" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-291"><a href="#cb74-291" aria-hidden="true" tabindex="-1"></a>Population data is essential for computing per-capita measures and for understanding the demographic context of economic performance. The World Bank's population series is one of the most comprehensive available.</span>
+<span id="cb74-292"><a href="#cb74-292" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-295"><a href="#cb74-295" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb74-296"><a href="#cb74-296" aria-hidden="true" tabindex="-1"></a>pop <span class="ot">&lt;-</span> <span class="fu">WDI</span>(</span>
+<span id="cb74-297"><a href="#cb74-297" aria-hidden="true" tabindex="-1"></a>  <span class="at">indicator =</span> <span class="st">"SP.POP.TOTL"</span>,</span>
+<span id="cb74-298"><a href="#cb74-298" aria-hidden="true" tabindex="-1"></a>  <span class="at">country =</span> <span class="fu">c</span>(<span class="st">"GB"</span>, <span class="st">"US"</span>, <span class="st">"CN"</span>, <span class="st">"IN"</span>, <span class="st">"DE"</span>),</span>
+<span id="cb74-299"><a href="#cb74-299" aria-hidden="true" tabindex="-1"></a>  <span class="at">start =</span> <span class="dv">1960</span>,</span>
+<span id="cb74-300"><a href="#cb74-300" aria-hidden="true" tabindex="-1"></a>  <span class="at">end =</span> <span class="dv">2024</span></span>
+<span id="cb74-301"><a href="#cb74-301" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb74-302"><a href="#cb74-302" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-303"><a href="#cb74-303" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pop, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> SP.POP.TOTL <span class="sc">/</span> <span class="fl">1e6</span>, <span class="at">colour =</span> country)) <span class="sc">+</span></span>
+<span id="cb74-304"><a href="#cb74-304" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb74-305"><a href="#cb74-305" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb74-306"><a href="#cb74-306" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Population (millions)"</span>,</span>
+<span id="cb74-307"><a href="#cb74-307" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Millions"</span>,</span>
+<span id="cb74-308"><a href="#cb74-308" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="st">"Country"</span></span>
+<span id="cb74-309"><a href="#cb74-309" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb74-310"><a href="#cb74-310" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb74-311"><a href="#cb74-311" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-312"><a href="#cb74-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-313"><a href="#cb74-313" aria-hidden="true" tabindex="-1"></a><span class="fu">### Development indicators</span></span>
+<span id="cb74-314"><a href="#cb74-314" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-315"><a href="#cb74-315" aria-hidden="true" tabindex="-1"></a>The WDI's greatest strength is its breadth. Beyond GDP and population, you can pull indicators on poverty rates, educational attainment, life expectancy, CO~2~ emissions, internet penetration, and hundreds more. This makes it the natural source for the cross-country analysis in @sec-cross-country.</span>
+<span id="cb74-316"><a href="#cb74-316" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-319"><a href="#cb74-319" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb74-320"><a href="#cb74-320" aria-hidden="true" tabindex="-1"></a><span class="co"># Life expectancy at birth</span></span>
+<span id="cb74-321"><a href="#cb74-321" aria-hidden="true" tabindex="-1"></a>life_exp <span class="ot">&lt;-</span> <span class="fu">WDI</span>(</span>
+<span id="cb74-322"><a href="#cb74-322" aria-hidden="true" tabindex="-1"></a>  <span class="at">indicator =</span> <span class="st">"SP.DYN.LE00.IN"</span>,</span>
+<span id="cb74-323"><a href="#cb74-323" aria-hidden="true" tabindex="-1"></a>  <span class="at">country =</span> <span class="fu">c</span>(<span class="st">"GB"</span>, <span class="st">"US"</span>, <span class="st">"DE"</span>, <span class="st">"JP"</span>, <span class="st">"CN"</span>, <span class="st">"IN"</span>, <span class="st">"BR"</span>),</span>
+<span id="cb74-324"><a href="#cb74-324" aria-hidden="true" tabindex="-1"></a>  <span class="at">start =</span> <span class="dv">1990</span>,</span>
+<span id="cb74-325"><a href="#cb74-325" aria-hidden="true" tabindex="-1"></a>  <span class="at">end =</span> <span class="dv">2024</span></span>
+<span id="cb74-326"><a href="#cb74-326" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb74-327"><a href="#cb74-327" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-328"><a href="#cb74-328" aria-hidden="true" tabindex="-1"></a><span class="co"># CO2 emissions per capita (tonnes CO2 equivalent)</span></span>
+<span id="cb74-329"><a href="#cb74-329" aria-hidden="true" tabindex="-1"></a>co2 <span class="ot">&lt;-</span> <span class="fu">WDI</span>(</span>
+<span id="cb74-330"><a href="#cb74-330" aria-hidden="true" tabindex="-1"></a>  <span class="at">indicator =</span> <span class="st">"EN.GHG.CO2.PC.CE.AR5"</span>,</span>
+<span id="cb74-331"><a href="#cb74-331" aria-hidden="true" tabindex="-1"></a>  <span class="at">country =</span> <span class="fu">c</span>(<span class="st">"GB"</span>, <span class="st">"US"</span>, <span class="st">"DE"</span>, <span class="st">"CN"</span>, <span class="st">"IN"</span>),</span>
+<span id="cb74-332"><a href="#cb74-332" aria-hidden="true" tabindex="-1"></a>  <span class="at">start =</span> <span class="dv">1990</span>,</span>
+<span id="cb74-333"><a href="#cb74-333" aria-hidden="true" tabindex="-1"></a>  <span class="at">end =</span> <span class="dv">2024</span></span>
+<span id="cb74-334"><a href="#cb74-334" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb74-335"><a href="#cb74-335" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-336"><a href="#cb74-336" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-337"><a href="#cb74-337" aria-hidden="true" tabindex="-1"></a><span class="fu">## Choosing the right source {#sec-choosing-source}</span></span>
+<span id="cb74-338"><a href="#cb74-338" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-339"><a href="#cb74-339" aria-hidden="true" tabindex="-1"></a>For many macroeconomic variables — GDP, inflation, unemployment — the same data is published by multiple organisations. Choosing the right source depends on what you are trying to do.</span>
+<span id="cb74-340"><a href="#cb74-340" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-341"><a href="#cb74-341" aria-hidden="true" tabindex="-1"></a>**The ECB** is the best source for euro area financial and monetary data. It publishes daily exchange rates, real-time policy rate changes, and high-frequency money and credit aggregates. If you need euro area HICP inflation, government bond yields, or bank lending rates, the ECB is the primary source. Its data is timely and granular but covers only the euro area and EU member states.</span>
+<span id="cb74-342"><a href="#cb74-342" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-343"><a href="#cb74-343" aria-hidden="true" tabindex="-1"></a>**The OECD** excels at cross-country comparisons among advanced economies. Because OECD statisticians harmonise national data to common definitions, you can meaningfully compare UK CPI with US CPI or German GDP growth with Japanese GDP growth. The OECD also publishes useful composite indicators (like the CLI) that are not available elsewhere. The trade-off is that OECD data is often published with a longer lag than national sources, and it covers only OECD member countries plus a handful of partners.</span>
+<span id="cb74-344"><a href="#cb74-344" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-345"><a href="#cb74-345" aria-hidden="true" tabindex="-1"></a>**The World Bank** is the right choice for global coverage and long time series. It covers over 200 countries, including emerging and developing economies that neither the ECB nor the OECD cover well. Its development indicators span topics well beyond traditional macro. The drawback is lower frequency (mostly annual) and longer publication lags.</span>
+<span id="cb74-346"><a href="#cb74-346" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-347"><a href="#cb74-347" aria-hidden="true" tabindex="-1"></a>The table below summarises when to use each source:</span>
+<span id="cb74-348"><a href="#cb74-348" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-349"><a href="#cb74-349" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Variable <span class="pp">|</span> ECB <span class="pp">|</span> OECD <span class="pp">|</span> World Bank <span class="pp">|</span></span>
+<span id="cb74-350"><a href="#cb74-350" aria-hidden="true" tabindex="-1"></a><span class="pp">|:---|:---|:---|:---|</span></span>
+<span id="cb74-351"><a href="#cb74-351" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Euro area GDP <span class="pp">|</span> High-frequency, quarterly <span class="pp">|</span> Cross-country comparison with G7 <span class="pp">|</span> Long historical series, annual <span class="pp">|</span></span>
+<span id="cb74-352"><a href="#cb74-352" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Inflation <span class="pp">|</span> HICP for euro area members <span class="pp">|</span> Harmonised CPI for 38+ countries <span class="pp">|</span> CPI for 200+ countries, annual <span class="pp">|</span></span>
+<span id="cb74-353"><a href="#cb74-353" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Interest rates <span class="pp">|</span> Daily policy rates, yields <span class="pp">|</span> Policy rates (monthly) <span class="pp">|</span> Lending rates (annual) <span class="pp">|</span></span>
+<span id="cb74-354"><a href="#cb74-354" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Exchange rates <span class="pp">|</span> Daily ECB reference rates <span class="pp">|</span> Monthly averages <span class="pp">|</span> Annual averages <span class="pp">|</span></span>
+<span id="cb74-355"><a href="#cb74-355" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Development indicators <span class="pp">|</span> Not available <span class="pp">|</span> Limited <span class="pp">|</span> Comprehensive (1,600+ indicators) <span class="pp">|</span></span>
+<span id="cb74-356"><a href="#cb74-356" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-357"><a href="#cb74-357" aria-hidden="true" tabindex="-1"></a>As a rule of thumb: use the **national source** (ONS, ECB) for the highest-frequency, most timely data on a single country or area; use the **OECD** for comparing a handful of advanced economies on a like-for-like basis; and use the **World Bank** for global coverage or development-oriented analysis.</span>
+<span id="cb74-358"><a href="#cb74-358" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-359"><a href="#cb74-359" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises</span></span>
+<span id="cb74-360"><a href="#cb74-360" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-361"><a href="#cb74-361" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Using <span class="in">`readecb`</span>, compare HICP inflation in Germany, France, Italy, and Spain since 2020. Which country had the highest peak inflation?</span>
+<span id="cb74-362"><a href="#cb74-362" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-363"><a href="#cb74-363" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Pull the EUR/USD exchange rate with <span class="in">`ecb_exchange_rate("USD")`</span> and plot it alongside ECB policy rate changes. Do you see a relationship?</span>
+<span id="cb74-364"><a href="#cb74-364" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-365"><a href="#cb74-365" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Using <span class="in">`readoecd`</span>, download the OECD Composite Leading Indicator for the G7 countries from 2018 onwards. Plot all seven on the same chart. Which country's CLI fell furthest during the Covid-19 pandemic?</span>
+<span id="cb74-366"><a href="#cb74-366" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-367"><a href="#cb74-367" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Using <span class="in">`WDI`</span>, download GDP per capita (PPP) for the G7 countries from 2000 to the latest available year. Which country has the highest GDP per capita? Has the ranking changed over the period?</span>
+<span id="cb74-368"><a href="#cb74-368" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-369"><a href="#cb74-369" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Download euro area CPI inflation from both the ECB (<span class="in">`ecb_hicp()`</span>) and the OECD. Compare the two series. Are there differences? Why might they arise?</span>
+<span id="cb74-370"><a href="#cb74-370" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-371"><a href="#cb74-371" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>Using the World Bank, download life expectancy at birth for ten countries of your choice over the period 1990--2024. How did the Covid-19 pandemic show up in the data?</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

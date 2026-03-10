@@ -359,11 +359,24 @@ e^{PPP} = \frac{P}{P^*}
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://vincentarelbundock.github.io/WDI/">WDI</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># PPP conversion factor (GDP) and official exchange rate</span></span>
-<span><span class="co"># PA.NUS.PPCD.D = PPP conversion factor, GDP (LCU per international $)</span></span>
-<span><span class="co"># PA.NUS.FCRF   = Official exchange rate (LCU per US$, period average)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'dplyr'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:stats':
+
+    filter, lag</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># PPP conversion factor (GDP) and official exchange rate</span></span>
+<span><span class="co"># PA.NUS.PPP  = PPP conversion factor, GDP (LCU per international $)</span></span>
+<span><span class="co"># PA.NUS.FCRF = Official exchange rate (LCU per US$, period average)</span></span>
 <span></span>
 <span><span class="va">g20_codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"US"</span>, <span class="st">"GB"</span>, <span class="st">"DE"</span>, <span class="st">"FR"</span>, <span class="st">"JP"</span>, <span class="st">"CA"</span>, <span class="st">"AU"</span>, <span class="st">"KR"</span>,</span>
 <span>               <span class="st">"BR"</span>, <span class="st">"IN"</span>, <span class="st">"CN"</span>, <span class="st">"MX"</span>, <span class="st">"ID"</span>, <span class="st">"TR"</span>, <span class="st">"ZA"</span>, <span class="st">"SA"</span>,</span>
@@ -371,18 +384,18 @@ e^{PPP} = \frac{P}{P^*}
 <span></span>
 <span><span class="va">ppp_data</span> <span class="op">&lt;-</span> <span class="fu">WDI</span><span class="op">(</span></span>
 <span>  country <span class="op">=</span> <span class="va">g20_codes</span>,</span>
-<span>  indicator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"PA.NUS.PPCD.D"</span>, <span class="st">"PA.NUS.FCRF"</span><span class="op">)</span>,</span>
+<span>  indicator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"PA.NUS.PPP"</span>, <span class="st">"PA.NUS.FCRF"</span><span class="op">)</span>,</span>
 <span>  start <span class="op">=</span> <span class="fl">2022</span>, end <span class="op">=</span> <span class="fl">2022</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ppp_data</span> <span class="op">&lt;-</span> <span class="va">ppp_data</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">rename</span><span class="op">(</span>ppp_rate <span class="op">=</span> <span class="va">PA.NUS.PPCD.D</span>,</span>
+<span>  <span class="fu">rename</span><span class="op">(</span>ppp_rate <span class="op">=</span> <span class="va">PA.NUS.PPP</span>,</span>
 <span>         market_rate <span class="op">=</span> <span class="va">PA.NUS.FCRF</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span>ppp_ratio <span class="op">=</span> <span class="va">ppp_rate</span> <span class="op">/</span> <span class="va">market_rate</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">ppp_ratio</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Plot the ratio of PPP to market exchange rates</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Plot the ratio of PPP to market exchange rates</span></span>
 <span><span class="co"># A ratio below 1 means the currency is "undervalued" vs PPP</span></span>
 <span><span class="co"># A ratio above 1 means "overvalued"</span></span>
 <span></span>
@@ -395,6 +408,12 @@ e^{PPP} = \frac{P}{P^*}
 <span>       x <span class="op">=</span> <span class="cn">NULL</span>, y <span class="op">=</span> <span class="st">"PPP / Market rate"</span>,</span>
 <span>       caption <span class="op">=</span> <span class="st">"Source: World Bank WDI"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="12-exchange-rates-trade_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
 </div>
 <p>The pattern is striking. Currencies in emerging markets — India, Indonesia, South Africa, Turkey — are well below PPP, with ratios of 0.2 to 0.5. This means that a dollar buys two to five times as many goods in these countries as the market exchange rate alone would suggest. Advanced economy currencies cluster near 1, with some (Switzerland, the Nordics) typically above. The United States is the benchmark, so its ratio is 1 by construction.</p>
 <p>This has important practical implications. When you compare GDP across countries at market exchange rates, you understate the living standards of poorer countries. China’s GDP at market exchange rates is roughly two-thirds of the US; at PPP, it is arguably larger. The IMF and World Bank therefore publish GDP figures at both market rates and PPP rates, and you should be clear about which you are using.</p>
@@ -408,23 +427,19 @@ e^{PPP} = \frac{P}{P^*}
 <p>A rising REER means a country is becoming less price-competitive — its goods are getting more expensive relative to those of its trading partners. A falling REER means the opposite. Central banks and treasuries monitor the REER closely because sustained misalignment can cause large trade imbalances.</p>
 <p>The Bank for International Settlements (BIS) and the OECD both publish REER indices. We can use the <code>readoecd</code> package to pull the OECD’s version.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">readoecd</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">readoecd</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># OECD publishes REER data in the MEI database</span></span>
-<span><span class="co"># The indicator code may vary; check available datasets</span></span>
-<span><span class="va">reer</span> <span class="op">&lt;-</span> <span class="fu">oecd_get</span><span class="op">(</span></span>
-<span>  dataset <span class="op">=</span> <span class="st">"MEI"</span>,</span>
-<span>  filter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
-<span>    LOCATION <span class="op">=</span> <span class="st">"GBR"</span>,</span>
-<span>    SUBJECT <span class="op">=</span> <span class="st">"CCRETT01"</span>,</span>
-<span>    FREQUENCY <span class="op">=</span> <span class="st">"M"</span></span>
-<span>  <span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">reer</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span><span class="co"># The readoecd package provides high-level functions for common datasets.</span></span>
+<span><span class="co"># For REER data, you can use the OECD Data Explorer directly:</span></span>
+<span><span class="co"># https://data-explorer.oecd.org/</span></span>
+<span><span class="co"># Download as CSV and read into R, or use the OECD API directly.</span></span>
+<span><span class="co">#</span></span>
+<span><span class="co"># reer &lt;- read.csv("data/oecd-reer-gbr.csv")</span></span>
+<span><span class="co"># head(reer)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Plot the UK REER over time</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Plot the UK REER over time</span></span>
 <span><span class="va">reer_uk</span> <span class="op">&lt;-</span> <span class="va">reer</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">date</span> <span class="op">&gt;=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="st">"2000-01-01"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -444,25 +459,19 @@ e^{PPP} = \frac{P}{P^*}
 <p>The chart typically shows a sharp depreciation after the Brexit referendum in June 2016. Sterling fell roughly 10% on a trade-weighted basis almost overnight — one of the largest peacetime currency moves for a major economy. The REER has remained below its pre-referendum level since, reflecting a structural repricing of the UK’s economic prospects. This depreciation boosted the competitiveness of UK exports in principle, but the trade balance did not improve materially, partly because imports became more expensive (the UK is a net importer of food and energy) and partly because non-price factors — supply chain disruption, regulatory uncertainty — offset the price advantage.</p>
 <p>It is instructive to compare the UK REER to those of other economies. Countries that run persistent current account surpluses (Germany, Japan) tend to have REERs that are low relative to fundamentals, while deficit countries tend to have overvalued REERs.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Compare REERs across major economies</span></span>
-<span><span class="va">reer_multi</span> <span class="op">&lt;-</span> <span class="fu">oecd_get</span><span class="op">(</span></span>
-<span>  dataset <span class="op">=</span> <span class="st">"MEI"</span>,</span>
-<span>  filter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
-<span>    LOCATION <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"GBR"</span>, <span class="st">"USA"</span>, <span class="st">"DEU"</span>, <span class="st">"JPN"</span>, <span class="st">"FRA"</span><span class="op">)</span>,</span>
-<span>    SUBJECT <span class="op">=</span> <span class="st">"CCRETT01"</span>,</span>
-<span>    FREQUENCY <span class="op">=</span> <span class="st">"M"</span></span>
-<span>  <span class="op">)</span></span>
-<span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">date</span> <span class="op">&gt;=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="st">"2000-01-01"</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">reer_multi</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">value</span>, colour <span class="op">=</span> <span class="va">country</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_line</span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Real Effective Exchange Rates"</span>,</span>
-<span>       subtitle <span class="op">=</span> <span class="st">"CPI-based, index (2015 = 100)"</span>,</span>
-<span>       x <span class="op">=</span> <span class="cn">NULL</span>, y <span class="op">=</span> <span class="cn">NULL</span>, colour <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>       caption <span class="op">=</span> <span class="st">"Source: OECD MEI"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Compare REERs across major economies</span></span>
+<span><span class="co"># Download REER data from the OECD Data Explorer for multiple countries</span></span>
+<span><span class="co"># reer_multi &lt;- read.csv("data/oecd-reer-multi.csv") |&gt;</span></span>
+<span><span class="co">#   filter(date &gt;= as.Date("2000-01-01"))</span></span>
+<span><span class="co">#</span></span>
+<span><span class="co"># ggplot(reer_multi, aes(x = date, y = value, colour = country)) +</span></span>
+<span><span class="co">#   geom_line(linewidth = 0.6) +</span></span>
+<span><span class="co">#   labs(title = "Real Effective Exchange Rates",</span></span>
+<span><span class="co">#        subtitle = "CPI-based, index (2015 = 100)",</span></span>
+<span><span class="co">#        x = NULL, y = NULL, colour = NULL,</span></span>
+<span><span class="co">#        caption = "Source: OECD MEI") +</span></span>
+<span><span class="co">#   theme_minimal() +</span></span>
+<span><span class="co">#   theme(legend.position = "bottom")</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section><section id="the-big-mac-index" class="level2" data-number="12.3"><h2 data-number="12.3" class="anchored" data-anchor-id="the-big-mac-index">
 <span class="header-section-number">12.3</span> The Big Mac Index</h2>
@@ -470,7 +479,7 @@ e^{PPP} = \frac{P}{P^*}
 <p>The raw Big Mac Index takes the price of a Big Mac in each country’s local currency, converts it to dollars at the market exchange rate, and compares it to the US price. If a Big Mac costs £3.69 in Britain and $5.58 in the US, the implied PPP rate is <span class="math inline">\(3.69 / 5.58 = 0.66\)</span> pounds per dollar. If the actual exchange rate is 0.80, sterling is overvalued by about 21% relative to “Big Mac PPP.”</p>
 <p>The Economist publishes the underlying data as a CSV on GitHub, making it easy to work with in R.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Download the Big Mac Index data from the Economist's GitHub</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Download the Big Mac Index data from the Economist's GitHub</span></span>
 <span><span class="va">bigmac_url</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span></span>
 <span>  <span class="st">"https://raw.githubusercontent.com/TheEconomist/"</span>,</span>
 <span>  <span class="st">"big-mac-data/master/output-data/big-mac-full-index.csv"</span></span>
@@ -480,9 +489,32 @@ e^{PPP} = \frac{P}{P^*}
 <span><span class="va">bigmac</span><span class="op">$</span><span class="va">date</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="va">bigmac</span><span class="op">$</span><span class="va">date</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">bigmac</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        date iso_a3 currency_code        name local_price dollar_ex
+1 2000-04-01    ARG           ARS   Argentina        2.50      1.00
+2 2000-04-01    AUS           AUD   Australia        2.59      1.68
+3 2000-04-01    BRA           BRL      Brazil        2.95      1.79
+4 2000-04-01    CAN           CAD      Canada        2.85      1.47
+5 2000-04-01    CHE           CHF Switzerland        5.90      1.70
+6 2000-04-01    CHL           CLP       Chile     1260.00    514.00
+  dollar_price  USD_raw  EUR_raw  GBP_raw  JPY_raw CNY_raw GDP_bigmac adj_price
+1     2.500000  0.11607  0.05007 -0.16722 -0.09864 1.09091   8317.725  1.941077
+2     1.541667 -0.31176 -0.35246 -0.48645 -0.44416 0.28939  28023.744  2.287635
+3     1.648045 -0.26427 -0.30778 -0.45102 -0.40581 0.37836   4511.789  1.874144
+4     1.938776 -0.13448 -0.18566 -0.35417 -0.30099 0.62152  24539.929  2.226367
+5     3.470588  0.54937  0.45774  0.15609  0.25130 1.90267  23524.313  2.208506
+6     2.451362  0.09436  0.02964 -0.18342 -0.11618 1.05023   4480.579  1.873595
+  USD_adjusted EUR_adjusted GBP_adjusted JPY_adjusted CNY_adjusted
+1      0.36397           NA     -0.07809      0.09763      0.96247
+2     -0.28631           NA     -0.51761     -0.42567      0.02686
+3     -0.06873           NA     -0.37055     -0.25058      0.33990
+4     -0.07777           NA     -0.37666     -0.25785      0.32689
+5      0.66423           NA      0.12486      0.33926      1.39447
+6      0.38561           NA     -0.06346      0.11504      0.99360</code></pre>
+</div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Get the most recent observation for each country</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Get the most recent observation for each country</span></span>
 <span><span class="va">latest</span> <span class="op">&lt;-</span> <span class="va">bigmac</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">date</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">dollar_price</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -491,7 +523,7 @@ e^{PPP} = \frac{P}{P^*}
 <span>  <span class="fu">arrange</span><span class="op">(</span><span class="va">overvaluation</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Horizontal bar chart of over/undervaluation</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Horizontal bar chart of over/undervaluation</span></span>
 <span><span class="co"># Select a subset for readability</span></span>
 <span><span class="va">top_bottom</span> <span class="op">&lt;-</span> <span class="fu">bind_rows</span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">latest</span>, <span class="fl">10</span><span class="op">)</span>,</span>
@@ -509,11 +541,17 @@ e^{PPP} = \frac{P}{P^*}
 <span>       x <span class="op">=</span> <span class="cn">NULL</span>, y <span class="op">=</span> <span class="st">"Over/undervaluation (%)"</span>,</span>
 <span>       caption <span class="op">=</span> <span class="st">"Source: The Economist"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="12-exchange-rates-trade_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
 </div>
 <p>The chart reveals a familiar pattern. Swiss francs and Norwegian kroner are typically the most overvalued — Big Macs in Zurich cost nearly twice the US price. At the other end, currencies in South-East Asia and parts of Latin America are heavily undervalued. A Big Mac in India or Egypt costs a fraction of the US price even after converting at market exchange rates.</p>
 <p>The Big Mac Index has its limitations. McDonald’s pricing reflects local costs (rent, wages, beef prices) and local market power, not just currency misalignment. The adjusted index controls for GDP per capita — the Balassa-Samuelson effect — and tends to show smaller deviations, but they remain substantial for many currencies.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Implied PPP rate vs actual exchange rate</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Implied PPP rate vs actual exchange rate</span></span>
 <span><span class="va">latest_ppp</span> <span class="op">&lt;-</span> <span class="va">bigmac</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">date</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">dollar_price</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">local_price</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -524,6 +562,40 @@ e^{PPP} = \frac{P}{P^*}
 <span>  <span class="fu">select</span><span class="op">(</span><span class="va">name</span>, <span class="va">iso_a3</span>, <span class="va">local_price</span>, <span class="va">dollar_price</span>, <span class="va">implied_ppp</span>, <span class="va">actual_rate</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">latest_ppp</span>, <span class="fl">15</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                   name iso_a3 local_price dollar_price  implied_ppp
+1  United Arab Emirates    ARE       18.00     4.900760    3.1088083
+2             Argentina    ARG     7300.00     6.952380 1260.7944732
+3             Australia    AUS        7.75     4.870488    1.3385147
+4            Azerbaijan    AZE        6.24     3.670588    1.0777202
+5               Bahrain    BHR        1.70     4.509284    0.2936097
+6                Brazil    BRA       23.90     4.025806    4.1278066
+7                Canada    CAN        7.81     5.429455    1.3488774
+8           Switzerland    CHE        7.20     7.992452    1.2435233
+9                 Chile    CHL     4490.00     4.547987  775.4749568
+10                China    CHN       25.50     3.518285    4.4041451
+11             Colombia    COL    21900.00     5.174589 3782.3834197
+12           Costa Rica    CRI     2990.00     5.901801  516.4075993
+13       Czech Republic    CZE      109.00     4.562235   18.8255613
+14              Denmark    DNK       39.00     5.487007    6.7357513
+15                Egypt    EGY      135.00     2.686567   23.3160622
+   actual_rate
+1     3.672900
+2  1050.000100
+3     1.591216
+4     1.700000
+5     0.377000
+6     5.936700
+7     1.438450
+8     0.900850
+9   987.250000
+10    7.247850
+11 4232.220000
+12  506.625000
+13   23.891800
+14    7.107700
+15   50.250000</code></pre>
+</div>
 </div>
 <p>Despite its informality, the Big Mac Index captures something real. Currencies that are significantly undervalued on the Big Mac measure do tend to appreciate over the following decade, consistent with long-run mean reversion to PPP. It is not a trading strategy — the convergence is far too slow for that — but it is a useful heuristic for whether a currency is cheap or expensive by historical standards.</p>
 </section><section id="gravity-models-of-trade" class="level2" data-number="12.4"><h2 data-number="12.4" class="anchored" data-anchor-id="gravity-models-of-trade">
@@ -537,7 +609,7 @@ e^{PPP} = \frac{P}{P^*}
 <p>The gravity model is one of the most empirically successful models in economics. In its basic form, it explains around 60-70% of the variation in bilateral trade flows. Adding further variables — common language, colonial history, shared borders, regional trade agreements — pushes the <span class="math inline">\(R^2\)</span> higher still. The finding that EU membership roughly doubles bilateral trade (controlling for size and distance) was central to the economic analysis of Brexit.</p>
 <p>For estimation, we use the CEPII gravity dataset, which provides bilateral trade flows along with geographic and cultural variables for nearly all country pairs. The <code>fixest</code> package provides fast fixed-effects estimation, which is essential given the large number of observations.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://lrberge.github.io/fixest/">fixest</a></span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://lrberge.github.io/fixest/">fixest</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># The CEPII gravity dataset can be downloaded from:</span></span>
@@ -548,7 +620,7 @@ e^{PPP} = \frac{P}{P^*}
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">gravity</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Basic gravity model</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Basic gravity model</span></span>
 <span><span class="co"># Trade is typically measured as exports from i to j</span></span>
 <span><span class="co"># Filter for a single year and non-zero trade flows</span></span>
 <span></span>
@@ -573,7 +645,7 @@ e^{PPP} = \frac{P}{P^*}
 <p>The coefficient on log distance is typically around <span class="math inline">\(-1.1\)</span> to <span class="math inline">\(-1.3\)</span>, meaning a doubling of distance reduces trade by about 55-60%. The coefficients on GDP are close to 1, consistent with the theoretical prediction. Sharing a border (<code>contig</code>) increases trade by roughly 50-80%, sharing an official language by 30-50%, and having a colonial relationship by 40-60%. Regional trade agreements (<code>rta</code>), which include EU membership, roughly double trade.</p>
 <p>A more sophisticated specification includes exporter and importer fixed effects, which control for all country-specific factors (GDP, institutions, remoteness) and isolate the effect of bilateral variables like distance.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Gravity model with exporter and importer fixed effects</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Gravity model with exporter and importer fixed effects</span></span>
 <span><span class="va">gravity_fe</span> <span class="op">&lt;-</span> <span class="fu">feols</span><span class="op">(</span></span>
 <span>  <span class="va">ln_trade</span> <span class="op">~</span> <span class="va">ln_dist</span> <span class="op">+</span> <span class="va">contig</span> <span class="op">+</span> <span class="va">comlang_off</span> <span class="op">+</span> <span class="va">colony</span> <span class="op">+</span> <span class="va">rta</span> <span class="op">|</span></span>
 <span>    <span class="va">iso_o</span> <span class="op">+</span> <span class="va">iso_d</span>,</span>
@@ -583,7 +655,7 @@ e^{PPP} = \frac{P}{P^*}
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">gravity_fe</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Compare the two specifications</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Compare the two specifications</span></span>
 <span><span class="fu">etable</span><span class="op">(</span><span class="va">gravity_ols</span>, <span class="va">gravity_fe</span>,</span>
 <span>       headers <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"OLS"</span>, <span class="st">"Fixed Effects"</span><span class="op">)</span>,</span>
 <span>       title <span class="op">=</span> <span class="st">"Gravity Model Estimates"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -591,7 +663,7 @@ e^{PPP} = \frac{P}{P^*}
 <p>The fixed-effects specification is the modern standard. Once you include country fixed effects, the GDP variables drop out (they are perfectly collinear with the fixed effects), but the bilateral variables — distance, common language, colonial ties — remain. Their coefficients are typically somewhat smaller than in the OLS specification, because the fixed effects absorb some of the correlation.</p>
 <p>For the UK specifically, the gravity model provides a framework for quantifying the trade effects of Brexit. Before the referendum, studies using gravity models estimated that EU membership boosted UK trade with EU partners by 40-100%. Leaving the single market and customs union would be expected to reduce this premium, with the magnitude depending on the depth of the future trading relationship. Early post-Brexit data suggest a significant decline in UK-EU trade relative to the gravity model’s predictions, though disentangling Brexit from COVID-19 effects remains an active area of research.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Illustrate the gravity relationship visually</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Illustrate the gravity relationship visually</span></span>
 <span><span class="co"># Plot log trade against log distance</span></span>
 <span></span>
 <span><span class="fu">ggplot</span><span class="op">(</span><span class="va">gravity_2019</span> <span class="op">|&gt;</span> <span class="fu">sample_n</span><span class="op">(</span><span class="fl">5000</span><span class="op">)</span>,</span>
@@ -1078,324 +1150,335 @@ e^{PPP} = \frac{P}{P^*}
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Exchange Rates and Trade {#sec-trade}</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>Exchange rates transmit monetary policy, reflect relative economic prospects, and reshape trade flows. This chapter covers purchasing power parity, real effective exchange rates, the Big Mac Index, and gravity models of trade. Along the way, we will pull data from the World Bank, BIS, OECD, and the Economist's open dataset.</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Purchasing power parity</span></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>Purchasing power parity (PPP) is one of the oldest ideas in international economics. It starts from the law of one price: if markets are competitive and transport costs are small, the same good should cost the same everywhere once you convert currencies. A tonne of wheat that costs $200 in the United States should cost £160 in the UK when the exchange rate is 1.25 dollars per pound. If wheat were cheaper in the UK, arbitrageurs would buy it there and sell it in the US, driving prices to equality.</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>Extend this logic from a single good to the entire price level and you get PPP. The PPP exchange rate is the rate that equalises the price of a representative basket of goods across countries:</span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>e^{PPP} = \frac{P}{P^*}</span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>where $P$ is the domestic price level and $P^*$ is the foreign price level. If a basket costs £80 in the UK and $100 in the US, the PPP exchange rate is 0.80 pounds per dollar.</span>
-<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>In practice, PPP holds poorly in the short run. Market exchange rates fluctuate wildly — driven by capital flows, interest rate differentials, and speculation — while price levels are sticky. But over decades, currencies do tend to converge towards their PPP values. The "Penn effect" also shows that PPP exchange rates systematically differ from market rates in a predictable way: currencies in poorer countries tend to be undervalued relative to PPP, because non-traded services (haircuts, restaurant meals) are cheap in low-wage economies. This is the Balassa-Samuelson effect.</span>
-<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>The World Bank publishes PPP conversion factors through its World Development Indicators, which we can access using the <span class="in">`WDI`</span> package.</span>
-<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(WDI)</span>
-<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a><span class="co"># PPP conversion factor (GDP) and official exchange rate</span></span>
-<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a><span class="co"># PA.NUS.PPCD.D = PPP conversion factor, GDP (LCU per international $)</span></span>
-<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a><span class="co"># PA.NUS.FCRF   = Official exchange rate (LCU per US$, period average)</span></span>
-<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a>g20_codes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"US"</span>, <span class="st">"GB"</span>, <span class="st">"DE"</span>, <span class="st">"FR"</span>, <span class="st">"JP"</span>, <span class="st">"CA"</span>, <span class="st">"AU"</span>, <span class="st">"KR"</span>,</span>
-<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>               <span class="st">"BR"</span>, <span class="st">"IN"</span>, <span class="st">"CN"</span>, <span class="st">"MX"</span>, <span class="st">"ID"</span>, <span class="st">"TR"</span>, <span class="st">"ZA"</span>, <span class="st">"SA"</span>,</span>
-<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a>               <span class="st">"AR"</span>, <span class="st">"RU"</span>, <span class="st">"IT"</span>, <span class="st">"ES"</span>)</span>
-<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a>ppp_data <span class="ot">&lt;-</span> <span class="fu">WDI</span>(</span>
-<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a>  <span class="at">country =</span> g20_codes,</span>
-<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a>  <span class="at">indicator =</span> <span class="fu">c</span>(<span class="st">"PA.NUS.PPCD.D"</span>, <span class="st">"PA.NUS.FCRF"</span>),</span>
-<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a>  <span class="at">start =</span> <span class="dv">2022</span>, <span class="at">end =</span> <span class="dv">2022</span></span>
-<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a>ppp_data <span class="ot">&lt;-</span> ppp_data <span class="sc">|&gt;</span></span>
-<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">ppp_rate =</span> PA.NUS.PPCD.D,</span>
-<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a>         <span class="at">market_rate =</span> PA.NUS.FCRF) <span class="sc">|&gt;</span></span>
-<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ppp_ratio =</span> ppp_rate <span class="sc">/</span> market_rate) <span class="sc">|&gt;</span></span>
-<span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(ppp_ratio))</span>
-<span id="cb15-47"><a href="#cb15-47" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb15-48"><a href="#cb15-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-51"><a href="#cb15-51" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb15-52"><a href="#cb15-52" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the ratio of PPP to market exchange rates</span></span>
-<span id="cb15-53"><a href="#cb15-53" aria-hidden="true" tabindex="-1"></a><span class="co"># A ratio below 1 means the currency is "undervalued" vs PPP</span></span>
-<span id="cb15-54"><a href="#cb15-54" aria-hidden="true" tabindex="-1"></a><span class="co"># A ratio above 1 means "overvalued"</span></span>
-<span id="cb15-55"><a href="#cb15-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-56"><a href="#cb15-56" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(ppp_data, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(country, ppp_ratio), <span class="at">y =</span> ppp_ratio)) <span class="sc">+</span></span>
-<span id="cb15-57"><a href="#cb15-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"#1565C0"</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
-<span id="cb15-58"><a href="#cb15-58" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">1</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">colour =</span> <span class="st">"grey40"</span>) <span class="sc">+</span></span>
-<span id="cb15-59"><a href="#cb15-59" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
-<span id="cb15-60"><a href="#cb15-60" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"PPP vs Market Exchange Rates"</span>,</span>
-<span id="cb15-61"><a href="#cb15-61" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Ratio of PPP conversion factor to market rate, 2022.</span><span class="sc">\n</span><span class="st">Below 1 = currency undervalued relative to PPP."</span>,</span>
-<span id="cb15-62"><a href="#cb15-62" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"PPP / Market rate"</span>,</span>
-<span id="cb15-63"><a href="#cb15-63" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">"Source: World Bank WDI"</span>) <span class="sc">+</span></span>
-<span id="cb15-64"><a href="#cb15-64" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb15-65"><a href="#cb15-65" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb15-66"><a href="#cb15-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-67"><a href="#cb15-67" aria-hidden="true" tabindex="-1"></a>The pattern is striking. Currencies in emerging markets — India, Indonesia, South Africa, Turkey — are well below PPP, with ratios of 0.2 to 0.5. This means that a dollar buys two to five times as many goods in these countries as the market exchange rate alone would suggest. Advanced economy currencies cluster near 1, with some (Switzerland, the Nordics) typically above. The United States is the benchmark, so its ratio is 1 by construction.</span>
-<span id="cb15-68"><a href="#cb15-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-69"><a href="#cb15-69" aria-hidden="true" tabindex="-1"></a>This has important practical implications. When you compare GDP across countries at market exchange rates, you understate the living standards of poorer countries. China's GDP at market exchange rates is roughly two-thirds of the US; at PPP, it is arguably larger. The IMF and World Bank therefore publish GDP figures at both market rates and PPP rates, and you should be clear about which you are using.</span>
-<span id="cb15-70"><a href="#cb15-70" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-71"><a href="#cb15-71" aria-hidden="true" tabindex="-1"></a><span class="fu">## Real effective exchange rates</span></span>
-<span id="cb15-72"><a href="#cb15-72" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-73"><a href="#cb15-73" aria-hidden="true" tabindex="-1"></a>A country does not trade with just one partner, so a bilateral exchange rate — sterling against the dollar, say — tells only part of the story. The real effective exchange rate (REER) is a trade-weighted, inflation-adjusted index that captures a country's price competitiveness against all of its trading partners simultaneously.</span>
-<span id="cb15-74"><a href="#cb15-74" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-75"><a href="#cb15-75" aria-hidden="true" tabindex="-1"></a>The REER is constructed in two steps. First, take a basket of bilateral exchange rates, weighted by each partner's share of trade. This gives the nominal effective exchange rate (NEER). Second, adjust for relative inflation: if UK prices are rising faster than its trading partners' prices, the UK is losing competitiveness even if the nominal exchange rate is unchanged. The REER captures this.</span>
-<span id="cb15-76"><a href="#cb15-76" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-77"><a href="#cb15-77" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb15-78"><a href="#cb15-78" aria-hidden="true" tabindex="-1"></a>\text{REER} = \text{NEER} \times \frac{P_{\text{domestic}}}{P_{\text{foreign}}^{*}}</span>
-<span id="cb15-79"><a href="#cb15-79" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb15-80"><a href="#cb15-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-81"><a href="#cb15-81" aria-hidden="true" tabindex="-1"></a>A rising REER means a country is becoming less price-competitive — its goods are getting more expensive relative to those of its trading partners. A falling REER means the opposite. Central banks and treasuries monitor the REER closely because sustained misalignment can cause large trade imbalances.</span>
-<span id="cb15-82"><a href="#cb15-82" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-83"><a href="#cb15-83" aria-hidden="true" tabindex="-1"></a>The Bank for International Settlements (BIS) and the OECD both publish REER indices. We can use the <span class="in">`readoecd`</span> package to pull the OECD's version.</span>
-<span id="cb15-84"><a href="#cb15-84" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-87"><a href="#cb15-87" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb15-88"><a href="#cb15-88" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readoecd)</span>
-<span id="cb15-89"><a href="#cb15-89" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-90"><a href="#cb15-90" aria-hidden="true" tabindex="-1"></a><span class="co"># OECD publishes REER data in the MEI database</span></span>
-<span id="cb15-91"><a href="#cb15-91" aria-hidden="true" tabindex="-1"></a><span class="co"># The indicator code may vary; check available datasets</span></span>
-<span id="cb15-92"><a href="#cb15-92" aria-hidden="true" tabindex="-1"></a>reer <span class="ot">&lt;-</span> <span class="fu">oecd_get</span>(</span>
-<span id="cb15-93"><a href="#cb15-93" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataset =</span> <span class="st">"MEI"</span>,</span>
-<span id="cb15-94"><a href="#cb15-94" aria-hidden="true" tabindex="-1"></a>  <span class="at">filter =</span> <span class="fu">list</span>(</span>
-<span id="cb15-95"><a href="#cb15-95" aria-hidden="true" tabindex="-1"></a>    <span class="at">LOCATION =</span> <span class="st">"GBR"</span>,</span>
-<span id="cb15-96"><a href="#cb15-96" aria-hidden="true" tabindex="-1"></a>    <span class="at">SUBJECT =</span> <span class="st">"CCRETT01"</span>,</span>
-<span id="cb15-97"><a href="#cb15-97" aria-hidden="true" tabindex="-1"></a>    <span class="at">FREQUENCY =</span> <span class="st">"M"</span></span>
-<span id="cb15-98"><a href="#cb15-98" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb15-99"><a href="#cb15-99" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb15-100"><a href="#cb15-100" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-101"><a href="#cb15-101" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(reer)</span>
-<span id="cb15-102"><a href="#cb15-102" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb15-103"><a href="#cb15-103" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-106"><a href="#cb15-106" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb15-107"><a href="#cb15-107" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the UK REER over time</span></span>
-<span id="cb15-108"><a href="#cb15-108" aria-hidden="true" tabindex="-1"></a>reer_uk <span class="ot">&lt;-</span> reer <span class="sc">|&gt;</span></span>
-<span id="cb15-109"><a href="#cb15-109" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">&gt;=</span> <span class="fu">as.Date</span>(<span class="st">"2000-01-01"</span>))</span>
-<span id="cb15-110"><a href="#cb15-110" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-111"><a href="#cb15-111" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(reer_uk, <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> value)) <span class="sc">+</span></span>
-<span id="cb15-112"><a href="#cb15-112" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">colour =</span> <span class="st">"#00695c"</span>, <span class="at">linewidth =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
-<span id="cb15-113"><a href="#cb15-113" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">as.Date</span>(<span class="st">"2016-06-23"</span>),</span>
-<span id="cb15-114"><a href="#cb15-114" aria-hidden="true" tabindex="-1"></a>             <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">colour =</span> <span class="st">"grey40"</span>) <span class="sc">+</span></span>
-<span id="cb15-115"><a href="#cb15-115" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="fu">as.Date</span>(<span class="st">"2016-06-23"</span>), <span class="at">y =</span> <span class="fu">max</span>(reer_uk<span class="sc">$</span>value) <span class="sc">*</span> <span class="fl">0.95</span>,</span>
-<span id="cb15-116"><a href="#cb15-116" aria-hidden="true" tabindex="-1"></a>           <span class="at">label =</span> <span class="st">"Brexit</span><span class="sc">\n</span><span class="st">referendum"</span>, <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.1</span>,</span>
-<span id="cb15-117"><a href="#cb15-117" aria-hidden="true" tabindex="-1"></a>           <span class="at">size =</span> <span class="dv">3</span>, <span class="at">colour =</span> <span class="st">"grey40"</span>) <span class="sc">+</span></span>
-<span id="cb15-118"><a href="#cb15-118" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"UK Real Effective Exchange Rate"</span>,</span>
-<span id="cb15-119"><a href="#cb15-119" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"CPI-based, index (2015 = 100)"</span>,</span>
-<span id="cb15-120"><a href="#cb15-120" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="cn">NULL</span>,</span>
-<span id="cb15-121"><a href="#cb15-121" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">"Source: OECD MEI"</span>) <span class="sc">+</span></span>
-<span id="cb15-122"><a href="#cb15-122" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb15-123"><a href="#cb15-123" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb15-124"><a href="#cb15-124" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-125"><a href="#cb15-125" aria-hidden="true" tabindex="-1"></a>The chart typically shows a sharp depreciation after the Brexit referendum in June 2016. Sterling fell roughly 10% on a trade-weighted basis almost overnight — one of the largest peacetime currency moves for a major economy. The REER has remained below its pre-referendum level since, reflecting a structural repricing of the UK's economic prospects. This depreciation boosted the competitiveness of UK exports in principle, but the trade balance did not improve materially, partly because imports became more expensive (the UK is a net importer of food and energy) and partly because non-price factors — supply chain disruption, regulatory uncertainty — offset the price advantage.</span>
-<span id="cb15-126"><a href="#cb15-126" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-127"><a href="#cb15-127" aria-hidden="true" tabindex="-1"></a>It is instructive to compare the UK REER to those of other economies. Countries that run persistent current account surpluses (Germany, Japan) tend to have REERs that are low relative to fundamentals, while deficit countries tend to have overvalued REERs.</span>
-<span id="cb15-128"><a href="#cb15-128" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-131"><a href="#cb15-131" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb15-132"><a href="#cb15-132" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare REERs across major economies</span></span>
-<span id="cb15-133"><a href="#cb15-133" aria-hidden="true" tabindex="-1"></a>reer_multi <span class="ot">&lt;-</span> <span class="fu">oecd_get</span>(</span>
-<span id="cb15-134"><a href="#cb15-134" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataset =</span> <span class="st">"MEI"</span>,</span>
-<span id="cb15-135"><a href="#cb15-135" aria-hidden="true" tabindex="-1"></a>  <span class="at">filter =</span> <span class="fu">list</span>(</span>
-<span id="cb15-136"><a href="#cb15-136" aria-hidden="true" tabindex="-1"></a>    <span class="at">LOCATION =</span> <span class="fu">c</span>(<span class="st">"GBR"</span>, <span class="st">"USA"</span>, <span class="st">"DEU"</span>, <span class="st">"JPN"</span>, <span class="st">"FRA"</span>),</span>
-<span id="cb15-137"><a href="#cb15-137" aria-hidden="true" tabindex="-1"></a>    <span class="at">SUBJECT =</span> <span class="st">"CCRETT01"</span>,</span>
-<span id="cb15-138"><a href="#cb15-138" aria-hidden="true" tabindex="-1"></a>    <span class="at">FREQUENCY =</span> <span class="st">"M"</span></span>
-<span id="cb15-139"><a href="#cb15-139" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb15-140"><a href="#cb15-140" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
-<span id="cb15-141"><a href="#cb15-141" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">&gt;=</span> <span class="fu">as.Date</span>(<span class="st">"2000-01-01"</span>))</span>
-<span id="cb15-142"><a href="#cb15-142" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-143"><a href="#cb15-143" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(reer_multi, <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> value, <span class="at">colour =</span> country)) <span class="sc">+</span></span>
-<span id="cb15-144"><a href="#cb15-144" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
-<span id="cb15-145"><a href="#cb15-145" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Real Effective Exchange Rates"</span>,</span>
-<span id="cb15-146"><a href="#cb15-146" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"CPI-based, index (2015 = 100)"</span>,</span>
-<span id="cb15-147"><a href="#cb15-147" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="cn">NULL</span>, <span class="at">colour =</span> <span class="cn">NULL</span>,</span>
-<span id="cb15-148"><a href="#cb15-148" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">"Source: OECD MEI"</span>) <span class="sc">+</span></span>
-<span id="cb15-149"><a href="#cb15-149" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb15-150"><a href="#cb15-150" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span>
-<span id="cb15-151"><a href="#cb15-151" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb15-152"><a href="#cb15-152" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-153"><a href="#cb15-153" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Big Mac Index</span></span>
-<span id="cb15-154"><a href="#cb15-154" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-155"><a href="#cb15-155" aria-hidden="true" tabindex="-1"></a>The Economist's Big Mac Index is the world's most digestible (pun intended) test of purchasing power parity. The idea is simple: a Big Mac is a standardised product sold in over 100 countries. If PPP held, a Big Mac should cost the same everywhere after converting currencies. In practice, it does not — and the deviations are informative.</span>
-<span id="cb15-156"><a href="#cb15-156" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-157"><a href="#cb15-157" aria-hidden="true" tabindex="-1"></a>The raw Big Mac Index takes the price of a Big Mac in each country's local currency, converts it to dollars at the market exchange rate, and compares it to the US price. If a Big Mac costs £3.69 in Britain and $5.58 in the US, the implied PPP rate is $3.69 / 5.58 = 0.66$ pounds per dollar. If the actual exchange rate is 0.80, sterling is overvalued by about 21% relative to "Big Mac PPP."</span>
-<span id="cb15-158"><a href="#cb15-158" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-159"><a href="#cb15-159" aria-hidden="true" tabindex="-1"></a>The Economist publishes the underlying data as a CSV on GitHub, making it easy to work with in R.</span>
-<span id="cb15-160"><a href="#cb15-160" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-163"><a href="#cb15-163" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb15-164"><a href="#cb15-164" aria-hidden="true" tabindex="-1"></a><span class="co"># Download the Big Mac Index data from the Economist's GitHub</span></span>
-<span id="cb15-165"><a href="#cb15-165" aria-hidden="true" tabindex="-1"></a>bigmac_url <span class="ot">&lt;-</span> <span class="fu">paste0</span>(</span>
-<span id="cb15-166"><a href="#cb15-166" aria-hidden="true" tabindex="-1"></a>  <span class="st">"https://raw.githubusercontent.com/TheEconomist/"</span>,</span>
-<span id="cb15-167"><a href="#cb15-167" aria-hidden="true" tabindex="-1"></a>  <span class="st">"big-mac-data/master/output-data/big-mac-full-index.csv"</span></span>
-<span id="cb15-168"><a href="#cb15-168" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb15-169"><a href="#cb15-169" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-170"><a href="#cb15-170" aria-hidden="true" tabindex="-1"></a>bigmac <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(bigmac_url)</span>
-<span id="cb15-171"><a href="#cb15-171" aria-hidden="true" tabindex="-1"></a>bigmac<span class="sc">$</span>date <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(bigmac<span class="sc">$</span>date)</span>
-<span id="cb15-172"><a href="#cb15-172" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-173"><a href="#cb15-173" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(bigmac)</span>
-<span id="cb15-174"><a href="#cb15-174" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb15-175"><a href="#cb15-175" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-178"><a href="#cb15-178" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb15-179"><a href="#cb15-179" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the most recent observation for each country</span></span>
-<span id="cb15-180"><a href="#cb15-180" aria-hidden="true" tabindex="-1"></a>latest <span class="ot">&lt;-</span> bigmac <span class="sc">|&gt;</span></span>
-<span id="cb15-181"><a href="#cb15-181" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">==</span> <span class="fu">max</span>(date)) <span class="sc">|&gt;</span></span>
-<span id="cb15-182"><a href="#cb15-182" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(dollar_price)) <span class="sc">|&gt;</span></span>
-<span id="cb15-183"><a href="#cb15-183" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">overvaluation =</span> <span class="dv">100</span> <span class="sc">*</span> (dollar_price <span class="sc">/</span> dollar_price[iso_a3 <span class="sc">==</span> <span class="st">"USA"</span>] <span class="sc">-</span> <span class="dv">1</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb15-184"><a href="#cb15-184" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(iso_a3 <span class="sc">!=</span> <span class="st">"USA"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb15-185"><a href="#cb15-185" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(overvaluation)</span>
-<span id="cb15-186"><a href="#cb15-186" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb15-187"><a href="#cb15-187" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-190"><a href="#cb15-190" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb15-191"><a href="#cb15-191" aria-hidden="true" tabindex="-1"></a><span class="co"># Horizontal bar chart of over/undervaluation</span></span>
-<span id="cb15-192"><a href="#cb15-192" aria-hidden="true" tabindex="-1"></a><span class="co"># Select a subset for readability</span></span>
-<span id="cb15-193"><a href="#cb15-193" aria-hidden="true" tabindex="-1"></a>top_bottom <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
-<span id="cb15-194"><a href="#cb15-194" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(latest, <span class="dv">10</span>),</span>
-<span id="cb15-195"><a href="#cb15-195" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tail</span>(latest, <span class="dv">10</span>)</span>
-<span id="cb15-196"><a href="#cb15-196" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb15-197"><a href="#cb15-197" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-198"><a href="#cb15-198" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(top_bottom,</span>
-<span id="cb15-199"><a href="#cb15-199" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(name, overvaluation), <span class="at">y =</span> overvaluation)) <span class="sc">+</span></span>
-<span id="cb15-200"><a href="#cb15-200" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">fill =</span> overvaluation <span class="sc">&gt;</span> <span class="dv">0</span>), <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb15-201"><a href="#cb15-201" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#c62828"</span>, <span class="st">"#2e7d32"</span>)) <span class="sc">+</span></span>
-<span id="cb15-202"><a href="#cb15-202" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
-<span id="cb15-203"><a href="#cb15-203" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
-<span id="cb15-204"><a href="#cb15-204" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"The Big Mac Index"</span>,</span>
-<span id="cb15-205"><a href="#cb15-205" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"% over/undervaluation against the US dollar"</span>,</span>
-<span id="cb15-206"><a href="#cb15-206" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Over/undervaluation (%)"</span>,</span>
-<span id="cb15-207"><a href="#cb15-207" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">"Source: The Economist"</span>) <span class="sc">+</span></span>
-<span id="cb15-208"><a href="#cb15-208" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb15-209"><a href="#cb15-209" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb15-210"><a href="#cb15-210" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-211"><a href="#cb15-211" aria-hidden="true" tabindex="-1"></a>The chart reveals a familiar pattern. Swiss francs and Norwegian kroner are typically the most overvalued — Big Macs in Zurich cost nearly twice the US price. At the other end, currencies in South-East Asia and parts of Latin America are heavily undervalued. A Big Mac in India or Egypt costs a fraction of the US price even after converting at market exchange rates.</span>
-<span id="cb15-212"><a href="#cb15-212" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-213"><a href="#cb15-213" aria-hidden="true" tabindex="-1"></a>The Big Mac Index has its limitations. McDonald's pricing reflects local costs (rent, wages, beef prices) and local market power, not just currency misalignment. The adjusted index controls for GDP per capita — the Balassa-Samuelson effect — and tends to show smaller deviations, but they remain substantial for many currencies.</span>
-<span id="cb15-214"><a href="#cb15-214" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-217"><a href="#cb15-217" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb15-218"><a href="#cb15-218" aria-hidden="true" tabindex="-1"></a><span class="co"># Implied PPP rate vs actual exchange rate</span></span>
-<span id="cb15-219"><a href="#cb15-219" aria-hidden="true" tabindex="-1"></a>latest_ppp <span class="ot">&lt;-</span> bigmac <span class="sc">|&gt;</span></span>
-<span id="cb15-220"><a href="#cb15-220" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">==</span> <span class="fu">max</span>(date)) <span class="sc">|&gt;</span></span>
-<span id="cb15-221"><a href="#cb15-221" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(dollar_price), <span class="sc">!</span><span class="fu">is.na</span>(local_price)) <span class="sc">|&gt;</span></span>
-<span id="cb15-222"><a href="#cb15-222" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb15-223"><a href="#cb15-223" aria-hidden="true" tabindex="-1"></a>    <span class="at">implied_ppp =</span> local_price <span class="sc">/</span> dollar_price[iso_a3 <span class="sc">==</span> <span class="st">"USA"</span>],</span>
-<span id="cb15-224"><a href="#cb15-224" aria-hidden="true" tabindex="-1"></a>    <span class="at">actual_rate =</span> local_price <span class="sc">/</span> dollar_price</span>
-<span id="cb15-225"><a href="#cb15-225" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb15-226"><a href="#cb15-226" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(name, iso_a3, local_price, dollar_price, implied_ppp, actual_rate)</span>
-<span id="cb15-227"><a href="#cb15-227" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-228"><a href="#cb15-228" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(latest_ppp, <span class="dv">15</span>)</span>
-<span id="cb15-229"><a href="#cb15-229" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb15-230"><a href="#cb15-230" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-231"><a href="#cb15-231" aria-hidden="true" tabindex="-1"></a>Despite its informality, the Big Mac Index captures something real. Currencies that are significantly undervalued on the Big Mac measure do tend to appreciate over the following decade, consistent with long-run mean reversion to PPP. It is not a trading strategy — the convergence is far too slow for that — but it is a useful heuristic for whether a currency is cheap or expensive by historical standards.</span>
-<span id="cb15-232"><a href="#cb15-232" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-233"><a href="#cb15-233" aria-hidden="true" tabindex="-1"></a><span class="fu">## Gravity models of trade</span></span>
-<span id="cb15-234"><a href="#cb15-234" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-235"><a href="#cb15-235" aria-hidden="true" tabindex="-1"></a>Why does Germany trade more with France than with Australia? Why does Canada's largest trading partner the United States rather than China, despite China's larger economy? The gravity model of trade provides the answer: bilateral trade flows are proportional to economic size and inversely proportional to distance, just like Newton's law of gravitation.</span>
-<span id="cb15-236"><a href="#cb15-236" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-237"><a href="#cb15-237" aria-hidden="true" tabindex="-1"></a>The gravity equation is:</span>
-<span id="cb15-238"><a href="#cb15-238" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-239"><a href="#cb15-239" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb15-240"><a href="#cb15-240" aria-hidden="true" tabindex="-1"></a>\ln(\text{Trade}_{ij}) = \beta_0 + \beta_1 \ln(\text{GDP}_i) + \beta_2 \ln(\text{GDP}_j) + \beta_3 \ln(\text{Distance}_{ij}) + \varepsilon_{ij}</span>
-<span id="cb15-241"><a href="#cb15-241" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb15-242"><a href="#cb15-242" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-243"><a href="#cb15-243" aria-hidden="true" tabindex="-1"></a>where $\text{Trade}_{ij}$ is the value of trade between countries $i$ and $j$, $\text{GDP}_i$ and $\text{GDP}_j$ are their economic sizes, and $\text{Distance}_{ij}$ is the geographic distance between them (usually measured between capital cities or economic centres). The model predicts that larger economies trade more ($\beta_1, \beta_2 &gt; 0$) and more distant economies trade less ($\beta_3 &lt; 0$).</span>
-<span id="cb15-244"><a href="#cb15-244" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-245"><a href="#cb15-245" aria-hidden="true" tabindex="-1"></a>The gravity model is one of the most empirically successful models in economics. In its basic form, it explains around 60-70% of the variation in bilateral trade flows. Adding further variables — common language, colonial history, shared borders, regional trade agreements — pushes the $R^2$ higher still. The finding that EU membership roughly doubles bilateral trade (controlling for size and distance) was central to the economic analysis of Brexit.</span>
-<span id="cb15-246"><a href="#cb15-246" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-247"><a href="#cb15-247" aria-hidden="true" tabindex="-1"></a>For estimation, we use the CEPII gravity dataset, which provides bilateral trade flows along with geographic and cultural variables for nearly all country pairs. The <span class="in">`fixest`</span> package provides fast fixed-effects estimation, which is essential given the large number of observations.</span>
-<span id="cb15-248"><a href="#cb15-248" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-251"><a href="#cb15-251" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb15-252"><a href="#cb15-252" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fixest)</span>
-<span id="cb15-253"><a href="#cb15-253" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb15-254"><a href="#cb15-254" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-255"><a href="#cb15-255" aria-hidden="true" tabindex="-1"></a><span class="co"># The CEPII gravity dataset can be downloaded from:</span></span>
-<span id="cb15-256"><a href="#cb15-256" aria-hidden="true" tabindex="-1"></a><span class="co"># http://www.cepii.fr/CEPII/en/bdd_modele/bdd_modele_item.asp?id=8</span></span>
-<span id="cb15-257"><a href="#cb15-257" aria-hidden="true" tabindex="-1"></a><span class="co"># For this example, assume it has been downloaded and saved locally</span></span>
-<span id="cb15-258"><a href="#cb15-258" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-259"><a href="#cb15-259" aria-hidden="true" tabindex="-1"></a>gravity <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"data/gravity_cepii.csv"</span>)</span>
-<span id="cb15-260"><a href="#cb15-260" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(gravity)</span>
-<span id="cb15-261"><a href="#cb15-261" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb15-262"><a href="#cb15-262" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-265"><a href="#cb15-265" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb15-266"><a href="#cb15-266" aria-hidden="true" tabindex="-1"></a><span class="co"># Basic gravity model</span></span>
-<span id="cb15-267"><a href="#cb15-267" aria-hidden="true" tabindex="-1"></a><span class="co"># Trade is typically measured as exports from i to j</span></span>
-<span id="cb15-268"><a href="#cb15-268" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter for a single year and non-zero trade flows</span></span>
-<span id="cb15-269"><a href="#cb15-269" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-270"><a href="#cb15-270" aria-hidden="true" tabindex="-1"></a>gravity_2019 <span class="ot">&lt;-</span> gravity <span class="sc">|&gt;</span></span>
-<span id="cb15-271"><a href="#cb15-271" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2019</span>, trade <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
-<span id="cb15-272"><a href="#cb15-272" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb15-273"><a href="#cb15-273" aria-hidden="true" tabindex="-1"></a>    <span class="at">ln_trade =</span> <span class="fu">log</span>(trade),</span>
-<span id="cb15-274"><a href="#cb15-274" aria-hidden="true" tabindex="-1"></a>    <span class="at">ln_gdp_o =</span> <span class="fu">log</span>(gdp_o),</span>
-<span id="cb15-275"><a href="#cb15-275" aria-hidden="true" tabindex="-1"></a>    <span class="at">ln_gdp_d =</span> <span class="fu">log</span>(gdp_d),</span>
-<span id="cb15-276"><a href="#cb15-276" aria-hidden="true" tabindex="-1"></a>    <span class="at">ln_dist =</span> <span class="fu">log</span>(dist)</span>
-<span id="cb15-277"><a href="#cb15-277" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb15-278"><a href="#cb15-278" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-279"><a href="#cb15-279" aria-hidden="true" tabindex="-1"></a><span class="co"># OLS gravity equation</span></span>
-<span id="cb15-280"><a href="#cb15-280" aria-hidden="true" tabindex="-1"></a>gravity_ols <span class="ot">&lt;-</span> <span class="fu">feols</span>(</span>
-<span id="cb15-281"><a href="#cb15-281" aria-hidden="true" tabindex="-1"></a>  ln_trade <span class="sc">~</span> ln_gdp_o <span class="sc">+</span> ln_gdp_d <span class="sc">+</span> ln_dist <span class="sc">+</span></span>
-<span id="cb15-282"><a href="#cb15-282" aria-hidden="true" tabindex="-1"></a>    contig <span class="sc">+</span> comlang_off <span class="sc">+</span> colony <span class="sc">+</span> rta,</span>
-<span id="cb15-283"><a href="#cb15-283" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> gravity_2019</span>
-<span id="cb15-284"><a href="#cb15-284" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb15-285"><a href="#cb15-285" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-286"><a href="#cb15-286" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(gravity_ols)</span>
-<span id="cb15-287"><a href="#cb15-287" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb15-288"><a href="#cb15-288" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-289"><a href="#cb15-289" aria-hidden="true" tabindex="-1"></a>The coefficient on log distance is typically around $-1.1$ to $-1.3$, meaning a doubling of distance reduces trade by about 55-60%. The coefficients on GDP are close to 1, consistent with the theoretical prediction. Sharing a border (<span class="in">`contig`</span>) increases trade by roughly 50-80%, sharing an official language by 30-50%, and having a colonial relationship by 40-60%. Regional trade agreements (<span class="in">`rta`</span>), which include EU membership, roughly double trade.</span>
-<span id="cb15-290"><a href="#cb15-290" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-291"><a href="#cb15-291" aria-hidden="true" tabindex="-1"></a>A more sophisticated specification includes exporter and importer fixed effects, which control for all country-specific factors (GDP, institutions, remoteness) and isolate the effect of bilateral variables like distance.</span>
-<span id="cb15-292"><a href="#cb15-292" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-295"><a href="#cb15-295" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb15-296"><a href="#cb15-296" aria-hidden="true" tabindex="-1"></a><span class="co"># Gravity model with exporter and importer fixed effects</span></span>
-<span id="cb15-297"><a href="#cb15-297" aria-hidden="true" tabindex="-1"></a>gravity_fe <span class="ot">&lt;-</span> <span class="fu">feols</span>(</span>
-<span id="cb15-298"><a href="#cb15-298" aria-hidden="true" tabindex="-1"></a>  ln_trade <span class="sc">~</span> ln_dist <span class="sc">+</span> contig <span class="sc">+</span> comlang_off <span class="sc">+</span> colony <span class="sc">+</span> rta <span class="sc">|</span></span>
-<span id="cb15-299"><a href="#cb15-299" aria-hidden="true" tabindex="-1"></a>    iso_o <span class="sc">+</span> iso_d,</span>
-<span id="cb15-300"><a href="#cb15-300" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> gravity_2019</span>
-<span id="cb15-301"><a href="#cb15-301" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb15-302"><a href="#cb15-302" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-303"><a href="#cb15-303" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(gravity_fe)</span>
-<span id="cb15-304"><a href="#cb15-304" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb15-305"><a href="#cb15-305" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-308"><a href="#cb15-308" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb15-309"><a href="#cb15-309" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare the two specifications</span></span>
-<span id="cb15-310"><a href="#cb15-310" aria-hidden="true" tabindex="-1"></a><span class="fu">etable</span>(gravity_ols, gravity_fe,</span>
-<span id="cb15-311"><a href="#cb15-311" aria-hidden="true" tabindex="-1"></a>       <span class="at">headers =</span> <span class="fu">c</span>(<span class="st">"OLS"</span>, <span class="st">"Fixed Effects"</span>),</span>
-<span id="cb15-312"><a href="#cb15-312" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Gravity Model Estimates"</span>)</span>
-<span id="cb15-313"><a href="#cb15-313" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb15-314"><a href="#cb15-314" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-315"><a href="#cb15-315" aria-hidden="true" tabindex="-1"></a>The fixed-effects specification is the modern standard. Once you include country fixed effects, the GDP variables drop out (they are perfectly collinear with the fixed effects), but the bilateral variables — distance, common language, colonial ties — remain. Their coefficients are typically somewhat smaller than in the OLS specification, because the fixed effects absorb some of the correlation.</span>
-<span id="cb15-316"><a href="#cb15-316" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-317"><a href="#cb15-317" aria-hidden="true" tabindex="-1"></a>For the UK specifically, the gravity model provides a framework for quantifying the trade effects of Brexit. Before the referendum, studies using gravity models estimated that EU membership boosted UK trade with EU partners by 40-100%. Leaving the single market and customs union would be expected to reduce this premium, with the magnitude depending on the depth of the future trading relationship. Early post-Brexit data suggest a significant decline in UK-EU trade relative to the gravity model's predictions, though disentangling Brexit from COVID-19 effects remains an active area of research.</span>
-<span id="cb15-318"><a href="#cb15-318" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-321"><a href="#cb15-321" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb15-322"><a href="#cb15-322" aria-hidden="true" tabindex="-1"></a><span class="co"># Illustrate the gravity relationship visually</span></span>
-<span id="cb15-323"><a href="#cb15-323" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot log trade against log distance</span></span>
-<span id="cb15-324"><a href="#cb15-324" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-325"><a href="#cb15-325" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(gravity_2019 <span class="sc">|&gt;</span> <span class="fu">sample_n</span>(<span class="dv">5000</span>),</span>
-<span id="cb15-326"><a href="#cb15-326" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> ln_dist, <span class="at">y =</span> ln_trade)) <span class="sc">+</span></span>
-<span id="cb15-327"><a href="#cb15-327" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.15</span>, <span class="at">size =</span> <span class="fl">0.8</span>, <span class="at">colour =</span> <span class="st">"#37474f"</span>) <span class="sc">+</span></span>
-<span id="cb15-328"><a href="#cb15-328" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">colour =</span> <span class="st">"#d32f2f"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb15-329"><a href="#cb15-329" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"The Gravity of Trade"</span>,</span>
-<span id="cb15-330"><a href="#cb15-330" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Bilateral trade flows vs distance, 2019"</span>,</span>
-<span id="cb15-331"><a href="#cb15-331" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Log distance (km)"</span>, <span class="at">y =</span> <span class="st">"Log trade (US$)"</span>,</span>
-<span id="cb15-332"><a href="#cb15-332" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">"Source: CEPII Gravity Database"</span>) <span class="sc">+</span></span>
-<span id="cb15-333"><a href="#cb15-333" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb15-334"><a href="#cb15-334" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb15-335"><a href="#cb15-335" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-336"><a href="#cb15-336" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises</span></span>
-<span id="cb15-337"><a href="#cb15-337" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-338"><a href="#cb15-338" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Using <span class="in">`readecb::ecb_exchange_rate()`</span>, download the EUR/GBP rate since the Brexit referendum (June 2016). Identify the three largest single-day moves.</span>
-<span id="cb15-339"><a href="#cb15-339" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-340"><a href="#cb15-340" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Download PPP-adjusted GDP per capita from the World Bank for the G20. How does the ranking differ from market exchange rate GDP per capita?</span>
-<span id="cb15-341"><a href="#cb15-341" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-342"><a href="#cb15-342" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Download the Big Mac Index data from the Economist's GitHub. Plot the implied PPP exchange rate against the actual exchange rate for the latest available date. Which currencies sit furthest from the 45-degree line?</span>
-<span id="cb15-343"><a href="#cb15-343" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-344"><a href="#cb15-344" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Estimate a gravity model for 2019 using the CEPII dataset. What is the elasticity of trade with respect to distance? How much does a common language boost trade?</span>
-<span id="cb15-345"><a href="#cb15-345" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-346"><a href="#cb15-346" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Add a dummy variable for EU membership to the gravity model. How much does EU membership increase bilateral trade? Is the coefficient statistically significant?</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co">  eval: true</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="fu"># Exchange Rates and Trade {#sec-trade}</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>Exchange rates transmit monetary policy, reflect relative economic prospects, and reshape trade flows. This chapter covers purchasing power parity, real effective exchange rates, the Big Mac Index, and gravity models of trade. Along the way, we will pull data from the World Bank, BIS, OECD, and the Economist's open dataset.</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="fu">## Purchasing power parity</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>Purchasing power parity (PPP) is one of the oldest ideas in international economics. It starts from the law of one price: if markets are competitive and transport costs are small, the same good should cost the same everywhere once you convert currencies. A tonne of wheat that costs $200 in the United States should cost £160 in the UK when the exchange rate is 1.25 dollars per pound. If wheat were cheaper in the UK, arbitrageurs would buy it there and sell it in the US, driving prices to equality.</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>Extend this logic from a single good to the entire price level and you get PPP. The PPP exchange rate is the rate that equalises the price of a representative basket of goods across countries:</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>e^{PPP} = \frac{P}{P^*}</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>where $P$ is the domestic price level and $P^*$ is the foreign price level. If a basket costs £80 in the UK and $100 in the US, the PPP exchange rate is 0.80 pounds per dollar.</span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>In practice, PPP holds poorly in the short run. Market exchange rates fluctuate wildly — driven by capital flows, interest rate differentials, and speculation — while price levels are sticky. But over decades, currencies do tend to converge towards their PPP values. The "Penn effect" also shows that PPP exchange rates systematically differ from market rates in a predictable way: currencies in poorer countries tend to be undervalued relative to PPP, because non-traded services (haircuts, restaurant meals) are cheap in low-wage economies. This is the Balassa-Samuelson effect.</span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>The World Bank publishes PPP conversion factors through its World Development Indicators, which we can access using the <span class="in">`WDI`</span> package.</span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(WDI)</span>
+<span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-33"><a href="#cb21-33" aria-hidden="true" tabindex="-1"></a><span class="co"># PPP conversion factor (GDP) and official exchange rate</span></span>
+<span id="cb21-34"><a href="#cb21-34" aria-hidden="true" tabindex="-1"></a><span class="co"># PA.NUS.PPP  = PPP conversion factor, GDP (LCU per international $)</span></span>
+<span id="cb21-35"><a href="#cb21-35" aria-hidden="true" tabindex="-1"></a><span class="co"># PA.NUS.FCRF = Official exchange rate (LCU per US$, period average)</span></span>
+<span id="cb21-36"><a href="#cb21-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-37"><a href="#cb21-37" aria-hidden="true" tabindex="-1"></a>g20_codes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"US"</span>, <span class="st">"GB"</span>, <span class="st">"DE"</span>, <span class="st">"FR"</span>, <span class="st">"JP"</span>, <span class="st">"CA"</span>, <span class="st">"AU"</span>, <span class="st">"KR"</span>,</span>
+<span id="cb21-38"><a href="#cb21-38" aria-hidden="true" tabindex="-1"></a>               <span class="st">"BR"</span>, <span class="st">"IN"</span>, <span class="st">"CN"</span>, <span class="st">"MX"</span>, <span class="st">"ID"</span>, <span class="st">"TR"</span>, <span class="st">"ZA"</span>, <span class="st">"SA"</span>,</span>
+<span id="cb21-39"><a href="#cb21-39" aria-hidden="true" tabindex="-1"></a>               <span class="st">"AR"</span>, <span class="st">"RU"</span>, <span class="st">"IT"</span>, <span class="st">"ES"</span>)</span>
+<span id="cb21-40"><a href="#cb21-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-41"><a href="#cb21-41" aria-hidden="true" tabindex="-1"></a>ppp_data <span class="ot">&lt;-</span> <span class="fu">WDI</span>(</span>
+<span id="cb21-42"><a href="#cb21-42" aria-hidden="true" tabindex="-1"></a>  <span class="at">country =</span> g20_codes,</span>
+<span id="cb21-43"><a href="#cb21-43" aria-hidden="true" tabindex="-1"></a>  <span class="at">indicator =</span> <span class="fu">c</span>(<span class="st">"PA.NUS.PPP"</span>, <span class="st">"PA.NUS.FCRF"</span>),</span>
+<span id="cb21-44"><a href="#cb21-44" aria-hidden="true" tabindex="-1"></a>  <span class="at">start =</span> <span class="dv">2022</span>, <span class="at">end =</span> <span class="dv">2022</span></span>
+<span id="cb21-45"><a href="#cb21-45" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-46"><a href="#cb21-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-47"><a href="#cb21-47" aria-hidden="true" tabindex="-1"></a>ppp_data <span class="ot">&lt;-</span> ppp_data <span class="sc">|&gt;</span></span>
+<span id="cb21-48"><a href="#cb21-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">ppp_rate =</span> PA.NUS.PPP,</span>
+<span id="cb21-49"><a href="#cb21-49" aria-hidden="true" tabindex="-1"></a>         <span class="at">market_rate =</span> PA.NUS.FCRF) <span class="sc">|&gt;</span></span>
+<span id="cb21-50"><a href="#cb21-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ppp_ratio =</span> ppp_rate <span class="sc">/</span> market_rate) <span class="sc">|&gt;</span></span>
+<span id="cb21-51"><a href="#cb21-51" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(ppp_ratio))</span>
+<span id="cb21-52"><a href="#cb21-52" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-53"><a href="#cb21-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-56"><a href="#cb21-56" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb21-57"><a href="#cb21-57" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the ratio of PPP to market exchange rates</span></span>
+<span id="cb21-58"><a href="#cb21-58" aria-hidden="true" tabindex="-1"></a><span class="co"># A ratio below 1 means the currency is "undervalued" vs PPP</span></span>
+<span id="cb21-59"><a href="#cb21-59" aria-hidden="true" tabindex="-1"></a><span class="co"># A ratio above 1 means "overvalued"</span></span>
+<span id="cb21-60"><a href="#cb21-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-61"><a href="#cb21-61" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(ppp_data, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(country, ppp_ratio), <span class="at">y =</span> ppp_ratio)) <span class="sc">+</span></span>
+<span id="cb21-62"><a href="#cb21-62" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"#1565C0"</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb21-63"><a href="#cb21-63" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">1</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">colour =</span> <span class="st">"grey40"</span>) <span class="sc">+</span></span>
+<span id="cb21-64"><a href="#cb21-64" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb21-65"><a href="#cb21-65" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"PPP vs Market Exchange Rates"</span>,</span>
+<span id="cb21-66"><a href="#cb21-66" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Ratio of PPP conversion factor to market rate, 2022.</span><span class="sc">\n</span><span class="st">Below 1 = currency undervalued relative to PPP."</span>,</span>
+<span id="cb21-67"><a href="#cb21-67" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"PPP / Market rate"</span>,</span>
+<span id="cb21-68"><a href="#cb21-68" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">"Source: World Bank WDI"</span>) <span class="sc">+</span></span>
+<span id="cb21-69"><a href="#cb21-69" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb21-70"><a href="#cb21-70" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-71"><a href="#cb21-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-72"><a href="#cb21-72" aria-hidden="true" tabindex="-1"></a>The pattern is striking. Currencies in emerging markets — India, Indonesia, South Africa, Turkey — are well below PPP, with ratios of 0.2 to 0.5. This means that a dollar buys two to five times as many goods in these countries as the market exchange rate alone would suggest. Advanced economy currencies cluster near 1, with some (Switzerland, the Nordics) typically above. The United States is the benchmark, so its ratio is 1 by construction.</span>
+<span id="cb21-73"><a href="#cb21-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-74"><a href="#cb21-74" aria-hidden="true" tabindex="-1"></a>This has important practical implications. When you compare GDP across countries at market exchange rates, you understate the living standards of poorer countries. China's GDP at market exchange rates is roughly two-thirds of the US; at PPP, it is arguably larger. The IMF and World Bank therefore publish GDP figures at both market rates and PPP rates, and you should be clear about which you are using.</span>
+<span id="cb21-75"><a href="#cb21-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-76"><a href="#cb21-76" aria-hidden="true" tabindex="-1"></a><span class="fu">## Real effective exchange rates</span></span>
+<span id="cb21-77"><a href="#cb21-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-78"><a href="#cb21-78" aria-hidden="true" tabindex="-1"></a>A country does not trade with just one partner, so a bilateral exchange rate — sterling against the dollar, say — tells only part of the story. The real effective exchange rate (REER) is a trade-weighted, inflation-adjusted index that captures a country's price competitiveness against all of its trading partners simultaneously.</span>
+<span id="cb21-79"><a href="#cb21-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-80"><a href="#cb21-80" aria-hidden="true" tabindex="-1"></a>The REER is constructed in two steps. First, take a basket of bilateral exchange rates, weighted by each partner's share of trade. This gives the nominal effective exchange rate (NEER). Second, adjust for relative inflation: if UK prices are rising faster than its trading partners' prices, the UK is losing competitiveness even if the nominal exchange rate is unchanged. The REER captures this.</span>
+<span id="cb21-81"><a href="#cb21-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-82"><a href="#cb21-82" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-83"><a href="#cb21-83" aria-hidden="true" tabindex="-1"></a>\text{REER} = \text{NEER} \times \frac{P_{\text{domestic}}}{P_{\text{foreign}}^{*}}</span>
+<span id="cb21-84"><a href="#cb21-84" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-85"><a href="#cb21-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-86"><a href="#cb21-86" aria-hidden="true" tabindex="-1"></a>A rising REER means a country is becoming less price-competitive — its goods are getting more expensive relative to those of its trading partners. A falling REER means the opposite. Central banks and treasuries monitor the REER closely because sustained misalignment can cause large trade imbalances.</span>
+<span id="cb21-87"><a href="#cb21-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-88"><a href="#cb21-88" aria-hidden="true" tabindex="-1"></a>The Bank for International Settlements (BIS) and the OECD both publish REER indices. We can use the <span class="in">`readoecd`</span> package to pull the OECD's version.</span>
+<span id="cb21-89"><a href="#cb21-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-92"><a href="#cb21-92" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb21-93"><a href="#cb21-93" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb21-94"><a href="#cb21-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-95"><a href="#cb21-95" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readoecd)</span>
+<span id="cb21-96"><a href="#cb21-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-97"><a href="#cb21-97" aria-hidden="true" tabindex="-1"></a><span class="co"># OECD publishes REER data in the MEI database</span></span>
+<span id="cb21-98"><a href="#cb21-98" aria-hidden="true" tabindex="-1"></a><span class="co"># The readoecd package provides high-level functions for common datasets.</span></span>
+<span id="cb21-99"><a href="#cb21-99" aria-hidden="true" tabindex="-1"></a><span class="co"># For REER data, you can use the OECD Data Explorer directly:</span></span>
+<span id="cb21-100"><a href="#cb21-100" aria-hidden="true" tabindex="-1"></a><span class="co"># https://data-explorer.oecd.org/</span></span>
+<span id="cb21-101"><a href="#cb21-101" aria-hidden="true" tabindex="-1"></a><span class="co"># Download as CSV and read into R, or use the OECD API directly.</span></span>
+<span id="cb21-102"><a href="#cb21-102" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb21-103"><a href="#cb21-103" aria-hidden="true" tabindex="-1"></a><span class="co"># reer &lt;- read.csv("data/oecd-reer-gbr.csv")</span></span>
+<span id="cb21-104"><a href="#cb21-104" aria-hidden="true" tabindex="-1"></a><span class="co"># head(reer)</span></span>
+<span id="cb21-105"><a href="#cb21-105" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-106"><a href="#cb21-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-109"><a href="#cb21-109" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb21-110"><a href="#cb21-110" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb21-111"><a href="#cb21-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-112"><a href="#cb21-112" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the UK REER over time</span></span>
+<span id="cb21-113"><a href="#cb21-113" aria-hidden="true" tabindex="-1"></a>reer_uk <span class="ot">&lt;-</span> reer <span class="sc">|&gt;</span></span>
+<span id="cb21-114"><a href="#cb21-114" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">&gt;=</span> <span class="fu">as.Date</span>(<span class="st">"2000-01-01"</span>))</span>
+<span id="cb21-115"><a href="#cb21-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-116"><a href="#cb21-116" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(reer_uk, <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> value)) <span class="sc">+</span></span>
+<span id="cb21-117"><a href="#cb21-117" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">colour =</span> <span class="st">"#00695c"</span>, <span class="at">linewidth =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb21-118"><a href="#cb21-118" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">as.Date</span>(<span class="st">"2016-06-23"</span>),</span>
+<span id="cb21-119"><a href="#cb21-119" aria-hidden="true" tabindex="-1"></a>             <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">colour =</span> <span class="st">"grey40"</span>) <span class="sc">+</span></span>
+<span id="cb21-120"><a href="#cb21-120" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="fu">as.Date</span>(<span class="st">"2016-06-23"</span>), <span class="at">y =</span> <span class="fu">max</span>(reer_uk<span class="sc">$</span>value) <span class="sc">*</span> <span class="fl">0.95</span>,</span>
+<span id="cb21-121"><a href="#cb21-121" aria-hidden="true" tabindex="-1"></a>           <span class="at">label =</span> <span class="st">"Brexit</span><span class="sc">\n</span><span class="st">referendum"</span>, <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.1</span>,</span>
+<span id="cb21-122"><a href="#cb21-122" aria-hidden="true" tabindex="-1"></a>           <span class="at">size =</span> <span class="dv">3</span>, <span class="at">colour =</span> <span class="st">"grey40"</span>) <span class="sc">+</span></span>
+<span id="cb21-123"><a href="#cb21-123" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"UK Real Effective Exchange Rate"</span>,</span>
+<span id="cb21-124"><a href="#cb21-124" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"CPI-based, index (2015 = 100)"</span>,</span>
+<span id="cb21-125"><a href="#cb21-125" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="cn">NULL</span>,</span>
+<span id="cb21-126"><a href="#cb21-126" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">"Source: OECD MEI"</span>) <span class="sc">+</span></span>
+<span id="cb21-127"><a href="#cb21-127" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb21-128"><a href="#cb21-128" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-129"><a href="#cb21-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-130"><a href="#cb21-130" aria-hidden="true" tabindex="-1"></a>The chart typically shows a sharp depreciation after the Brexit referendum in June 2016. Sterling fell roughly 10% on a trade-weighted basis almost overnight — one of the largest peacetime currency moves for a major economy. The REER has remained below its pre-referendum level since, reflecting a structural repricing of the UK's economic prospects. This depreciation boosted the competitiveness of UK exports in principle, but the trade balance did not improve materially, partly because imports became more expensive (the UK is a net importer of food and energy) and partly because non-price factors — supply chain disruption, regulatory uncertainty — offset the price advantage.</span>
+<span id="cb21-131"><a href="#cb21-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-132"><a href="#cb21-132" aria-hidden="true" tabindex="-1"></a>It is instructive to compare the UK REER to those of other economies. Countries that run persistent current account surpluses (Germany, Japan) tend to have REERs that are low relative to fundamentals, while deficit countries tend to have overvalued REERs.</span>
+<span id="cb21-133"><a href="#cb21-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-136"><a href="#cb21-136" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb21-137"><a href="#cb21-137" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb21-138"><a href="#cb21-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-139"><a href="#cb21-139" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare REERs across major economies</span></span>
+<span id="cb21-140"><a href="#cb21-140" aria-hidden="true" tabindex="-1"></a><span class="co"># Download REER data from the OECD Data Explorer for multiple countries</span></span>
+<span id="cb21-141"><a href="#cb21-141" aria-hidden="true" tabindex="-1"></a><span class="co"># reer_multi &lt;- read.csv("data/oecd-reer-multi.csv") |&gt;</span></span>
+<span id="cb21-142"><a href="#cb21-142" aria-hidden="true" tabindex="-1"></a><span class="co">#   filter(date &gt;= as.Date("2000-01-01"))</span></span>
+<span id="cb21-143"><a href="#cb21-143" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb21-144"><a href="#cb21-144" aria-hidden="true" tabindex="-1"></a><span class="co"># ggplot(reer_multi, aes(x = date, y = value, colour = country)) +</span></span>
+<span id="cb21-145"><a href="#cb21-145" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_line(linewidth = 0.6) +</span></span>
+<span id="cb21-146"><a href="#cb21-146" aria-hidden="true" tabindex="-1"></a><span class="co">#   labs(title = "Real Effective Exchange Rates",</span></span>
+<span id="cb21-147"><a href="#cb21-147" aria-hidden="true" tabindex="-1"></a><span class="co">#        subtitle = "CPI-based, index (2015 = 100)",</span></span>
+<span id="cb21-148"><a href="#cb21-148" aria-hidden="true" tabindex="-1"></a><span class="co">#        x = NULL, y = NULL, colour = NULL,</span></span>
+<span id="cb21-149"><a href="#cb21-149" aria-hidden="true" tabindex="-1"></a><span class="co">#        caption = "Source: OECD MEI") +</span></span>
+<span id="cb21-150"><a href="#cb21-150" aria-hidden="true" tabindex="-1"></a><span class="co">#   theme_minimal() +</span></span>
+<span id="cb21-151"><a href="#cb21-151" aria-hidden="true" tabindex="-1"></a><span class="co">#   theme(legend.position = "bottom")</span></span>
+<span id="cb21-152"><a href="#cb21-152" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-153"><a href="#cb21-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-154"><a href="#cb21-154" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Big Mac Index</span></span>
+<span id="cb21-155"><a href="#cb21-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-156"><a href="#cb21-156" aria-hidden="true" tabindex="-1"></a>The Economist's Big Mac Index is the world's most digestible (pun intended) test of purchasing power parity. The idea is simple: a Big Mac is a standardised product sold in over 100 countries. If PPP held, a Big Mac should cost the same everywhere after converting currencies. In practice, it does not — and the deviations are informative.</span>
+<span id="cb21-157"><a href="#cb21-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-158"><a href="#cb21-158" aria-hidden="true" tabindex="-1"></a>The raw Big Mac Index takes the price of a Big Mac in each country's local currency, converts it to dollars at the market exchange rate, and compares it to the US price. If a Big Mac costs £3.69 in Britain and $5.58 in the US, the implied PPP rate is $3.69 / 5.58 = 0.66$ pounds per dollar. If the actual exchange rate is 0.80, sterling is overvalued by about 21% relative to "Big Mac PPP."</span>
+<span id="cb21-159"><a href="#cb21-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-160"><a href="#cb21-160" aria-hidden="true" tabindex="-1"></a>The Economist publishes the underlying data as a CSV on GitHub, making it easy to work with in R.</span>
+<span id="cb21-161"><a href="#cb21-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-164"><a href="#cb21-164" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb21-165"><a href="#cb21-165" aria-hidden="true" tabindex="-1"></a><span class="co"># Download the Big Mac Index data from the Economist's GitHub</span></span>
+<span id="cb21-166"><a href="#cb21-166" aria-hidden="true" tabindex="-1"></a>bigmac_url <span class="ot">&lt;-</span> <span class="fu">paste0</span>(</span>
+<span id="cb21-167"><a href="#cb21-167" aria-hidden="true" tabindex="-1"></a>  <span class="st">"https://raw.githubusercontent.com/TheEconomist/"</span>,</span>
+<span id="cb21-168"><a href="#cb21-168" aria-hidden="true" tabindex="-1"></a>  <span class="st">"big-mac-data/master/output-data/big-mac-full-index.csv"</span></span>
+<span id="cb21-169"><a href="#cb21-169" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-170"><a href="#cb21-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-171"><a href="#cb21-171" aria-hidden="true" tabindex="-1"></a>bigmac <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(bigmac_url)</span>
+<span id="cb21-172"><a href="#cb21-172" aria-hidden="true" tabindex="-1"></a>bigmac<span class="sc">$</span>date <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(bigmac<span class="sc">$</span>date)</span>
+<span id="cb21-173"><a href="#cb21-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-174"><a href="#cb21-174" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(bigmac)</span>
+<span id="cb21-175"><a href="#cb21-175" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-176"><a href="#cb21-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-179"><a href="#cb21-179" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb21-180"><a href="#cb21-180" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the most recent observation for each country</span></span>
+<span id="cb21-181"><a href="#cb21-181" aria-hidden="true" tabindex="-1"></a>latest <span class="ot">&lt;-</span> bigmac <span class="sc">|&gt;</span></span>
+<span id="cb21-182"><a href="#cb21-182" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">==</span> <span class="fu">max</span>(date)) <span class="sc">|&gt;</span></span>
+<span id="cb21-183"><a href="#cb21-183" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(dollar_price)) <span class="sc">|&gt;</span></span>
+<span id="cb21-184"><a href="#cb21-184" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">overvaluation =</span> <span class="dv">100</span> <span class="sc">*</span> (dollar_price <span class="sc">/</span> dollar_price[iso_a3 <span class="sc">==</span> <span class="st">"USA"</span>] <span class="sc">-</span> <span class="dv">1</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb21-185"><a href="#cb21-185" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(iso_a3 <span class="sc">!=</span> <span class="st">"USA"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb21-186"><a href="#cb21-186" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(overvaluation)</span>
+<span id="cb21-187"><a href="#cb21-187" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-188"><a href="#cb21-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-191"><a href="#cb21-191" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb21-192"><a href="#cb21-192" aria-hidden="true" tabindex="-1"></a><span class="co"># Horizontal bar chart of over/undervaluation</span></span>
+<span id="cb21-193"><a href="#cb21-193" aria-hidden="true" tabindex="-1"></a><span class="co"># Select a subset for readability</span></span>
+<span id="cb21-194"><a href="#cb21-194" aria-hidden="true" tabindex="-1"></a>top_bottom <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb21-195"><a href="#cb21-195" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(latest, <span class="dv">10</span>),</span>
+<span id="cb21-196"><a href="#cb21-196" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tail</span>(latest, <span class="dv">10</span>)</span>
+<span id="cb21-197"><a href="#cb21-197" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-198"><a href="#cb21-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-199"><a href="#cb21-199" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(top_bottom,</span>
+<span id="cb21-200"><a href="#cb21-200" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(name, overvaluation), <span class="at">y =</span> overvaluation)) <span class="sc">+</span></span>
+<span id="cb21-201"><a href="#cb21-201" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">fill =</span> overvaluation <span class="sc">&gt;</span> <span class="dv">0</span>), <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb21-202"><a href="#cb21-202" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#c62828"</span>, <span class="st">"#2e7d32"</span>)) <span class="sc">+</span></span>
+<span id="cb21-203"><a href="#cb21-203" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb21-204"><a href="#cb21-204" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb21-205"><a href="#cb21-205" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"The Big Mac Index"</span>,</span>
+<span id="cb21-206"><a href="#cb21-206" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"% over/undervaluation against the US dollar"</span>,</span>
+<span id="cb21-207"><a href="#cb21-207" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Over/undervaluation (%)"</span>,</span>
+<span id="cb21-208"><a href="#cb21-208" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">"Source: The Economist"</span>) <span class="sc">+</span></span>
+<span id="cb21-209"><a href="#cb21-209" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb21-210"><a href="#cb21-210" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-211"><a href="#cb21-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-212"><a href="#cb21-212" aria-hidden="true" tabindex="-1"></a>The chart reveals a familiar pattern. Swiss francs and Norwegian kroner are typically the most overvalued — Big Macs in Zurich cost nearly twice the US price. At the other end, currencies in South-East Asia and parts of Latin America are heavily undervalued. A Big Mac in India or Egypt costs a fraction of the US price even after converting at market exchange rates.</span>
+<span id="cb21-213"><a href="#cb21-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-214"><a href="#cb21-214" aria-hidden="true" tabindex="-1"></a>The Big Mac Index has its limitations. McDonald's pricing reflects local costs (rent, wages, beef prices) and local market power, not just currency misalignment. The adjusted index controls for GDP per capita — the Balassa-Samuelson effect — and tends to show smaller deviations, but they remain substantial for many currencies.</span>
+<span id="cb21-215"><a href="#cb21-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-218"><a href="#cb21-218" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb21-219"><a href="#cb21-219" aria-hidden="true" tabindex="-1"></a><span class="co"># Implied PPP rate vs actual exchange rate</span></span>
+<span id="cb21-220"><a href="#cb21-220" aria-hidden="true" tabindex="-1"></a>latest_ppp <span class="ot">&lt;-</span> bigmac <span class="sc">|&gt;</span></span>
+<span id="cb21-221"><a href="#cb21-221" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">==</span> <span class="fu">max</span>(date)) <span class="sc">|&gt;</span></span>
+<span id="cb21-222"><a href="#cb21-222" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(dollar_price), <span class="sc">!</span><span class="fu">is.na</span>(local_price)) <span class="sc">|&gt;</span></span>
+<span id="cb21-223"><a href="#cb21-223" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb21-224"><a href="#cb21-224" aria-hidden="true" tabindex="-1"></a>    <span class="at">implied_ppp =</span> local_price <span class="sc">/</span> dollar_price[iso_a3 <span class="sc">==</span> <span class="st">"USA"</span>],</span>
+<span id="cb21-225"><a href="#cb21-225" aria-hidden="true" tabindex="-1"></a>    <span class="at">actual_rate =</span> local_price <span class="sc">/</span> dollar_price</span>
+<span id="cb21-226"><a href="#cb21-226" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb21-227"><a href="#cb21-227" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(name, iso_a3, local_price, dollar_price, implied_ppp, actual_rate)</span>
+<span id="cb21-228"><a href="#cb21-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-229"><a href="#cb21-229" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(latest_ppp, <span class="dv">15</span>)</span>
+<span id="cb21-230"><a href="#cb21-230" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-231"><a href="#cb21-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-232"><a href="#cb21-232" aria-hidden="true" tabindex="-1"></a>Despite its informality, the Big Mac Index captures something real. Currencies that are significantly undervalued on the Big Mac measure do tend to appreciate over the following decade, consistent with long-run mean reversion to PPP. It is not a trading strategy — the convergence is far too slow for that — but it is a useful heuristic for whether a currency is cheap or expensive by historical standards.</span>
+<span id="cb21-233"><a href="#cb21-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-234"><a href="#cb21-234" aria-hidden="true" tabindex="-1"></a><span class="fu">## Gravity models of trade</span></span>
+<span id="cb21-235"><a href="#cb21-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-236"><a href="#cb21-236" aria-hidden="true" tabindex="-1"></a>Why does Germany trade more with France than with Australia? Why does Canada's largest trading partner the United States rather than China, despite China's larger economy? The gravity model of trade provides the answer: bilateral trade flows are proportional to economic size and inversely proportional to distance, just like Newton's law of gravitation.</span>
+<span id="cb21-237"><a href="#cb21-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-238"><a href="#cb21-238" aria-hidden="true" tabindex="-1"></a>The gravity equation is:</span>
+<span id="cb21-239"><a href="#cb21-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-240"><a href="#cb21-240" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-241"><a href="#cb21-241" aria-hidden="true" tabindex="-1"></a>\ln(\text{Trade}_{ij}) = \beta_0 + \beta_1 \ln(\text{GDP}_i) + \beta_2 \ln(\text{GDP}_j) + \beta_3 \ln(\text{Distance}_{ij}) + \varepsilon_{ij}</span>
+<span id="cb21-242"><a href="#cb21-242" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-243"><a href="#cb21-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-244"><a href="#cb21-244" aria-hidden="true" tabindex="-1"></a>where $\text{Trade}_{ij}$ is the value of trade between countries $i$ and $j$, $\text{GDP}_i$ and $\text{GDP}_j$ are their economic sizes, and $\text{Distance}_{ij}$ is the geographic distance between them (usually measured between capital cities or economic centres). The model predicts that larger economies trade more ($\beta_1, \beta_2 &gt; 0$) and more distant economies trade less ($\beta_3 &lt; 0$).</span>
+<span id="cb21-245"><a href="#cb21-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-246"><a href="#cb21-246" aria-hidden="true" tabindex="-1"></a>The gravity model is one of the most empirically successful models in economics. In its basic form, it explains around 60-70% of the variation in bilateral trade flows. Adding further variables — common language, colonial history, shared borders, regional trade agreements — pushes the $R^2$ higher still. The finding that EU membership roughly doubles bilateral trade (controlling for size and distance) was central to the economic analysis of Brexit.</span>
+<span id="cb21-247"><a href="#cb21-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-248"><a href="#cb21-248" aria-hidden="true" tabindex="-1"></a>For estimation, we use the CEPII gravity dataset, which provides bilateral trade flows along with geographic and cultural variables for nearly all country pairs. The <span class="in">`fixest`</span> package provides fast fixed-effects estimation, which is essential given the large number of observations.</span>
+<span id="cb21-249"><a href="#cb21-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-252"><a href="#cb21-252" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb21-253"><a href="#cb21-253" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb21-254"><a href="#cb21-254" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-255"><a href="#cb21-255" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fixest)</span>
+<span id="cb21-256"><a href="#cb21-256" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb21-257"><a href="#cb21-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-258"><a href="#cb21-258" aria-hidden="true" tabindex="-1"></a><span class="co"># The CEPII gravity dataset can be downloaded from:</span></span>
+<span id="cb21-259"><a href="#cb21-259" aria-hidden="true" tabindex="-1"></a><span class="co"># http://www.cepii.fr/CEPII/en/bdd_modele/bdd_modele_item.asp?id=8</span></span>
+<span id="cb21-260"><a href="#cb21-260" aria-hidden="true" tabindex="-1"></a><span class="co"># For this example, assume it has been downloaded and saved locally</span></span>
+<span id="cb21-261"><a href="#cb21-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-262"><a href="#cb21-262" aria-hidden="true" tabindex="-1"></a>gravity <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"data/gravity_cepii.csv"</span>)</span>
+<span id="cb21-263"><a href="#cb21-263" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(gravity)</span>
+<span id="cb21-264"><a href="#cb21-264" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-265"><a href="#cb21-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-268"><a href="#cb21-268" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb21-269"><a href="#cb21-269" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb21-270"><a href="#cb21-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-271"><a href="#cb21-271" aria-hidden="true" tabindex="-1"></a><span class="co"># Basic gravity model</span></span>
+<span id="cb21-272"><a href="#cb21-272" aria-hidden="true" tabindex="-1"></a><span class="co"># Trade is typically measured as exports from i to j</span></span>
+<span id="cb21-273"><a href="#cb21-273" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter for a single year and non-zero trade flows</span></span>
+<span id="cb21-274"><a href="#cb21-274" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-275"><a href="#cb21-275" aria-hidden="true" tabindex="-1"></a>gravity_2019 <span class="ot">&lt;-</span> gravity <span class="sc">|&gt;</span></span>
+<span id="cb21-276"><a href="#cb21-276" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2019</span>, trade <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
+<span id="cb21-277"><a href="#cb21-277" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb21-278"><a href="#cb21-278" aria-hidden="true" tabindex="-1"></a>    <span class="at">ln_trade =</span> <span class="fu">log</span>(trade),</span>
+<span id="cb21-279"><a href="#cb21-279" aria-hidden="true" tabindex="-1"></a>    <span class="at">ln_gdp_o =</span> <span class="fu">log</span>(gdp_o),</span>
+<span id="cb21-280"><a href="#cb21-280" aria-hidden="true" tabindex="-1"></a>    <span class="at">ln_gdp_d =</span> <span class="fu">log</span>(gdp_d),</span>
+<span id="cb21-281"><a href="#cb21-281" aria-hidden="true" tabindex="-1"></a>    <span class="at">ln_dist =</span> <span class="fu">log</span>(dist)</span>
+<span id="cb21-282"><a href="#cb21-282" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb21-283"><a href="#cb21-283" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-284"><a href="#cb21-284" aria-hidden="true" tabindex="-1"></a><span class="co"># OLS gravity equation</span></span>
+<span id="cb21-285"><a href="#cb21-285" aria-hidden="true" tabindex="-1"></a>gravity_ols <span class="ot">&lt;-</span> <span class="fu">feols</span>(</span>
+<span id="cb21-286"><a href="#cb21-286" aria-hidden="true" tabindex="-1"></a>  ln_trade <span class="sc">~</span> ln_gdp_o <span class="sc">+</span> ln_gdp_d <span class="sc">+</span> ln_dist <span class="sc">+</span></span>
+<span id="cb21-287"><a href="#cb21-287" aria-hidden="true" tabindex="-1"></a>    contig <span class="sc">+</span> comlang_off <span class="sc">+</span> colony <span class="sc">+</span> rta,</span>
+<span id="cb21-288"><a href="#cb21-288" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> gravity_2019</span>
+<span id="cb21-289"><a href="#cb21-289" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-290"><a href="#cb21-290" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-291"><a href="#cb21-291" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(gravity_ols)</span>
+<span id="cb21-292"><a href="#cb21-292" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-293"><a href="#cb21-293" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-294"><a href="#cb21-294" aria-hidden="true" tabindex="-1"></a>The coefficient on log distance is typically around $-1.1$ to $-1.3$, meaning a doubling of distance reduces trade by about 55-60%. The coefficients on GDP are close to 1, consistent with the theoretical prediction. Sharing a border (<span class="in">`contig`</span>) increases trade by roughly 50-80%, sharing an official language by 30-50%, and having a colonial relationship by 40-60%. Regional trade agreements (<span class="in">`rta`</span>), which include EU membership, roughly double trade.</span>
+<span id="cb21-295"><a href="#cb21-295" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-296"><a href="#cb21-296" aria-hidden="true" tabindex="-1"></a>A more sophisticated specification includes exporter and importer fixed effects, which control for all country-specific factors (GDP, institutions, remoteness) and isolate the effect of bilateral variables like distance.</span>
+<span id="cb21-297"><a href="#cb21-297" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-300"><a href="#cb21-300" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb21-301"><a href="#cb21-301" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb21-302"><a href="#cb21-302" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-303"><a href="#cb21-303" aria-hidden="true" tabindex="-1"></a><span class="co"># Gravity model with exporter and importer fixed effects</span></span>
+<span id="cb21-304"><a href="#cb21-304" aria-hidden="true" tabindex="-1"></a>gravity_fe <span class="ot">&lt;-</span> <span class="fu">feols</span>(</span>
+<span id="cb21-305"><a href="#cb21-305" aria-hidden="true" tabindex="-1"></a>  ln_trade <span class="sc">~</span> ln_dist <span class="sc">+</span> contig <span class="sc">+</span> comlang_off <span class="sc">+</span> colony <span class="sc">+</span> rta <span class="sc">|</span></span>
+<span id="cb21-306"><a href="#cb21-306" aria-hidden="true" tabindex="-1"></a>    iso_o <span class="sc">+</span> iso_d,</span>
+<span id="cb21-307"><a href="#cb21-307" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> gravity_2019</span>
+<span id="cb21-308"><a href="#cb21-308" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-309"><a href="#cb21-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-310"><a href="#cb21-310" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(gravity_fe)</span>
+<span id="cb21-311"><a href="#cb21-311" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-312"><a href="#cb21-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-315"><a href="#cb21-315" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb21-316"><a href="#cb21-316" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb21-317"><a href="#cb21-317" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-318"><a href="#cb21-318" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare the two specifications</span></span>
+<span id="cb21-319"><a href="#cb21-319" aria-hidden="true" tabindex="-1"></a><span class="fu">etable</span>(gravity_ols, gravity_fe,</span>
+<span id="cb21-320"><a href="#cb21-320" aria-hidden="true" tabindex="-1"></a>       <span class="at">headers =</span> <span class="fu">c</span>(<span class="st">"OLS"</span>, <span class="st">"Fixed Effects"</span>),</span>
+<span id="cb21-321"><a href="#cb21-321" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Gravity Model Estimates"</span>)</span>
+<span id="cb21-322"><a href="#cb21-322" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-323"><a href="#cb21-323" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-324"><a href="#cb21-324" aria-hidden="true" tabindex="-1"></a>The fixed-effects specification is the modern standard. Once you include country fixed effects, the GDP variables drop out (they are perfectly collinear with the fixed effects), but the bilateral variables — distance, common language, colonial ties — remain. Their coefficients are typically somewhat smaller than in the OLS specification, because the fixed effects absorb some of the correlation.</span>
+<span id="cb21-325"><a href="#cb21-325" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-326"><a href="#cb21-326" aria-hidden="true" tabindex="-1"></a>For the UK specifically, the gravity model provides a framework for quantifying the trade effects of Brexit. Before the referendum, studies using gravity models estimated that EU membership boosted UK trade with EU partners by 40-100%. Leaving the single market and customs union would be expected to reduce this premium, with the magnitude depending on the depth of the future trading relationship. Early post-Brexit data suggest a significant decline in UK-EU trade relative to the gravity model's predictions, though disentangling Brexit from COVID-19 effects remains an active area of research.</span>
+<span id="cb21-327"><a href="#cb21-327" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-330"><a href="#cb21-330" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb21-331"><a href="#cb21-331" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb21-332"><a href="#cb21-332" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-333"><a href="#cb21-333" aria-hidden="true" tabindex="-1"></a><span class="co"># Illustrate the gravity relationship visually</span></span>
+<span id="cb21-334"><a href="#cb21-334" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot log trade against log distance</span></span>
+<span id="cb21-335"><a href="#cb21-335" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-336"><a href="#cb21-336" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(gravity_2019 <span class="sc">|&gt;</span> <span class="fu">sample_n</span>(<span class="dv">5000</span>),</span>
+<span id="cb21-337"><a href="#cb21-337" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> ln_dist, <span class="at">y =</span> ln_trade)) <span class="sc">+</span></span>
+<span id="cb21-338"><a href="#cb21-338" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.15</span>, <span class="at">size =</span> <span class="fl">0.8</span>, <span class="at">colour =</span> <span class="st">"#37474f"</span>) <span class="sc">+</span></span>
+<span id="cb21-339"><a href="#cb21-339" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">colour =</span> <span class="st">"#d32f2f"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb21-340"><a href="#cb21-340" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"The Gravity of Trade"</span>,</span>
+<span id="cb21-341"><a href="#cb21-341" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Bilateral trade flows vs distance, 2019"</span>,</span>
+<span id="cb21-342"><a href="#cb21-342" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Log distance (km)"</span>, <span class="at">y =</span> <span class="st">"Log trade (US$)"</span>,</span>
+<span id="cb21-343"><a href="#cb21-343" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">"Source: CEPII Gravity Database"</span>) <span class="sc">+</span></span>
+<span id="cb21-344"><a href="#cb21-344" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb21-345"><a href="#cb21-345" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-346"><a href="#cb21-346" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-347"><a href="#cb21-347" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises</span></span>
+<span id="cb21-348"><a href="#cb21-348" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-349"><a href="#cb21-349" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Using <span class="in">`readecb::ecb_exchange_rate()`</span>, download the EUR/GBP rate since the Brexit referendum (June 2016). Identify the three largest single-day moves.</span>
+<span id="cb21-350"><a href="#cb21-350" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-351"><a href="#cb21-351" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Download PPP-adjusted GDP per capita from the World Bank for the G20. How does the ranking differ from market exchange rate GDP per capita?</span>
+<span id="cb21-352"><a href="#cb21-352" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-353"><a href="#cb21-353" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Download the Big Mac Index data from the Economist's GitHub. Plot the implied PPP exchange rate against the actual exchange rate for the latest available date. Which currencies sit furthest from the 45-degree line?</span>
+<span id="cb21-354"><a href="#cb21-354" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-355"><a href="#cb21-355" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Estimate a gravity model for 2019 using the CEPII dataset. What is the elasticity of trade with respect to distance? How much does a common language boost trade?</span>
+<span id="cb21-356"><a href="#cb21-356" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-357"><a href="#cb21-357" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Add a dummy variable for EU membership to the gravity model. How much does EU membership increase bilateral trade? Is the coefficient statistically significant?</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

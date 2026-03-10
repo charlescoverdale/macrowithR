@@ -425,8 +425,17 @@ Table&nbsp;1.1: Key macroeconomic data sources and their R packages
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">readecb</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">rates</span> <span class="op">&lt;-</span> <span class="fu">ecb_policy_rates</span><span class="op">(</span>from <span class="op">=</span> <span class="st">"2000-01"</span><span class="op">)</span></span>
-<span><span class="va">dfr</span> <span class="op">&lt;-</span> <span class="va">rates</span><span class="op">[</span><span class="va">rates</span><span class="op">$</span><span class="va">rate</span> <span class="op">==</span> <span class="st">"Deposit facility rate"</span>, <span class="op">]</span></span>
+<span><span class="va">rates</span> <span class="op">&lt;-</span> <span class="fu">ecb_policy_rates</span><span class="op">(</span>from <span class="op">=</span> <span class="st">"2000-01"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ℹ Fetching ECB policy rates</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>✔ Fetching ECB policy rates [66ms]</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">dfr</span> <span class="op">&lt;-</span> <span class="va">rates</span><span class="op">[</span><span class="va">rates</span><span class="op">$</span><span class="va">rate</span> <span class="op">==</span> <span class="st">"Deposit facility rate"</span>, <span class="op">]</span></span>
 <span></span>
 <span><span class="fu">ggplot</span><span class="op">(</span><span class="va">dfr</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_line</span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"#003299"</span>, linewidth <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span> <span class="op">+</span></span>
@@ -435,6 +444,12 @@ Table&nbsp;1.1: Key macroeconomic data sources and their R packages
 <span>       x <span class="op">=</span> <span class="cn">NULL</span>, y <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>       caption <span class="op">=</span> <span class="st">"Source: European Central Bank"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="01-introduction_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
 </div>
 <p>This example pulls the ECB’s deposit facility rate — the rate at which banks can deposit money overnight with the ECB — from 2000 to the present, and plots it. The negative rates from 2014 to 2022 and the rapid tightening cycle that followed are immediately visible. No manual downloads, no data cleaning, no date parsing. Just a function call and a chart.</p>
 <p>By the end of this book, you will be able to pull data from any major central bank, build charts that belong in a policy report, estimate the models that central bankers actually use, and do it all in reproducible R scripts.</p>
@@ -916,108 +931,113 @@ Table&nbsp;1.1: Key macroeconomic data sources and their R packages
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Introduction {#sec-introduction}</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">## What economists actually do</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>The popular image of an economist involves blackboards full of equations and grand pronouncements about the state of the world. The reality is more prosaic, and more interesting. Most applied macroeconomists spend their days doing some combination of four things.</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>**Nowcasting** is the art of estimating what the economy is doing right now, before official data arrive. GDP figures for Q1 are not published until late April at the earliest, and even then they are preliminary. Central bank staff, Treasury economists, and City forecasters build models that combine high-frequency indicators — retail sales, PMI surveys, tax receipts, card payment data — to produce a real-time estimate of growth. Chapter <span class="co">[</span><span class="ot">-@sec-nowcasting</span><span class="co">]</span> covers this in detail.</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>**Scenario analysis** asks "what if?" questions. What happens to the public finances if interest rates stay at 5% for two more years? What is the fiscal cost of a recession that pushes unemployment to 6%? The OBR's fiscal forecasts and the Bank of England's stress tests are both exercises in scenario analysis, built on top of macroeconomic models.</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>**Briefing notes** are how analysis reaches decision-makers. A well-constructed briefing for the Chancellor or a Monetary Policy Committee member distils weeks of data work into a few pages: a chart showing the trend, a table showing the numbers, and a paragraph explaining what it means. The ability to go from raw data to a polished document in a reproducible pipeline is what separates modern analytical work from the spreadsheet era.</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>**Forecast rounds** are the recurring cycle at central banks and fiscal institutions. Every quarter, the Bank of England produces an Inflation Report (now the Monetary Policy Report); the OBR produces forecasts at each fiscal event. These rounds involve pulling the latest data, re-estimating models, running scenarios, and writing up the results — all under time pressure and all requiring audit trails. Reproducibility is not a nice-to-have; it is a compliance requirement.</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>This book teaches you to do all four, using R.</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="fu">## Why R for macroeconomics?</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>Most macroeconomic analysis still happens in Excel, MATLAB, or Stata. Each has its place, but R offers something none of them do: a free, open-source ecosystem that handles everything from data acquisition to publication-quality output in a single reproducible script.</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>Central banks are increasingly adopting R. The Bank of England uses R and Shiny dashboards for internal analysis and has published R code alongside research papers. The Reserve Bank of Australia's data is accessible through <span class="in">`readabs`</span>. The ECB publishes data through an API that can be queried directly from R.</span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>The barrier has always been that the tools were scattered: one package for data, another for estimation, blog posts for the glue in between. This book brings them together.</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="fu">## The software landscape</span></span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>The choice of software in macroeconomics is not purely technical — it reflects institutional history and the type of work being done.</span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>**MATLAB and Dynare** dominate structural modelling. If you are estimating a DSGE model — the workhorse of central bank forecasting — you will almost certainly use Dynare, which runs on MATLAB (or its free clone, Octave). The Bank of England's COMPASS model and the ECB's NAWM are both Dynare models. MATLAB is expensive, proprietary, and its data handling is clunky, but its matrix algebra is fast and Dynare has no serious competitor.</span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>**Stata** is the default in academic labour economics and microeconometrics but is less common in macro, where time series methods dominate. It has good VAR support but limited ecosystem for data acquisition.</span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>**R** is strongest for data ingestion, time series analysis (VARs, state-space models, spectral methods), and visualisation. The <span class="in">`vars`</span>, <span class="in">`tsDyn`</span>, <span class="in">`BVAR`</span>, and <span class="in">`bvartools`</span> packages provide serious VAR and Bayesian VAR estimation. <span class="in">`ggplot2`</span> produces publication-quality charts. And packages like the ones used in this book make data acquisition trivial.</span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>**Python** is growing rapidly, particularly for machine learning approaches to forecasting and for working with alternative data (web scraping, text analysis, satellite imagery). The <span class="in">`statsmodels`</span> library provides VAR estimation, and <span class="in">`pandas`</span> handles time series data well. But Python's macro-specific ecosystem is thinner than R's.</span>
-<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>In practice, many teams use more than one tool: R for data and charts, MATLAB for DSGE models, Python for machine learning. This book focuses on R because it covers the largest share of what an applied macroeconomist needs.</span>
-<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a><span class="fu">## The macro data landscape</span></span>
-<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>Macroeconomic data comes from a small number of institutions. Each publishes data in its own format, through its own API (or lack thereof), with its own quirks. The packages used in this book wrap these sources into a common interface: you call a function, you get a data frame.</span>
-<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Source <span class="pp">|</span> What it publishes <span class="pp">|</span> R package <span class="pp">|</span></span>
-<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|---|</span></span>
-<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Office for National Statistics (ONS) <span class="pp">|</span> UK GDP, inflation, unemployment, wages, trade <span class="pp">|</span> <span class="in">`ons`</span> <span class="pp">|</span></span>
-<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Bank of England (BoE) <span class="pp">|</span> Bank Rate, SONIA, gilt yields, mortgage rates <span class="pp">|</span> <span class="in">`boe`</span> <span class="pp">|</span></span>
-<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> HM Revenue &amp; Customs (HMRC) <span class="pp">|</span> Tax receipts, corporation tax, stamp duty <span class="pp">|</span> <span class="in">`hmrc`</span> <span class="pp">|</span></span>
-<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Office for Budget Responsibility (OBR) <span class="pp">|</span> Fiscal forecasts, public finances <span class="pp">|</span> <span class="in">`obr`</span> <span class="pp">|</span></span>
-<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> European Central Bank (ECB) <span class="pp">|</span> Policy rates, HICP, exchange rates, yield curves <span class="pp">|</span> <span class="in">`readecb`</span> <span class="pp">|</span></span>
-<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> OECD <span class="pp">|</span> Cross-country economic indicators <span class="pp">|</span> <span class="in">`readoecd`</span> <span class="pp">|</span></span>
-<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> World Bank <span class="pp">|</span> Development indicators for 200+ countries <span class="pp">|</span> <span class="in">`WDI`</span> <span class="pp">|</span></span>
-<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> US Federal Reserve (FRED) <span class="pp">|</span> 800,000+ US and international series <span class="pp">|</span> <span class="in">`fredr`</span> <span class="pp">|</span></span>
-<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>: Key macroeconomic data sources and their R packages {#tbl-data-sources}</span>
-<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>Each of these packages follows a common pattern: named convenience functions, tidy data frames, and local caching. You call <span class="in">`ecb_policy_rates()`</span> and get a data frame. No SDMX keys, no manual downloads, no copy-pasting from spreadsheets.</span>
-<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>The UK packages (<span class="in">`ons`</span>, <span class="in">`boe`</span>, <span class="in">`hmrc`</span>, <span class="in">`obr`</span>) and the ECB package (<span class="in">`readecb`</span>) were written by this book's author specifically to fill gaps in the R ecosystem. Before these packages existed, pulling UK GDP data into R required navigating the ONS website, downloading a CSV, finding the right cell in a spreadsheet with dozens of tabs, and manually parsing dates. Now it takes one line.</span>
-<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a><span class="fu">## A taste of what is coming</span></span>
-<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>Here is a complete workflow — from data to chart — in under 10 lines:</span>
-<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readecb)</span>
-<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>rates <span class="ot">&lt;-</span> <span class="fu">ecb_policy_rates</span>(<span class="at">from =</span> <span class="st">"2000-01"</span>)</span>
-<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>dfr <span class="ot">&lt;-</span> rates[rates<span class="sc">$</span>rate <span class="sc">==</span> <span class="st">"Deposit facility rate"</span>, ]</span>
-<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dfr, <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> value)) <span class="sc">+</span></span>
-<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">colour =</span> <span class="st">"#003299"</span>, <span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
-<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"ECB Deposit Facility Rate"</span>,</span>
-<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Percent per annum, daily"</span>,</span>
-<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="cn">NULL</span>,</span>
-<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">"Source: European Central Bank"</span>) <span class="sc">+</span></span>
-<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a>This example pulls the ECB's deposit facility rate — the rate at which banks can deposit money overnight with the ECB — from 2000 to the present, and plots it. The negative rates from 2014 to 2022 and the rapid tightening cycle that followed are immediately visible. No manual downloads, no data cleaning, no date parsing. Just a function call and a chart.</span>
-<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a>By the end of this book, you will be able to pull data from any major central bank, build charts that belong in a policy report, estimate the models that central bankers actually use, and do it all in reproducible R scripts.</span>
-<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a><span class="fu">## How this book is structured</span></span>
-<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a>**Part I** covers data acquisition. You will learn to pull data from the ONS, Bank of England, HMRC, OBR, ECB, and OECD, and to work with the time series structures that macroeconomic data comes in — mixed frequencies, data revisions, seasonal adjustment.</span>
-<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a>**Part II** covers visualisation. Macroeconomic charts have conventions — recession shading, fan charts for uncertainty, dual-axis plots for policy rates and inflation — and you will learn to produce them to publication standard using <span class="in">`ggplot2`</span>.</span>
-<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a>**Part III** covers the models that practitioners use: Phillips curves, Taylor rules, nowcasting models, vector autoregressions (VARs), and fiscal multiplier analysis. The emphasis is on estimation and interpretation, not derivation.</span>
-<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a>**Part IV** covers special topics: exchange rate and trade analysis, the macroeconomics of climate change, and cross-country comparisons using OECD and World Bank data.</span>
-<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises</span></span>
-<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Install the <span class="in">`ons`</span>, <span class="in">`boe`</span>, and <span class="in">`readecb`</span> packages. Pull UK GDP data with <span class="in">`ons::ons_gdp()`</span> and ECB policy rates with <span class="in">`readecb::ecb_policy_rates()`</span>. What class are the returned objects? What columns do they have?</span>
-<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Using <span class="in">`readecb::ecb_hicp()`</span>, download euro area inflation data from 2020 onwards. What was the peak annual inflation rate, and when did it occur?</span>
-<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Read the Bank of England's latest Monetary Policy Summary (available on their website). Identify three data series mentioned in the summary that you could pull directly using the <span class="in">`ons`</span> or <span class="in">`boe`</span> packages. Write the R code to pull each one.</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">  eval: true</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu"># Introduction {#sec-introduction}</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">## What economists actually do</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>The popular image of an economist involves blackboards full of equations and grand pronouncements about the state of the world. The reality is more prosaic, and more interesting. Most applied macroeconomists spend their days doing some combination of four things.</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>**Nowcasting** is the art of estimating what the economy is doing right now, before official data arrive. GDP figures for Q1 are not published until late April at the earliest, and even then they are preliminary. Central bank staff, Treasury economists, and City forecasters build models that combine high-frequency indicators — retail sales, PMI surveys, tax receipts, card payment data — to produce a real-time estimate of growth. Chapter <span class="co">[</span><span class="ot">-@sec-nowcasting</span><span class="co">]</span> covers this in detail.</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>**Scenario analysis** asks "what if?" questions. What happens to the public finances if interest rates stay at 5% for two more years? What is the fiscal cost of a recession that pushes unemployment to 6%? The OBR's fiscal forecasts and the Bank of England's stress tests are both exercises in scenario analysis, built on top of macroeconomic models.</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>**Briefing notes** are how analysis reaches decision-makers. A well-constructed briefing for the Chancellor or a Monetary Policy Committee member distils weeks of data work into a few pages: a chart showing the trend, a table showing the numbers, and a paragraph explaining what it means. The ability to go from raw data to a polished document in a reproducible pipeline is what separates modern analytical work from the spreadsheet era.</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>**Forecast rounds** are the recurring cycle at central banks and fiscal institutions. Every quarter, the Bank of England produces an Inflation Report (now the Monetary Policy Report); the OBR produces forecasts at each fiscal event. These rounds involve pulling the latest data, re-estimating models, running scenarios, and writing up the results — all under time pressure and all requiring audit trails. Reproducibility is not a nice-to-have; it is a compliance requirement.</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>This book teaches you to do all four, using R.</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="fu">## Why R for macroeconomics?</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>Most macroeconomic analysis still happens in Excel, MATLAB, or Stata. Each has its place, but R offers something none of them do: a free, open-source ecosystem that handles everything from data acquisition to publication-quality output in a single reproducible script.</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>Central banks are increasingly adopting R. The Bank of England uses R and Shiny dashboards for internal analysis and has published R code alongside research papers. The Reserve Bank of Australia's data is accessible through <span class="in">`readabs`</span>. The ECB publishes data through an API that can be queried directly from R.</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>The barrier has always been that the tools were scattered: one package for data, another for estimation, blog posts for the glue in between. This book brings them together.</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a><span class="fu">## The software landscape</span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>The choice of software in macroeconomics is not purely technical — it reflects institutional history and the type of work being done.</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>**MATLAB and Dynare** dominate structural modelling. If you are estimating a DSGE model — the workhorse of central bank forecasting — you will almost certainly use Dynare, which runs on MATLAB (or its free clone, Octave). The Bank of England's COMPASS model and the ECB's NAWM are both Dynare models. MATLAB is expensive, proprietary, and its data handling is clunky, but its matrix algebra is fast and Dynare has no serious competitor.</span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>**Stata** is the default in academic labour economics and microeconometrics but is less common in macro, where time series methods dominate. It has good VAR support but limited ecosystem for data acquisition.</span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>**R** is strongest for data ingestion, time series analysis (VARs, state-space models, spectral methods), and visualisation. The <span class="in">`vars`</span>, <span class="in">`tsDyn`</span>, <span class="in">`BVAR`</span>, and <span class="in">`bvartools`</span> packages provide serious VAR and Bayesian VAR estimation. <span class="in">`ggplot2`</span> produces publication-quality charts. And packages like the ones used in this book make data acquisition trivial.</span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>**Python** is growing rapidly, particularly for machine learning approaches to forecasting and for working with alternative data (web scraping, text analysis, satellite imagery). The <span class="in">`statsmodels`</span> library provides VAR estimation, and <span class="in">`pandas`</span> handles time series data well. But Python's macro-specific ecosystem is thinner than R's.</span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>In practice, many teams use more than one tool: R for data and charts, MATLAB for DSGE models, Python for machine learning. This book focuses on R because it covers the largest share of what an applied macroeconomist needs.</span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a><span class="fu">## The macro data landscape</span></span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>Macroeconomic data comes from a small number of institutions. Each publishes data in its own format, through its own API (or lack thereof), with its own quirks. The packages used in this book wrap these sources into a common interface: you call a function, you get a data frame.</span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Source <span class="pp">|</span> What it publishes <span class="pp">|</span> R package <span class="pp">|</span></span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|---|</span></span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Office for National Statistics (ONS) <span class="pp">|</span> UK GDP, inflation, unemployment, wages, trade <span class="pp">|</span> <span class="in">`ons`</span> <span class="pp">|</span></span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Bank of England (BoE) <span class="pp">|</span> Bank Rate, SONIA, gilt yields, mortgage rates <span class="pp">|</span> <span class="in">`boe`</span> <span class="pp">|</span></span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> HM Revenue &amp; Customs (HMRC) <span class="pp">|</span> Tax receipts, corporation tax, stamp duty <span class="pp">|</span> <span class="in">`hmrc`</span> <span class="pp">|</span></span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Office for Budget Responsibility (OBR) <span class="pp">|</span> Fiscal forecasts, public finances <span class="pp">|</span> <span class="in">`obr`</span> <span class="pp">|</span></span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> European Central Bank (ECB) <span class="pp">|</span> Policy rates, HICP, exchange rates, yield curves <span class="pp">|</span> <span class="in">`readecb`</span> <span class="pp">|</span></span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> OECD <span class="pp">|</span> Cross-country economic indicators <span class="pp">|</span> <span class="in">`readoecd`</span> <span class="pp">|</span></span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> World Bank <span class="pp">|</span> Development indicators for 200+ countries <span class="pp">|</span> <span class="in">`WDI`</span> <span class="pp">|</span></span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> US Federal Reserve (FRED) <span class="pp">|</span> 800,000+ US and international series <span class="pp">|</span> <span class="in">`fredr`</span> <span class="pp">|</span></span>
+<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>: Key macroeconomic data sources and their R packages {#tbl-data-sources}</span>
+<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>Each of these packages follows a common pattern: named convenience functions, tidy data frames, and local caching. You call <span class="in">`ecb_policy_rates()`</span> and get a data frame. No SDMX keys, no manual downloads, no copy-pasting from spreadsheets.</span>
+<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a>The UK packages (<span class="in">`ons`</span>, <span class="in">`boe`</span>, <span class="in">`hmrc`</span>, <span class="in">`obr`</span>) and the ECB package (<span class="in">`readecb`</span>) were written by this book's author specifically to fill gaps in the R ecosystem. Before these packages existed, pulling UK GDP data into R required navigating the ONS website, downloading a CSV, finding the right cell in a spreadsheet with dozens of tabs, and manually parsing dates. Now it takes one line.</span>
+<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a><span class="fu">## A taste of what is coming</span></span>
+<span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a>Here is a complete workflow — from data to chart — in under 10 lines:</span>
+<span id="cb6-70"><a href="#cb6-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-73"><a href="#cb6-73" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb6-74"><a href="#cb6-74" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readecb)</span>
+<span id="cb6-75"><a href="#cb6-75" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb6-76"><a href="#cb6-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-77"><a href="#cb6-77" aria-hidden="true" tabindex="-1"></a>rates <span class="ot">&lt;-</span> <span class="fu">ecb_policy_rates</span>(<span class="at">from =</span> <span class="st">"2000-01"</span>)</span>
+<span id="cb6-78"><a href="#cb6-78" aria-hidden="true" tabindex="-1"></a>dfr <span class="ot">&lt;-</span> rates[rates<span class="sc">$</span>rate <span class="sc">==</span> <span class="st">"Deposit facility rate"</span>, ]</span>
+<span id="cb6-79"><a href="#cb6-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-80"><a href="#cb6-80" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dfr, <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> value)) <span class="sc">+</span></span>
+<span id="cb6-81"><a href="#cb6-81" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">colour =</span> <span class="st">"#003299"</span>, <span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb6-82"><a href="#cb6-82" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"ECB Deposit Facility Rate"</span>,</span>
+<span id="cb6-83"><a href="#cb6-83" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Percent per annum, daily"</span>,</span>
+<span id="cb6-84"><a href="#cb6-84" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="cn">NULL</span>,</span>
+<span id="cb6-85"><a href="#cb6-85" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">"Source: European Central Bank"</span>) <span class="sc">+</span></span>
+<span id="cb6-86"><a href="#cb6-86" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb6-87"><a href="#cb6-87" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-88"><a href="#cb6-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-89"><a href="#cb6-89" aria-hidden="true" tabindex="-1"></a>This example pulls the ECB's deposit facility rate — the rate at which banks can deposit money overnight with the ECB — from 2000 to the present, and plots it. The negative rates from 2014 to 2022 and the rapid tightening cycle that followed are immediately visible. No manual downloads, no data cleaning, no date parsing. Just a function call and a chart.</span>
+<span id="cb6-90"><a href="#cb6-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-91"><a href="#cb6-91" aria-hidden="true" tabindex="-1"></a>By the end of this book, you will be able to pull data from any major central bank, build charts that belong in a policy report, estimate the models that central bankers actually use, and do it all in reproducible R scripts.</span>
+<span id="cb6-92"><a href="#cb6-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-93"><a href="#cb6-93" aria-hidden="true" tabindex="-1"></a><span class="fu">## How this book is structured</span></span>
+<span id="cb6-94"><a href="#cb6-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-95"><a href="#cb6-95" aria-hidden="true" tabindex="-1"></a>**Part I** covers data acquisition. You will learn to pull data from the ONS, Bank of England, HMRC, OBR, ECB, and OECD, and to work with the time series structures that macroeconomic data comes in — mixed frequencies, data revisions, seasonal adjustment.</span>
+<span id="cb6-96"><a href="#cb6-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-97"><a href="#cb6-97" aria-hidden="true" tabindex="-1"></a>**Part II** covers visualisation. Macroeconomic charts have conventions — recession shading, fan charts for uncertainty, dual-axis plots for policy rates and inflation — and you will learn to produce them to publication standard using <span class="in">`ggplot2`</span>.</span>
+<span id="cb6-98"><a href="#cb6-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-99"><a href="#cb6-99" aria-hidden="true" tabindex="-1"></a>**Part III** covers the models that practitioners use: Phillips curves, Taylor rules, nowcasting models, vector autoregressions (VARs), and fiscal multiplier analysis. The emphasis is on estimation and interpretation, not derivation.</span>
+<span id="cb6-100"><a href="#cb6-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-101"><a href="#cb6-101" aria-hidden="true" tabindex="-1"></a>**Part IV** covers special topics: exchange rate and trade analysis, the macroeconomics of climate change, and cross-country comparisons using OECD and World Bank data.</span>
+<span id="cb6-102"><a href="#cb6-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-103"><a href="#cb6-103" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises</span></span>
+<span id="cb6-104"><a href="#cb6-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-105"><a href="#cb6-105" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Install the <span class="in">`ons`</span>, <span class="in">`boe`</span>, and <span class="in">`readecb`</span> packages. Pull UK GDP data with <span class="in">`ons::ons_gdp()`</span> and ECB policy rates with <span class="in">`readecb::ecb_policy_rates()`</span>. What class are the returned objects? What columns do they have?</span>
+<span id="cb6-106"><a href="#cb6-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-107"><a href="#cb6-107" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Using <span class="in">`readecb::ecb_hicp()`</span>, download euro area inflation data from 2020 onwards. What was the peak annual inflation rate, and when did it occur?</span>
+<span id="cb6-108"><a href="#cb6-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-109"><a href="#cb6-109" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Read the Bank of England's latest Monetary Policy Summary (available on their website). Identify three data series mentioned in the summary that you could pull directly using the <span class="in">`ons`</span> or <span class="in">`boe`</span> packages. Write the R code to pull each one.</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
