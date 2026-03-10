@@ -1,0 +1,17 @@
+# Interactive Dashboards {#sec-dashboards}
+
+A Shiny dashboard turns your R analysis into a tool that non-technical colleagues can use. This chapter builds a UK economy dashboard from scratch — pulling live data from the ONS, Bank of England, and OBR.
+
+## Why dashboards?
+
+## Building a UK economy dashboard
+
+## Layout and design
+
+## Deploying to the web
+
+## Exercises
+
+1. Add a new tab to the dashboard showing the EUR/USD exchange rate using `readecb::ecb_exchange_rate()`.
+
+2. Add a date range selector that filters all charts simultaneously.

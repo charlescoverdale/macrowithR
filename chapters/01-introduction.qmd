@@ -1,0 +1,55 @@
+# Introduction {#sec-introduction}
+
+## Why R for macroeconomics?
+
+Most macroeconomic analysis still happens in Excel, MATLAB, or Stata. Each has its place, but R offers something none of them do: a free, open-source ecosystem that handles everything from data acquisition to publication-quality output in a single reproducible script.
+
+Central banks are increasingly adopting R. The Bank of England uses R and Shiny dashboards for policymakers. The Reserve Bank of Australia's data is accessible through `readabs`. The ECB publishes data through an API that can be queried directly from R.
+
+The barrier has always been that the tools were scattered: one package for data, another for estimation, blog posts for the glue in between. This book brings them together.
+
+## The macro data landscape
+
+Macroeconomic data comes from a small number of institutions:
+
+| Source | What it publishes | R package |
+|---|---|---|
+| Office for National Statistics (ONS) | UK GDP, inflation, unemployment, wages, trade | `ons` |
+| Bank of England (BoE) | Bank Rate, SONIA, gilt yields, mortgage rates | `boe` |
+| HM Revenue & Customs (HMRC) | Tax receipts, corporation tax, stamp duty | `hmrc` |
+| Office for Budget Responsibility (OBR) | Fiscal forecasts, public finances | `obr` |
+| European Central Bank (ECB) | Policy rates, HICP, exchange rates, yield curves | `readecb` |
+| OECD | Cross-country economic indicators | `readoecd` |
+| World Bank | Development indicators for 200+ countries | `WDI` |
+| US Federal Reserve (FRED) | 800,000+ US and international series | `fredr` |
+
+Each of these packages follows a common pattern: named convenience functions, tidy data frames, and local caching. You call `ecb_policy_rates()` and get a data frame. No SDMX keys, no manual downloads, no copy-pasting from spreadsheets.
+
+## A taste of what is coming
+
+Here is a complete workflow — from data to chart — in under 10 lines:
+
+```{r}
+#| eval: false
+library(readecb)
+library(ggplot2)
+
+rates <- ecb_policy_rates(from = "2000-01")
+dfr <- rates[rates$rate == "Deposit facility rate", ]
+
+ggplot(dfr, aes(x = date, y = value)) +
+  geom_line(colour = "#003299", linewidth = 0.8) +
+  labs(title = "ECB Deposit Facility Rate",
+       subtitle = "Percent per annum, daily",
+       x = NULL, y = NULL,
+       caption = "Source: European Central Bank") +
+  theme_minimal()
+```
+
+By the end of this book, you will be able to pull data from any major central bank, build charts that belong in a policy report, estimate the models that central bankers actually use, and do it all in reproducible R scripts.
+
+## Exercises
+
+1. Install the `ons`, `boe`, and `readecb` packages. Pull UK GDP data with `ons::ons_gdp()` and ECB policy rates with `readecb::ecb_policy_rates()`. What class are the returned objects? What columns do they have?
+
+2. Using `readecb::ecb_hicp()`, download euro area inflation data from 2020 onwards. What was the peak annual inflation rate, and when did it occur?

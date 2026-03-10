@@ -1,0 +1,66 @@
+# European and International Data {#sec-european-data}
+
+Macroeconomics rarely stops at national borders. Comparing inflation across the euro area, tracking ECB policy alongside the Fed, or benchmarking UK growth against the G7 — all of these require international data.
+
+This chapter covers the ECB Data Portal, the OECD, and the World Bank.
+
+## The European Central Bank
+
+```{r}
+#| eval: false
+library(readecb)
+```
+
+### Policy rates
+
+```{r}
+#| eval: false
+rates <- ecb_policy_rates(from = "1999-01")
+```
+
+### Inflation across the euro area
+
+```{r}
+#| eval: false
+hicp <- ecb_hicp(c("DE", "FR", "IT", "ES"), from = "2020-01")
+```
+
+### Exchange rates
+
+```{r}
+#| eval: false
+fx <- ecb_exchange_rate(c("USD", "GBP"), from = "2020-01")
+```
+
+### Yield curves
+
+```{r}
+#| eval: false
+yields <- ecb_yield_curve("10Y", from = "2005-01")
+```
+
+## The OECD
+
+```{r}
+#| eval: false
+library(readoecd)
+```
+
+The OECD publishes harmonised data across its 38 member countries — making it the natural choice for cross-country comparisons.
+
+## The World Bank
+
+```{r}
+#| eval: false
+library(WDI)
+```
+
+For broader international comparisons — especially involving emerging markets — the World Bank's World Development Indicators cover 200+ countries.
+
+## Exercises
+
+1. Using `readecb`, compare HICP inflation in Germany, France, Italy, and Spain since 2020. Which country had the highest peak inflation?
+
+2. Pull the EUR/USD exchange rate with `ecb_exchange_rate("USD")` and plot it alongside ECB policy rate changes. Do you see a relationship?
+
+3. Using `WDI`, download GDP per capita (PPP) for the G7 countries. Which country has the highest GDP per capita? Has the ranking changed since 2000?

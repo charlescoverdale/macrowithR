@@ -1,0 +1,105 @@
+# UK Economic Data {#sec-uk-data}
+
+The United Kingdom has some of the best-documented and most accessible economic data in the world. Four institutions publish the bulk of it, and each has a dedicated R package.
+
+This chapter walks through pulling, cleaning, and combining data from the ONS, Bank of England, HMRC, and OBR — the building blocks of any UK macro analysis.
+
+## The Office for National Statistics
+
+```{r}
+#| eval: false
+library(ons)
+```
+
+The ONS is the UK's national statistical institute. It publishes GDP, inflation (CPI and CPIH), the labour market, wages, trade, retail sales, house prices, productivity, and population estimates.
+
+### GDP
+
+```{r}
+#| eval: false
+gdp <- ons_gdp()
+head(gdp)
+```
+
+### Inflation
+
+```{r}
+#| eval: false
+cpi <- ons_cpi()
+```
+
+### The labour market
+
+```{r}
+#| eval: false
+unemp <- ons_unemployment()
+wages <- ons_wages()
+```
+
+## The Bank of England
+
+```{r}
+#| eval: false
+library(boe)
+```
+
+The Bank of England publishes monetary policy data: Bank Rate, SONIA (the sterling overnight rate), gilt yields, exchange rates, mortgage rates, consumer credit, and money supply.
+
+### Bank Rate
+
+```{r}
+#| eval: false
+bank_rate <- boe_bank_rate()
+```
+
+### Gilt yields
+
+```{r}
+#| eval: false
+gilts <- boe_yield_curve(from = "2020-01")
+```
+
+## HM Revenue & Customs
+
+```{r}
+#| eval: false
+library(hmrc)
+```
+
+HMRC publishes monthly tax receipt data — a real-time read on economic activity, since tax receipts respond immediately to changes in employment, spending, and corporate profits.
+
+## The Office for Budget Responsibility
+
+```{r}
+#| eval: false
+library(obr)
+```
+
+The OBR produces the UK's official fiscal forecasts. Its Public Finances Databank contains historical fiscal data going back decades.
+
+## Putting it together: a UK macro dataset
+
+A common task is to assemble a single dataset of key UK macro indicators — GDP growth, inflation, unemployment, Bank Rate — for analysis or charting.
+
+```{r}
+#| eval: false
+library(ons)
+library(boe)
+library(dplyr)
+
+gdp <- ons_gdp()
+cpi <- ons_cpi()
+unemp <- ons_unemployment()
+bank_rate <- boe_bank_rate()
+
+# Each returns a tidy data frame with a date column.
+# Merge on date for a combined dataset.
+```
+
+## Exercises
+
+1. Pull UK GDP data with `ons_gdp()` and calculate the quarter-on-quarter growth rate. In which quarter was growth weakest since 2010?
+
+2. Download Bank Rate with `boe_bank_rate()` and CPI inflation with `ons_cpi()`. Plot both on the same chart (hint: you will need to merge on date and use dual axes or facets).
+
+3. Using `hmrc`, pull the latest tax receipts data. Which tax head generates the most revenue?

@@ -1,0 +1,31 @@
+# Vector Autoregressions {#sec-var}
+
+The VAR is the workhorse of empirical macroeconomics. It lets you model the dynamic interactions between multiple macro variables — GDP, inflation, interest rates — without imposing a structural economic model.
+
+## What is a VAR?
+
+## Estimation with the vars package
+
+## Lag selection
+
+## Impulse response functions
+
+## Forecast error variance decomposition
+
+## Structural VARs: identification
+
+### Cholesky decomposition
+
+### Sign restrictions
+
+## Bayesian VARs
+
+## Application: what happens when the Bank of England raises rates?
+
+## Exercises
+
+1. Estimate a 3-variable VAR with UK GDP growth, CPI inflation, and Bank Rate. How many lags does the AIC suggest?
+
+2. Compute impulse response functions for a 25bp Bank Rate shock. How long does it take for GDP growth to respond? What about inflation?
+
+3. Re-estimate the model as a Bayesian VAR using the `BVAR` package with a Minnesota prior. How do the impulse responses change?

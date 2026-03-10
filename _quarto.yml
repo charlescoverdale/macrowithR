@@ -1,0 +1,51 @@
+project:
+  type: book
+  output-dir: docs
+
+book:
+  title: "Macro with R"
+  subtitle: "A Practical Guide to Macroeconomic Data and Policy Analysis"
+  author: "Charles Coverdale"
+  date: today
+  site-url: https://macrowithr.com
+  repo-url: https://github.com/charlescoverdale/macrowithR
+  repo-actions: [issue]
+  sharing: [twitter, linkedin]
+  chapters:
+    - index.qmd
+    - part: "Part I: Getting Data into R"
+      chapters:
+        - chapters/01-introduction.qmd
+        - chapters/02-uk-data.qmd
+        - chapters/03-european-data.qmd
+        - chapters/04-time-series-essentials.qmd
+    - part: "Part II: Visualising the Economy"
+      chapters:
+        - chapters/05-macro-charts.qmd
+        - chapters/06-dashboards.qmd
+    - part: "Part III: Macro Models in Practice"
+      chapters:
+        - chapters/07-inflation-phillips-curve.qmd
+        - chapters/08-monetary-policy.qmd
+        - chapters/09-nowcasting.qmd
+        - chapters/10-var-models.qmd
+        - chapters/11-fiscal-policy.qmd
+    - part: "Part IV: Special Topics"
+      chapters:
+        - chapters/12-exchange-rates-trade.qmd
+        - chapters/13-climate-macro.qmd
+        - chapters/14-cross-country.qmd
+    - references.qmd
+
+format:
+  html:
+    theme:
+      light: cosmo
+    code-link: true
+    code-tools: true
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    highlight-style: github
+
+bibliography: references.bib

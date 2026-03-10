@@ -1,0 +1,21 @@
+# Climate and the Macroeconomy {#sec-climate}
+
+Climate change is increasingly central to macroeconomic policy. Central banks run climate stress tests, governments set carbon budgets, and transition risk is repricing assets. This chapter covers the data and tools at the intersection of climate and macro.
+
+## Emissions data in R
+
+## Carbon pricing and the EU ETS
+
+## NGFS climate scenarios
+
+## Climate-adjusted macro projections
+
+## Stranded assets and transition risk
+
+## Exercises
+
+1. Download global CO2 emissions data from Our World in Data. Plot emissions for the G7 since 1990. Which country has reduced emissions the most?
+
+2. Using Eurostat data, plot the EU ETS carbon price alongside euro area industrial production. Is there a relationship?
+
+3. Describe how a central bank would use NGFS scenarios to stress test a portfolio of corporate bonds. What macro variables would you need?

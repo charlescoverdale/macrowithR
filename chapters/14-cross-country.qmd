@@ -1,0 +1,19 @@
+# Cross-Country Comparisons {#sec-cross-country}
+
+Why are some countries richer than others? This chapter covers convergence, growth accounting, and panel data techniques for macroeconomics.
+
+## The convergence hypothesis
+
+## Growth accounting
+
+## Institutions and growth
+
+## Panel data techniques for macro
+
+## Exercises
+
+1. Using World Bank data, test the unconditional convergence hypothesis: do poorer countries grow faster? Plot initial GDP per capita against average growth for 1990-2020.
+
+2. Perform a simple growth accounting exercise for the UK using ONS productivity data. What share of growth comes from labour, capital, and TFP?
+
+3. Estimate a panel regression of GDP growth on investment, trade openness, and institutional quality for OECD countries. What drives growth?

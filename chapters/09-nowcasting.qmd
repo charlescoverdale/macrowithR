@@ -1,0 +1,23 @@
+# GDP Nowcasting {#sec-nowcasting}
+
+GDP is published with a lag — typically 6 to 8 weeks after the quarter ends. Nowcasting uses higher-frequency data to estimate GDP in real time, before the official number arrives.
+
+## The nowcasting problem
+
+## Bridge equations
+
+## MIDAS models
+
+## Dynamic factor models
+
+## Building a simple UK GDP nowcaster
+
+## Evaluating forecast accuracy
+
+## Exercises
+
+1. Build a bridge equation that uses monthly retail sales and industrial production to predict quarterly GDP growth. How accurate is it out of sample?
+
+2. Estimate a dynamic factor model using `dfms` with 5 monthly UK indicators. What share of variation does the first factor explain?
+
+3. Compare your nowcast for the latest quarter against the Bank of England's published nowcast (from the Monetary Policy Report). How close are they?

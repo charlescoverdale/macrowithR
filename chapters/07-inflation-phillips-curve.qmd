@@ -1,0 +1,23 @@
+# Inflation and the Phillips Curve {#sec-phillips-curve}
+
+The Phillips curve — the relationship between unemployment and inflation — is one of the most debated relationships in macroeconomics. This chapter estimates it with real data and asks whether it still holds.
+
+## A brief history of the Phillips curve
+
+## Pulling the data
+
+## The simple Phillips curve
+
+## Expectations-augmented Phillips curve
+
+## Has the Phillips curve flattened?
+
+## Rolling regressions and time-varying parameters
+
+## Exercises
+
+1. Estimate a Phillips curve for the euro area using `readecb::ecb_hicp()` and `readecb::ecb_unemployment()`. Is the slope statistically significant?
+
+2. Estimate a rolling 10-year Phillips curve for the UK. Plot the slope coefficient over time. When was the relationship strongest?
+
+3. Add inflation expectations (from a survey or market measure) to the Phillips curve. Does the fit improve?

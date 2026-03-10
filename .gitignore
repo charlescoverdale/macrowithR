@@ -1,0 +1,17 @@
+# Quarto build output
+docs/
+_book/
+/.quarto/
+
+# R
+.Rhistory
+.Rproj.user/
+*.Rproj
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Caches
+*_cache/
+*_files/

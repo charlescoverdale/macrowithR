@@ -1,0 +1,54 @@
+# Preface {.unnumbered}
+
+This book teaches you how to do macroeconomics with R.
+
+It covers the full workflow of a macro practitioner: pulling data from central banks and statistical agencies, building publication-quality charts, and estimating the models that underpin economic policy — Phillips curves, Taylor rules, yield curve models, VARs, and nowcasting systems.
+
+## Who is this book for?
+
+This book is for anyone who works with macroeconomic data and wants to do it in R. That includes:
+
+- **Economics students** (Masters and advanced undergraduate) who want to go beyond textbook theory and work with real data
+- **Central bank and treasury analysts** who use R for data pipelines, visualisation, and ad-hoc modelling
+- **Think tank researchers and economic consultants** who need reproducible, transparent analysis
+- **Data journalists** covering economics who want to automate their workflow
+- **Finance professionals** who need to understand the macro environment
+
+## What you need to know
+
+This book assumes you are comfortable with R basics: installing packages, writing scripts, using `dplyr` and `ggplot2`. If you are new to R, start with [R for Data Science](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Cetinkaya-Rundel, and Garrett Grolemund.
+
+You do not need a background in econometrics, though some familiarity with regression helps. Each chapter introduces the relevant theory before diving into code.
+
+## How this book is organised
+
+**Part I: Getting Data into R** shows you how to pull macroeconomic data from the ONS, Bank of England, HMRC, OBR, ECB, and OECD — using purpose-built R packages that abstract away the complexity of each API.
+
+**Part II: Visualising the Economy** covers the chart types that macro practitioners actually use: time series with recession shading, fan charts for uncertainty, yield curve plots, and interactive Shiny dashboards.
+
+**Part III: Macro Models in Practice** walks through the workhorses of applied macroeconomics — estimating Phillips curves, Taylor rules, yield curve decompositions, vector autoregressions, and GDP nowcasting models — all with real data.
+
+**Part IV: Special Topics** covers exchange rates and trade, climate and the macroeconomy, and cross-country growth analysis.
+
+## Software
+
+All code in this book is written in R. The following packages are used throughout:
+
+```r
+# Data access
+install.packages(c("ons", "boe", "hmrc", "obr", "readecb", "readoecd", "inflateR"))
+
+# Core tidyverse
+install.packages(c("dplyr", "ggplot2", "tidyr", "readr", "lubridate"))
+
+# Econometrics
+install.packages(c("vars", "BVAR", "seasonal", "dfms"))
+```
+
+## Acknowledgements
+
+This book builds on the work of many people. Rob Hyndman's [Forecasting: Principles and Practice](https://otexts.com/fpp3/) set the standard for free online R textbooks. Franz Mohr's [r-econometrics.com](https://www.r-econometrics.com/) provides excellent VAR tutorials. Kevin Kotze's [time series course](https://kevinkotze.github.io/ts-outline/) at the University of Cape Town inspired several chapters.
+
+## License
+
+This book is licensed under [Creative Commons Attribution-NonCommercial-ShareAlike 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).

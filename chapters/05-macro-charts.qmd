@@ -1,0 +1,27 @@
+# Publication-Quality Economic Charts {#sec-charts}
+
+A good chart can carry an argument. Central bank reports, budget documents, and think tank publications all rely on a small set of chart types — done well, with clean design and careful annotation.
+
+This chapter builds a toolkit for the charts macro practitioners actually use.
+
+## A house style for economics
+
+## Time series with recession shading
+
+## Fan charts for uncertainty
+
+## Dual-axis charts (and when not to use them)
+
+## Small multiples for cross-country comparisons
+
+## Yield curve snapshots
+
+## Annotating key events
+
+## Exercises
+
+1. Build a chart of UK GDP growth with recession periods shaded in grey. (Hint: UK recessions are defined as two consecutive quarters of negative growth.)
+
+2. Create a fan chart showing the OBR's GDP growth forecast with uncertainty bands.
+
+3. Plot HICP inflation for Germany, France, Italy, and Spain as small multiples using `facet_wrap()`.

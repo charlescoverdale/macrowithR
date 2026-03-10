@@ -1,0 +1,23 @@
+# Monetary Policy and Interest Rates {#sec-monetary-policy}
+
+Central banks set interest rates. But how do we know if rates are too high, too low, or about right? This chapter covers the Taylor rule, yield curve analysis, and event studies around rate decisions.
+
+## The Taylor rule
+
+## Estimating a Taylor rule for the UK
+
+## Estimating a Taylor rule for the euro area
+
+## The yield curve as a recession predictor
+
+## Nelson-Siegel term structure models
+
+## Event studies around rate decisions
+
+## Exercises
+
+1. Estimate a Taylor rule for the Bank of England using `ons::ons_cpi()` for inflation and `ons::ons_unemployment()` for the output gap proxy. How does the predicted rate compare to the actual Bank Rate?
+
+2. Download 2-year and 10-year euro area government bond yields with `readecb::ecb_yield_curve()`. Calculate the 2s10s spread. When was it last negative?
+
+3. Pick three recent Bank of England rate decisions. Using daily gilt yield data from `boe::boe_yield_curve()`, plot yields in a 5-day window around each decision. Was the decision priced in?

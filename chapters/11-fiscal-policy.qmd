@@ -1,0 +1,21 @@
+# Fiscal Policy and Public Finances {#sec-fiscal}
+
+Fiscal policy — government spending and taxation — shapes the macroeconomy alongside monetary policy. This chapter analyses UK public finances using data from the OBR and HMRC.
+
+## UK public finances
+
+## The debt-to-GDP identity
+
+## Fiscal multipliers
+
+## OBR forecasts versus outcomes
+
+## Tax receipts as a real-time indicator
+
+## Exercises
+
+1. Using `obr`, download the Public Finances Databank. Plot the UK debt-to-GDP ratio since 1990. Mark the financial crisis and the pandemic.
+
+2. Compare the OBR's GDP growth forecasts at successive fiscal events. How accurate were they?
+
+3. Using `hmrc`, plot monthly income tax and VAT receipts. Do they lead or lag GDP growth?

@@ -1,0 +1,17 @@
+# Exchange Rates and Trade {#sec-trade}
+
+Exchange rates transmit monetary policy, reflect relative economic prospects, and reshape trade flows. This chapter covers purchasing power parity, real effective exchange rates, and gravity models.
+
+## Purchasing power parity
+
+## Real effective exchange rates
+
+## The Big Mac Index
+
+## Gravity models of trade
+
+## Exercises
+
+1. Using `readecb::ecb_exchange_rate()`, download the EUR/GBP rate since the Brexit referendum (June 2016). Identify the three largest single-day moves.
+
+2. Download PPP-adjusted GDP per capita from the World Bank for the G20. How does the ranking differ from market exchange rate GDP per capita?

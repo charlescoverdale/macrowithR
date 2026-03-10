@@ -1,0 +1,30 @@
+# Working with Macro Time Series {#sec-time-series}
+
+Macroeconomic data is time series data, and it comes with its own set of practical challenges: mixed frequencies, seasonal patterns, real versus nominal values, data revisions, and rebasing.
+
+This chapter covers the essential data wrangling operations you will use in every subsequent chapter.
+
+## Date handling and frequency conversion
+
+## Seasonal adjustment
+
+## Real versus nominal: adjusting for inflation
+
+```{r}
+#| eval: false
+library(inflateR)
+```
+
+## Rebasing indices
+
+## Calculating growth rates
+
+## Handling data revisions
+
+## Exercises
+
+1. Download monthly UK CPI data and quarterly GDP data. Convert CPI to quarterly frequency by averaging. Merge the two series.
+
+2. Using `inflateR`, convert a series of nominal UK GDP values to real terms (base year 2019). How does the growth profile change?
+
+3. Rebase the ECB's HICP index to January 2015 = 100. Plot the rebased series for Germany and France.
