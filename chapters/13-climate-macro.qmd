@@ -1,3 +1,8 @@
+---
+execute:
+  eval: true
+---
+
 # Climate and the Macroeconomy {#sec-climate}
 
 Climate change is increasingly central to macroeconomic policy. Central banks run climate stress tests, governments set carbon budgets, and transition risk is repricing assets across every sector. Yet most macroeconomics textbooks still treat the environment as an externality to be dealt with in a microeconomics course. This chapter brings climate into the macro toolkit — with data, models, and R code.
@@ -64,14 +69,22 @@ The United States and Canada have by far the highest per-capita emissions — ro
 We can quantify the percentage reduction for each country since 1990, which is the Kyoto Protocol baseline year:
 
 ```{r}
-co2_g7 |>
-  filter(year %in% c(1990, max(year))) |>
+latest_year <- max(co2_g7$year, na.rm = TRUE)
+
+co2_change <- co2_g7 |>
+  filter(year %in% c(1990, latest_year)) |>
   select(country, year, co2) |>
-  pivot_wider(names_from = year, values_from = co2, names_prefix = "y") |>
+  pivot_wider(names_from = year, values_from = co2,
+              names_prefix = "y") |>
+  rename(initial = y1990) |>
   mutate(
-    pct_change = (y2023 - y1990) / y1990 * 100
+    latest = pick(last_col()) |> pull(),
+    pct_change = (latest - initial) / initial * 100
   ) |>
-  arrange(pct_change)
+  arrange(pct_change) |>
+  select(country, initial, latest, pct_change)
+
+co2_change
 ```
 
 The UK typically leads this table with a reduction of around 45–50 per cent, driven primarily by the near-complete phase-out of coal from electricity generation. Germany has also made significant reductions, particularly after reunification closed inefficient East German industry, and more recently through its Energiewende renewable energy programme. Canada and Japan have made the least progress among G7 members.
@@ -104,11 +117,13 @@ library(readr)
 Plotting the EU carbon price alongside euro area industrial production reveals an important relationship. When industrial output falls — as it did sharply in 2008–2009 and during the COVID-19 pandemic — demand for emissions permits drops and the carbon price weakens. Conversely, the post-pandemic recovery saw both industrial production and carbon prices rise sharply.
 
 ```{r}
+#| eval: false
+
 library(readecb)
 library(dplyr)
 
 # Euro area industrial production index
-ip <- ecb_get("STS.M.I8.Y.PROD.NS0020.4.000")
+ip <- ecb_get("STS", "M.I8.Y.PROD.NS0020.4.000")
 
 # Suppose we have carbon price data loaded as carbon_price
 # with columns: date, price_eur

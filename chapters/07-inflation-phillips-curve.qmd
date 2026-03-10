@@ -1,3 +1,8 @@
+---
+execute:
+  eval: true
+---
+
 # Inflation and the Phillips Curve {#sec-phillips-curve}
 
 The Phillips curve — the relationship between unemployment and inflation — is one of the most debated relationships in macroeconomics. It has been declared dead, resurrected, and declared dead again more times than any other empirical regularity. This chapter estimates it with real UK data and asks whether it still holds.
@@ -49,23 +54,19 @@ cpi <- ons_cpi()
 unemp <- ons_unemployment()
 ```
 
-The CPI data arrives as an index level, so we need to compute the annual inflation rate — the percentage change over 12 months. We also extract a year-month date for merging.
+The `ons_cpi()` function returns the annual rate of change directly, so we simply rename the column for clarity.
 
 ```{r}
 inflation <- cpi |>
   arrange(date) |>
-  mutate(
-    inflation = (value / lag(value, 12) - 1) * 100
-  ) |>
-  filter(!is.na(inflation)) |>
-  select(date, inflation)
+  rename(inflation = value)
 ```
 
 Now we merge inflation and unemployment on date. The unemployment series uses three-month rolling averages centred on the middle month, so there is a slight timing mismatch, but for annual relationships this is immaterial.
 
 ```{r}
 phillips_data <- inflation |>
-  inner_join(unemp, by = "date", suffix = c("_cpi", "_unemp")) |>
+  inner_join(unemp, by = "date") |>
   rename(unemployment = value) |>
   mutate(decade = paste0(floor(year(date) / 10) * 10, "s"))
 

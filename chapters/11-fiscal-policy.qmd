@@ -1,3 +1,8 @@
+---
+execute:
+  eval: true
+---
+
 # Fiscal Policy and Public Finances {#sec-fiscal}
 
 Fiscal policy — government spending and taxation — shapes the macroeconomy alongside monetary policy. This chapter analyses UK public finances using data from the OBR and HMRC. We will plot the debt-to-GDP ratio, decompose its dynamics using a key identity, estimate fiscal multipliers, evaluate OBR forecast accuracy, and explore tax receipts as a real-time indicator.
@@ -14,7 +19,7 @@ library(ggplot2)
 library(dplyr)
 
 # Download the Public Finances Databank
-pf <- obr_public_finances()
+pf <- get_public_finances()
 head(pf)
 ```
 
@@ -24,20 +29,23 @@ Let us plot the ratio from 1990 onwards, marking the two episodes that caused it
 
 ```{r}
 # Filter for the debt-to-GDP ratio series
+# The year column is a fiscal year string like "1990-91"
+# Extract the starting calendar year for plotting
 debt_gdp <- pf |>
-  filter(variable == "Public sector net debt (% of GDP)") |>
-  filter(date >= as.Date("1990-01-01"))
+  filter(series == "Public sector net debt") |>
+  mutate(cal_year = as.numeric(substr(year, 1, 4))) |>
+  filter(cal_year >= 1990)
 
-ggplot(debt_gdp, aes(x = date, y = value)) +
+ggplot(debt_gdp, aes(x = cal_year, y = value)) +
   geom_line(colour = "#1b5e20", linewidth = 0.8) +
-  geom_vline(xintercept = as.Date("2008-09-15"),
+  geom_vline(xintercept = 2008,
              linetype = "dashed", colour = "grey40") +
-  geom_vline(xintercept = as.Date("2020-03-23"),
+  geom_vline(xintercept = 2020,
              linetype = "dashed", colour = "grey40") +
-  annotate("text", x = as.Date("2008-09-15"), y = 90,
+  annotate("text", x = 2008, y = 90,
            label = "Financial\ncrisis", hjust = -0.1,
            size = 3, colour = "grey40") +
-  annotate("text", x = as.Date("2020-03-23"), y = 90,
+  annotate("text", x = 2020, y = 90,
            label = "COVID-19\npandemic", hjust = -0.1,
            size = 3, colour = "grey40") +
   labs(title = "UK Public Sector Net Debt",
@@ -79,13 +87,13 @@ We can decompose actual UK debt changes into these two components using data fro
 # primary_balance: primary balance as % of GDP (positive = surplus)
 
 decomposition <- pf |>
-  filter(variable %in% c(
-    "Public sector net debt (% of GDP)",
-    "Central government net interest payments (% of GDP)",
-    "Public sector net borrowing (% of GDP)"
+  filter(series %in% c(
+    "Public sector net debt",
+    "Central government debt interest, net of APF",
+    "Public sector net borrowing"
   )) |>
-  select(date, variable, value) |>
-  tidyr::pivot_wider(names_from = variable, values_from = value)
+  select(year, series, value) |>
+  tidyr::pivot_wider(names_from = series, values_from = value)
 
 head(decomposition)
 ```
@@ -121,6 +129,8 @@ The multiplier depends on the state of the economy. When the economy is at full 
 We can estimate a simple fiscal multiplier using a VAR model. The idea is to identify government spending shocks — unexpected changes in spending — and trace their effect on GDP over time using impulse response functions.
 
 ```{r}
+#| eval: false
+
 library(vars)
 
 # Pull quarterly GDP and construct a simple fiscal dataset
@@ -143,6 +153,8 @@ gdp <- ons::ons_gdp()
 ```
 
 ```{r}
+#| eval: false
+
 # Estimate a VAR with government spending ordered first
 # (Blanchard-Perotti identification: government spending does not
 # respond to GDP within the quarter)
@@ -168,6 +180,8 @@ plot(irf_result)
 ```
 
 ```{r}
+#| eval: false
+
 # Compute the cumulative multiplier
 # The cumulative multiplier at horizon h is:
 # sum of GDP responses from 0 to h / sum of spending responses from 0 to h
@@ -200,19 +214,21 @@ The OBR publishes GDP growth forecasts at each fiscal event. How accurate are th
 We can evaluate this by comparing successive OBR forecasts to actual outcomes. The OBR itself publishes a "Forecast evaluation report" each year, but it is instructive to replicate the exercise.
 
 ```{r}
-# Download OBR forecasts from successive fiscal events
-obr_forecasts <- obr_forecasts()
+# Download OBR forecasts for real GDP growth
+obr_gdp_forecasts <- get_forecasts(series = "real_GDP")
 
-head(obr_forecasts)
+head(obr_gdp_forecasts)
 ```
 
 ```{r}
-# Filter for GDP growth forecasts
-gdp_forecasts <- obr_forecasts |>
-  filter(variable == "Real GDP growth (%)") |>
-  select(forecast_date, target_year, value)
+#| eval: false
 
-# Get actual GDP growth outcomes
+# The forecasts have columns: series, forecast_date, fiscal_year, value
+# Extract the target calendar year from fiscal_year
+gdp_forecasts <- obr_gdp_forecasts |>
+  mutate(target_year = as.numeric(substr(fiscal_year, 1, 4)))
+
+# Get actual GDP growth outcomes (quarterly, average by calendar year)
 gdp_actual <- ons::ons_gdp() |>
   mutate(year = as.numeric(format(date, "%Y"))) |>
   group_by(year) |>
@@ -222,17 +238,17 @@ gdp_actual <- ons::ons_gdp() |>
 forecast_eval <- gdp_forecasts |>
   left_join(gdp_actual, by = c("target_year" = "year")) |>
   mutate(
-    forecast_error = value - actual_growth,
-    horizon = target_year - as.numeric(format(forecast_date, "%Y"))
+    forecast_error = value - actual_growth
   )
 ```
 
 ```{r}
-# Plot forecast errors by horizon
+#| eval: false
+
+# Plot forecast errors
 ggplot(forecast_eval, aes(x = target_year, y = forecast_error)) +
   geom_col(fill = "#2196F3", alpha = 0.7) +
   geom_hline(yintercept = 0, linewidth = 0.5) +
-  facet_wrap(~paste0(horizon, "-year ahead")) +
   labs(title = "OBR GDP Growth Forecast Errors",
        subtitle = "Forecast minus actual (pp). Positive = over-prediction.",
        x = NULL, y = "Forecast error (pp)",
@@ -241,9 +257,10 @@ ggplot(forecast_eval, aes(x = target_year, y = forecast_error)) +
 ```
 
 ```{r}
+#| eval: false
+
 # Test for bias: is the mean forecast error significantly different from zero?
 forecast_eval |>
-  group_by(horizon) |>
   summarise(
     mean_error = mean(forecast_error, na.rm = TRUE),
     sd_error = sd(forecast_error, na.rm = TRUE),
@@ -267,20 +284,24 @@ Because tax receipts respond to economic activity almost in real time, they are 
 library(hmrc)
 
 # Pull monthly tax receipts
-receipts <- hmrc_tax_receipts()
+receipts <- get_tax_receipts()
 head(receipts)
 ```
 
 ```{r}
 # Plot monthly receipts by tax type
 receipts_main <- receipts |>
-  filter(tax %in% c("Income Tax", "VAT", "Corporation Tax")) |>
+  filter(description %in% c(
+    "Income Tax (PAYE and Self Assessment)",
+    "Value Added Tax",
+    "Corporation Tax (onshore)"
+  )) |>
   filter(date >= as.Date("2010-01-01"))
 
-ggplot(receipts_main, aes(x = date, y = value, colour = tax)) +
+ggplot(receipts_main, aes(x = date, y = receipts_gbp_m, colour = description)) +
   geom_line(linewidth = 0.6) +
   labs(title = "UK Monthly Tax Receipts",
-       subtitle = "£ millions, nominal",
+       subtitle = "GBP millions, nominal",
        x = NULL, y = NULL, colour = NULL,
        caption = "Source: HMRC") +
   theme_minimal() +
@@ -292,10 +313,9 @@ Tax receipts are strongly seasonal — income tax peaks in January (self-assessm
 ```{r}
 # Year-on-year growth in total receipts
 total_receipts <- receipts |>
-  group_by(date) |>
-  summarise(total = sum(value, na.rm = TRUE)) |>
+  filter(description == "Total HMRC receipts") |>
   arrange(date) |>
-  mutate(yoy_growth = 100 * (total / lag(total, 12) - 1)) |>
+  mutate(yoy_growth = 100 * (receipts_gbp_m / lag(receipts_gbp_m, 12) - 1)) |>
   filter(!is.na(yoy_growth))
 
 ggplot(total_receipts, aes(x = date, y = yoy_growth)) +
@@ -318,8 +338,8 @@ For fiscal monitoring, the most useful exercise is to compare cumulative receipt
 # above or below the prior year
 
 total_receipts_monthly <- receipts |>
-  group_by(date) |>
-  summarise(total = sum(value, na.rm = TRUE)) |>
+  filter(description == "Total HMRC receipts") |>
+  rename(total = receipts_gbp_m) |>
   mutate(
     fiscal_year = ifelse(
       as.numeric(format(date, "%m")) >= 4,
@@ -341,7 +361,7 @@ ggplot(recent_years,
            colour = factor(fiscal_year))) +
   geom_line(linewidth = 0.7) +
   labs(title = "Cumulative Tax Receipts by Fiscal Year",
-       subtitle = "£ billions, April to March",
+       subtitle = "GBP billions, April to March",
        x = "Month of fiscal year", y = NULL, colour = "Fiscal year",
        caption = "Source: HMRC") +
   scale_x_continuous(breaks = 1:12,

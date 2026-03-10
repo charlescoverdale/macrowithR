@@ -1,3 +1,8 @@
+---
+execute:
+  eval: true
+---
+
 # UK Economic Data {#sec-uk-data}
 
 The United Kingdom has some of the best-documented and most accessible economic data in the world. Four institutions publish the bulk of it, and each has a dedicated R package.
@@ -21,15 +26,15 @@ One thing to be aware of: the ONS revises its data constantly. The first estimat
 GDP — gross domestic product — is the broadest measure of economic activity. The ONS publishes quarterly GDP in chained volume measures (i.e., adjusted for inflation) and in current prices. The `ons_gdp()` function returns the headline quarterly real GDP index.
 
 ```{r}
-gdp <- ons_gdp()
+gdp <- ons_gdp(measure = "level")
 head(gdp)
 #>         date  value
-#> 1 1955-01-01  6.898
-#> 2 1955-04-01  6.975
-#> 3 1955-07-01  7.002
-#> 4 1955-10-01  6.970
-#> 5 1956-01-01  6.979
-#> 6 1956-04-01  6.981
+#> 1 1955-01-01 145457
+#> 2 1955-04-01 145551
+#> 3 1955-07-01 147995
+#> 4 1955-10-01 147119
+#> 5 1956-01-01 148955
+#> 6 1956-04-01 148835
 ```
 
 The series goes back to 1955 and is indexed (100 = 2022). To calculate quarter-on-quarter growth rates, you can use base R or `dplyr`:
@@ -85,15 +90,15 @@ The unemployment rate is reported as a three-month rolling average — the figur
 Wages data is equally important for monetary policy, since wage growth feeds into service-sector inflation. The `ons_wages()` function returns average weekly earnings growth:
 
 ```{r}
-wages <- ons_wages()
+wages <- ons_wages(measure = "growth")
 head(wages)
 #>         date value
-#> 1 2001-03-01   5.3
-#> 2 2001-04-01   4.7
-#> 3 2001-05-01   3.5
-#> 4 2001-06-01   4.2
-#> 5 2001-07-01   4.3
-#> 6 2001-08-01   3.9
+#> 1 2001-03-01   6.1
+#> 2 2001-04-01   6.2
+#> 3 2001-05-01   5.1
+#> 4 2001-06-01   5.5
+#> 5 2001-07-01   5.2
+#> 6 2001-08-01   5.3
 ```
 
 The MPC watches this series closely. During 2023-24, wage growth running at 7-8% was a key reason the Committee held rates at 5.25% for an extended period — service-sector firms pass wage costs through to prices, and wage growth at that level is inconsistent with 2% inflation.
@@ -127,7 +132,7 @@ head(bank_rate)
 The series goes back to 1694, making it one of the longest continuous financial time series in the world. For most practical analysis you will want to filter to a more recent period:
 
 ```{r}
-bank_rate_recent <- boe_bank_rate(from = "2000-01")
+bank_rate_recent <- boe_bank_rate(from = "2000-01-01")
 ```
 
 ### The gilt yield curve
@@ -135,7 +140,7 @@ bank_rate_recent <- boe_bank_rate(from = "2000-01")
 The yield curve — the relationship between interest rates and maturity — is one of the most information-rich objects in financial markets. A normal yield curve slopes upward (longer-term rates are higher than short-term rates); an inverted yield curve (short rates above long rates) has historically been a reliable predictor of recession.
 
 ```{r}
-gilts <- boe_yield_curve(from = "2020-01")
+gilts <- boe_yield_curve(from = "2020-01-01")
 head(gilts)
 ```
 
@@ -180,7 +185,7 @@ list_tax_heads()
 To pull a specific tax — for example, VAT receipts:
 
 ```{r}
-vat <- get_tax_receipts(tax = "VAT")
+vat <- get_tax_receipts(tax = "vat")
 head(vat)
 ```
 
@@ -277,7 +282,7 @@ Let us build a quarterly dataset step by step.
 library(ons)
 library(boe)
 
-gdp   <- ons_gdp()           # quarterly
+gdp   <- ons_gdp(measure = "level")  # quarterly index
 cpi   <- ons_cpi()           # monthly
 unemp <- ons_unemployment()  # monthly (3-month rolling)
 br    <- boe_bank_rate()     # irregular (changes at MPC meetings)
@@ -323,11 +328,11 @@ months <- data.frame(date = seq(min(br_monthly$month),
 br_filled <- months |>
   left_join(br |> mutate(date = as.Date(format(date, "%Y-%m-01"))),
             by = "date") |>
-  tidyr::fill(value, .direction = "down")
+  tidyr::fill(rate_pct, .direction = "down")
 
 br_q <- br_filled |>
   mutate(quarter = to_quarter(date)) |>
-  summarise(bank_rate = mean(value, na.rm = TRUE), .by = quarter) |>
+  summarise(bank_rate = mean(rate_pct, na.rm = TRUE), .by = quarter) |>
   rename(date = quarter)
 ```
 

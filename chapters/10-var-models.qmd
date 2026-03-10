@@ -1,3 +1,8 @@
+---
+execute:
+  eval: true
+---
+
 # Vector Autoregressions {#sec-var}
 
 The VAR is the workhorse of empirical macroeconomics. It lets you model the dynamic interactions between multiple macro variables — GDP, inflation, interest rates — without imposing a structural economic model.
@@ -34,15 +39,16 @@ library(lubridate)
 library(vars)
 library(ggplot2)
 
-# Pull GDP and compute quarter-on-quarter growth
-gdp <- ons_gdp() |>
-  filter(frequency == "quarterly") |>
-  mutate(gdp_growth = (value / lag(value) - 1) * 100) |>
-  select(date, gdp_growth)
+# vars loads MASS which masks dplyr::select; ensure dplyr wins
+select <- dplyr::select
 
-# Pull CPI inflation (annual rate)
+# Pull quarterly GDP growth (ons_gdp() returns q-on-q growth by default)
+gdp <- ons_gdp() |>
+  rename(gdp_growth = value)
+
+# Pull CPI inflation (ons_cpi() returns the annual rate by default)
 cpi <- ons_cpi() |>
-  select(date, inflation = value)
+  rename(inflation = value)
 
 # Aggregate CPI to quarterly (take last month of each quarter)
 cpi_q <- cpi |>
@@ -56,7 +62,7 @@ cpi_q <- cpi |>
 bank_rate <- boe_bank_rate() |>
   mutate(quarter_date = floor_date(date, "quarter")) |>
   group_by(quarter_date) |>
-  summarise(bank_rate = mean(value, na.rm = TRUE), .groups = "drop") |>
+  summarise(bank_rate = mean(rate_pct, na.rm = TRUE), .groups = "drop") |>
   rename(date = quarter_date)
 ```
 
@@ -385,12 +391,13 @@ cat("Eigenvalues:", roots(var_final), "\n")
 cat("Stable:", all(roots(var_final) < 1), "\n")
 
 # 3. Structural IRFs (Cholesky)
-irf_gdp <- irf(var_final, impulse = "bank_rate", response = "gdp_growth",
-                n.ahead = 20, ortho = TRUE, ci = 0.68, runs = 1000)
-irf_inf <- irf(var_final, impulse = "bank_rate", response = "inflation",
-                n.ahead = 20, ortho = TRUE, ci = 0.68, runs = 1000)
-irf_rate_own <- irf(var_final, impulse = "bank_rate", response = "bank_rate",
-                     n.ahead = 20, ortho = TRUE, ci = 0.68, runs = 1000)
+# Use vars::irf explicitly since BVAR also exports irf()
+irf_gdp <- vars::irf(var_final, impulse = "bank_rate", response = "gdp_growth",
+                      n.ahead = 20, ortho = TRUE, ci = 0.68, runs = 1000)
+irf_inf <- vars::irf(var_final, impulse = "bank_rate", response = "inflation",
+                      n.ahead = 20, ortho = TRUE, ci = 0.68, runs = 1000)
+irf_rate_own <- vars::irf(var_final, impulse = "bank_rate", response = "bank_rate",
+                           n.ahead = 20, ortho = TRUE, ci = 0.68, runs = 1000)
 ```
 
 ```{r}
@@ -424,7 +431,7 @@ The results should be read as follows. A 25 basis point increase in Bank Rate �
 
 ```{r}
 # 4. Variance decomposition
-fevd_final <- fevd(var_final, n.ahead = 20)
+fevd_final <- vars::fevd(var_final, n.ahead = 20)
 
 # Table: share of GDP growth variance explained at selected horizons
 fevd_table <- as.data.frame(fevd_final$gdp_growth)
@@ -443,7 +450,7 @@ bvar_final <- bvar(var_ts,
                    priors = bv_priors(hyper = "auto"),
                    mh = bv_mh(scale_hess = 0.05))
 
-bvar_irf_final <- irf(bvar_final, horizon = 20, identification = TRUE)
+bvar_irf_final <- BVAR::irf(bvar_final, horizon = 20, identification = TRUE)
 plot(bvar_irf_final)
 ```
 
@@ -451,7 +458,7 @@ The Bayesian IRFs should tell a similar qualitative story — a rate increase re
 
 ```{r}
 # 6. Forecast the next 2 years
-var_forecast <- predict(var_final, n.ahead = 8, ci = 0.68)
+var_forecast <- stats::predict(var_final, n.ahead = 8, ci = 0.68)
 plot(var_forecast)
 
 # Extract point forecasts

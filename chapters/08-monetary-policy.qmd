@@ -1,3 +1,8 @@
+---
+execute:
+  eval: true
+---
+
 # Monetary Policy and Interest Rates {#sec-monetary-policy}
 
 Central banks set interest rates. But how do we know if rates are too high, too low, or about right? This chapter covers the Taylor rule, yield curve analysis, and event studies around rate decisions. These are the tools that market economists, central bank watchers, and policy analysts use every day.
@@ -30,18 +35,17 @@ library(ggplot2)
 
 # Pull the data
 bank_rate <- boe_bank_rate()
-cpi <- ons_cpi()
-gdp <- ons_gdp()
+cpi <- ons_cpi()            # returns annual CPI inflation rate
+gdp <- ons_gdp()            # returns quarterly GDP growth
 ```
 
 First, we compute annual CPI inflation from the index level:
 
 ```{r}
+# ons_cpi() already returns the annual CPI inflation rate
 inflation <- cpi |>
   arrange(date) |>
-  mutate(inflation = (value / lag(value, 12) - 1) * 100) |>
-  filter(!is.na(inflation)) |>
-  select(date, inflation)
+  rename(inflation = value)
 ```
 
 Next, we construct the output gap using a Hodrick-Prescott filter. The HP filter decomposes a time series into a trend component and a cyclical component. For quarterly data, the conventional smoothing parameter is $\lambda = 1600$.
@@ -49,13 +53,14 @@ Next, we construct the output gap using a Hodrick-Prescott filter. The HP filter
 ```{r}
 library(mFilter)
 
-gdp_ts <- gdp |>
+# ons_gdp(measure = "level") gives the GDP index level for HP filtering
+gdp_level <- ons_gdp(measure = "level") |>
   arrange(date) |>
   filter(!is.na(value))
 
-hp <- hpfilter(gdp_ts$value, freq = 1600)
+hp <- hpfilter(gdp_level$value, freq = 1600)
 
-gdp_gap <- gdp_ts |>
+gdp_gap <- gdp_level |>
   mutate(
     trend = as.numeric(hp$trend),
     output_gap = (value - trend) / trend * 100
@@ -90,7 +95,7 @@ bank_rate_q <- bank_rate |>
   group_by(quarter_date) |>
   slice_tail(n = 1) |>
   ungroup() |>
-  select(quarter_date, bank_rate = value)
+  select(quarter_date, bank_rate = rate_pct)
 
 taylor_data <- taylor_data |>
   left_join(bank_rate_q, by = "quarter_date")
@@ -143,17 +148,14 @@ hicp <- ecb_hicp()
 The ECB targets HICP inflation "below, but close to, 2%" (since 2021, symmetrically at 2%). We use the same Taylor rule parameters for comparability, though the ECB's reaction function may differ from the Bank of England's.
 
 ```{r}
-# Compute euro area inflation from HICP
+# ecb_hicp() already returns the annual inflation rate for the euro area (U2)
 ea_inflation <- hicp |>
-  filter(geo == "EA") |>
   arrange(date) |>
-  mutate(inflation = (value / lag(value, 12) - 1) * 100) |>
-  filter(!is.na(inflation)) |>
-  select(date, inflation)
+  rename(inflation = value)
 
 # Extract the main refinancing rate
 mro <- ecb_rates |>
-  filter(series == "main_refinancing") |>
+  filter(rate == "Main refinancing rate") |>
   select(date, ecb_rate = value)
 
 # Merge and compute Taylor rate (using inflation gap only, as EA output gap is harder to construct)
@@ -204,13 +206,16 @@ The logic runs through the expectations hypothesis of the term structure. Long-t
 The most commonly watched measure is the 10-year minus 2-year spread (the "2s10s"). We can compute this from Bank of England gilt yield data:
 
 ```{r}
+# boe_yield_curve() provides 5yr, 10yr, and 20yr maturities
+# We use the 5yr-10yr spread as a proxy for the short-long spread
 gilts <- boe_yield_curve()
 
 spread <- gilts |>
-  filter(maturity %in% c(2, 10)) |>
-  select(date, maturity, yield = value) |>
-  tidyr::pivot_wider(names_from = maturity, values_from = yield, names_prefix = "y") |>
-  mutate(spread_2s10s = y10 - y2)
+  filter(maturity %in% c("5yr", "10yr")) |>
+  select(date, maturity, yield = yield_pct) |>
+  tidyr::pivot_wider(names_from = maturity, values_from = yield) |>
+  rename(y5 = `5yr`, y10 = `10yr`) |>
+  mutate(spread_2s10s = y10 - y5)
 ```
 
 ```{r}
@@ -237,10 +242,10 @@ We can formalise this relationship with a probit model. The dependent variable i
 
 ```{r}
 # Construct a simple recession indicator from GDP
+# ons_gdp() already returns quarter-on-quarter growth
 gdp_growth <- gdp |>
   arrange(date) |>
-  mutate(growth = (value / lag(value) - 1) * 100) |>
-  filter(!is.na(growth)) |>
+  rename(growth = value) |>
   mutate(recession = as.integer(growth < 0))
 
 # Merge with the spread (quarterly)
@@ -297,9 +302,11 @@ We fit the Nelson-Siegel model to a cross-section of UK gilt yields using nonlin
 
 ```{r}
 # Get a cross-section of yields at a single date
+# Convert maturity from "5yr"/"10yr"/"20yr" to numeric
 gilts_cross <- gilts |>
   filter(date == max(date)) |>
-  select(maturity, yield = value) |>
+  mutate(maturity_yrs = as.numeric(gsub("yr", "", maturity))) |>
+  select(maturity = maturity_yrs, yield = yield_pct) |>
   filter(!is.na(yield), maturity > 0)
 
 # Nelson-Siegel function
@@ -310,15 +317,19 @@ nelson_siegel <- function(tau, beta1, beta2, beta3, lambda) {
   beta1 + beta2 * factor1 + beta3 * factor2
 }
 
-# Fit using nls
-ns_fit <- nls(
-  yield ~ nelson_siegel(maturity, beta1, beta2, beta3, lambda),
-  data = gilts_cross,
-  start = list(beta1 = 4, beta2 = -1, beta3 = 1, lambda = 0.5),
-  control = nls.control(maxiter = 200)
-)
-
-summary(ns_fit)
+# With 3 maturities we fix lambda and solve the linear system directly
+lambda <- 0.5
+X_ns <- matrix(NA, nrow(gilts_cross), 3)
+for (i in seq_len(nrow(gilts_cross))) {
+  tau <- gilts_cross$maturity[i]
+  x <- lambda * tau
+  f1 <- (1 - exp(-x)) / x
+  f2 <- f1 - exp(-x)
+  X_ns[i, ] <- c(1, f1, f2)
+}
+ns_coefs <- solve(X_ns, gilts_cross$yield)
+names(ns_coefs) <- c("beta1", "beta2", "beta3")
+print(ns_coefs)
 ```
 
 The fitted parameters tell us about the shape of the yield curve on that date. A positive $\beta_1$ indicates the long-run yield level. A negative $\beta_2$ implies an upward-sloping curve (short rates below long rates). The sign and magnitude of $\beta_3$ tell us whether there is a hump or a trough at intermediate maturities.
@@ -330,7 +341,10 @@ We can plot the fitted curve against the actual yields:
 #| fig-cap: "Nelson-Siegel fitted yield curve versus actual gilt yields"
 
 tau_grid <- seq(0.5, 30, by = 0.1)
-fitted_yields <- predict(ns_fit, newdata = data.frame(maturity = tau_grid))
+fitted_yields <- sapply(tau_grid, function(tau) {
+  nelson_siegel(tau, ns_coefs["beta1"], ns_coefs["beta2"],
+                ns_coefs["beta3"], lambda)
+})
 
 ns_plot_data <- tibble(maturity = tau_grid, fitted = fitted_yields)
 
@@ -351,24 +365,28 @@ The Nelson-Siegel model fits the yield curve remarkably well with only three par
 To track the evolution of the yield curve over time, we can fit the model to each date in our sample and plot the three factors:
 
 ```{r}
-# Fit Nelson-Siegel to each date
+# Fit Nelson-Siegel to each date by solving the linear system (lambda fixed)
+fit_ns <- function(mats, yields, lam = 0.5) {
+  X <- matrix(NA, length(mats), 3)
+  for (i in seq_along(mats)) {
+    x <- lam * mats[i]
+    f1 <- (1 - exp(-x)) / x
+    f2 <- f1 - exp(-x)
+    X[i, ] <- c(1, f1, f2)
+  }
+  tryCatch(
+    { b <- solve(X, yields); c(beta1 = b[1], beta2 = b[2], beta3 = b[3]) },
+    error = function(e) c(beta1 = NA, beta2 = NA, beta3 = NA)
+  )
+}
+
 ns_over_time <- gilts |>
-  filter(!is.na(value), maturity > 0) |>
+  mutate(maturity_yrs = as.numeric(gsub("yr", "", maturity))) |>
+  filter(!is.na(yield_pct), maturity_yrs > 0) |>
   group_by(date) |>
-  filter(n() >= 5) |>
+  filter(n() >= 3) |>
   summarise(
-    ns = list(tryCatch(
-      {
-        fit <- nls(
-          value ~ nelson_siegel(maturity, beta1, beta2, beta3, lambda),
-          data = pick(everything()),
-          start = list(beta1 = 4, beta2 = -1, beta3 = 1, lambda = 0.5),
-          control = nls.control(maxiter = 200)
-        )
-        coef(fit)
-      },
-      error = function(e) c(beta1 = NA, beta2 = NA, beta3 = NA, lambda = NA)
-    )),
+    ns = list(fit_ns(maturity_yrs, yield_pct)),
     .groups = "drop"
   ) |>
   tidyr::unnest_wider(ns)
@@ -396,38 +414,33 @@ events <- tibble(
 gilts_daily <- boe_yield_curve()
 
 # For each event, extract yields in a window
-event_windows <- events |>
-  rowwise() |>
-  mutate(
-    window_data = list(
-      gilts_daily |>
-        filter(
-          date >= !!date - 5,
-          date <= !!date + 5,
-          maturity %in% c(2, 5, 10)
-        ) |>
-        mutate(
-          event_date = !!date,
-          event_label = !!label,
-          days_from_event = as.numeric(date - !!date)
-        )
+event_windows <- purrr::pmap_dfr(events, function(date, label) {
+  gilts_daily |>
+    filter(
+      .data$date >= !!date - 7,
+      .data$date <= !!date + 7,
+      maturity %in% c("5yr", "10yr", "20yr")
+    ) |>
+    mutate(
+      event_date = !!date,
+      event_label = !!label,
+      days_from_event = as.numeric(.data$date - !!date)
     )
-  ) |>
-  tidyr::unnest(window_data)
+})
 ```
 
 ```{r}
 #| label: fig-event-study
 #| fig-cap: "Gilt yields around Bank of England rate decisions"
 
-ggplot(event_windows, aes(x = days_from_event, y = value,
-                          colour = factor(maturity), group = maturity)) +
+ggplot(event_windows, aes(x = days_from_event, y = yield_pct,
+                          colour = maturity, group = maturity)) +
   geom_line(linewidth = 0.8) +
   geom_vline(xintercept = 0, linetype = "dashed", colour = "grey50") +
   facet_wrap(~event_label, scales = "free_y", ncol = 1) +
   scale_colour_manual(
-    values = c("2" = "#3498db", "5" = "#2ecc71", "10" = "#e74c3c"),
-    labels = c("2-year", "5-year", "10-year")
+    values = c("5yr" = "#3498db", "10yr" = "#2ecc71", "20yr" = "#e74c3c"),
+    labels = c("5-year", "10-year", "20-year")
   ) +
   labs(
     x = "Days from decision",

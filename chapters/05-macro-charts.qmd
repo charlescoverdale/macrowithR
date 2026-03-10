@@ -1,3 +1,8 @@
+---
+execute:
+  eval: true
+---
+
 # Publication-Quality Economic Charts {#sec-charts}
 
 A good chart can carry an argument. Central bank reports, budget documents, and think tank publications all rely on a small set of chart types — done well, with clean design and careful annotation.
@@ -176,8 +181,10 @@ The chart works by stacking `geom_ribbon()` layers, each representing a differen
 To demonstrate, we will build a fan chart for UK GDP growth using OBR forecast data. In practice you would pull the OBR's forecast distribution parameters; here we simulate symmetric uncertainty bands around a central path to illustrate the technique.
 
 ```{r}
-# Pull OBR GDP forecast
-obr_gdp <- obr_forecast("GDP growth")
+# Pull OBR GDP forecast — keep only the latest vintage
+obr_gdp <- get_forecasts("real_GDP") |>
+  filter(forecast_date == max(forecast_date)) |>
+  mutate(date = as.Date(paste0(fiscal_year, "-01-01")))
 
 # For illustration, create expanding uncertainty bands around the central forecast.
 # In a real application you would use the OBR's published forecast distribution.
@@ -222,8 +229,7 @@ Let us plot HICP inflation for the four largest euro area economies. The ECB pub
 countries <- c("DE", "FR", "IT", "ES")
 
 hicp_data <- lapply(countries, function(cc) {
-  ecb_hicp(geo = cc) |>
-    mutate(country = cc)
+  ecb_hicp(country = cc)
 }) |>
   bind_rows()
 
@@ -260,7 +266,7 @@ Plotting multiple yield curves on the same chart at different points in time sho
 
 ```{r}
 # Pull yield curve data for selected dates
-yield_data <- boe_yield_curve(from = "2019-01")
+yield_data <- boe_yield_curve(from = "2019-01-01")
 
 # Select specific dates to plot
 snapshot_dates <- as.Date(c("2019-06-28", "2020-06-30", "2022-06-30", "2024-06-28"))
@@ -269,7 +275,7 @@ yield_snapshots <- yield_data |>
   filter(date %in% snapshot_dates) |>
   mutate(date_label = format(date, "%B %Y"))
 
-ggplot(yield_snapshots, aes(x = maturity, y = value, colour = date_label)) +
+ggplot(yield_snapshots, aes(x = maturity, y = yield_pct, colour = date_label, group = date_label)) +
   geom_line(linewidth = 0.8) +
   geom_point(size = 1.5) +
   scale_colour_macro() +
@@ -302,7 +308,7 @@ events <- tibble(
 )
 
 ggplot(bank_rate |> filter(date >= as.Date("2005-01-01")),
-       aes(x = date, y = value)) +
+       aes(x = date, y = rate_pct)) +
   geom_line(colour = "#1B5E7B", linewidth = 0.6) +
   geom_vline(
     data = events, aes(xintercept = date),
@@ -332,7 +338,7 @@ For charts with many events, consider using `ggrepel::geom_text_repel()` to auto
 library(ggrepel)
 
 ggplot(bank_rate |> filter(date >= as.Date("2005-01-01")),
-       aes(x = date, y = value)) +
+       aes(x = date, y = rate_pct)) +
   geom_line(colour = "#1B5E7B", linewidth = 0.6) +
   geom_vline(
     data = events, aes(xintercept = date),
@@ -340,7 +346,9 @@ ggplot(bank_rate |> filter(date >= as.Date("2005-01-01")),
   ) +
   geom_point(
     data = bank_rate |> filter(date %in% events$date),
-    colour = "#C0392B", size = 2
+    aes(x = date, y = rate_pct),
+    colour = "#C0392B", size = 2,
+    inherit.aes = FALSE
   ) +
   geom_text_repel(
     data = events,

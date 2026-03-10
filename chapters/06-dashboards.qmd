@@ -17,6 +17,7 @@ The dashboard we will build has four tabs: GDP growth, CPI inflation, unemployme
 The code below is a complete, runnable Shiny application. You can save it as `app.R` in a new directory and run it with `shiny::runApp()`. The application uses `bslib` for modern Bootstrap 5 styling and organises the tabs with `navset_card_tab()`, which gives a clean, professional appearance without requiring CSS knowledge.
 
 ```{r}
+#| eval: false
 library(shiny)
 library(bslib)
 library(ggplot2)
@@ -163,7 +164,7 @@ server <- function(input, output, session) {
   output$bank_rate_plot <- renderPlot({
     df <- filter_dates(bank_rate_data())
 
-    ggplot(df, aes(x = date, y = value)) +
+    ggplot(df, aes(x = date, y = rate_pct)) +
       geom_step(colour = "#8E44AD", linewidth = 0.7) +
       labs(
         title    = "Bank of England Bank Rate",
@@ -189,6 +190,7 @@ The layout is built around three components. `page_sidebar()` creates the top-le
 For more complex dashboards, you might add additional sidebar controls: a dropdown to select specific economic indicators, checkboxes to toggle reference lines, or a download button to export the data. Shiny's reactive programming model means that adding interactivity is straightforward — when a user changes an input, all outputs that depend on it are automatically recomputed.
 
 ```{r}
+#| eval: false
 # Example: adding a download button to the sidebar
 sidebar(
   title = "Settings",
@@ -214,6 +216,7 @@ A Shiny dashboard running on your laptop is useful for your own analysis, but it
 Deployment takes three steps. First, install the `rsconnect` package and configure your shinyapps.io account credentials. Second, ensure all packages your app uses are installed from CRAN (shinyapps.io installs dependencies automatically from CRAN, but cannot access packages installed locally from GitHub). Third, call `rsconnect::deployApp()` from the directory containing your `app.R` file.
 
 ```{r}
+#| eval: false
 # One-time setup
 rsconnect::setAccountInfo(
   name   = "your-account-name",

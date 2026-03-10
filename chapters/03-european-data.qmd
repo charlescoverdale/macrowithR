@@ -1,3 +1,8 @@
+---
+execute:
+  eval: true
+---
+
 # European and International Data {#sec-european-data}
 
 Macroeconomics rarely stops at national borders. Comparing inflation across the euro area, tracking ECB policy alongside the Fed, or benchmarking UK growth against the G7 — all of these require international data.
@@ -29,7 +34,7 @@ The resulting data frame contains one row per date on which rates changed, with 
 ```{r}
 library(ggplot2)
 
-ggplot(rates, aes(x = date, y = value, colour = series)) +
+ggplot(rates, aes(x = date, y = value, colour = rate)) +
   geom_step() +
   labs(
     title = "ECB policy rates",
@@ -137,85 +142,61 @@ library(readoecd)
 
 The Organisation for Economic Co-operation and Development publishes harmonised data across its 38 member countries, plus key partner economies. The OECD's great strength is comparability: its statisticians take national data and apply consistent definitions and methodologies, making it the natural choice for cross-country analysis.
 
-The `readoecd` package wraps the OECD's SDMX REST API, providing both dedicated functions for popular datasets and a flexible `oecd_get()` function for direct access to any OECD dataflow.
+The `readoecd` package wraps the OECD's SDMX REST API, providing dedicated functions for popular datasets including GDP, CPI, unemployment, and more.
 
-### Composite leading indicators
+### GDP
 
-The OECD's Composite Leading Indicators (CLI) are designed to provide early signals of turning points in business cycles. They combine a variety of forward-looking indicators — order books, building permits, share prices, interest rate spreads — into a single index calibrated so that 100 represents trend growth. Values above 100 suggest expansion; below 100, contraction.
+The OECD publishes GDP data on a comparable basis across member countries, making it the natural choice for cross-country growth comparisons. The `get_oecd_gdp()` function returns GDP in PPP-adjusted terms for the countries you specify.
 
 ```{r}
-cli <- oecd_get(
-  dataset = "MEI_CLI",
-  filter = list(
-    location = c("GBR", "USA", "DEU", "JPN"),
-    subject = "LOLITOAA",
-    measure = "STSA",
-    frequency = "M"
-  ),
-  start_period = "2015-01"
+gdp_oecd <- get_oecd_gdp(
+  countries = c("GBR", "USA", "DEU", "JPN"),
+  start_year = 2000
 )
 
-head(cli)
+head(gdp_oecd)
 ```
 
-The CLI is particularly useful for identifying where different economies are in the cycle. If the UK CLI is falling while the US CLI is rising, that divergence has implications for exchange rates, relative monetary policy, and trade.
+### Unemployment
+
+Cross-country unemployment comparisons are straightforward with harmonised OECD data. National definitions of unemployment vary slightly, but the OECD applies a consistent ILO-based methodology.
 
 ```{r}
-ggplot(cli, aes(x = date, y = value, colour = location)) +
+unemp_oecd <- get_oecd_unemployment(
+  countries = c("GBR", "USA", "DEU", "JPN"),
+  start_year = 2015
+)
+
+head(unemp_oecd)
+```
+
+```{r}
+ggplot(unemp_oecd, aes(x = year, y = value, colour = country_name)) +
   geom_line() +
-  geom_hline(yintercept = 100, linetype = "dashed") +
   labs(
-    title = "OECD Composite Leading Indicators",
-    x = NULL, y = "Index (100 = trend)",
+    title = "Unemployment rate: cross-country comparison",
+    subtitle = "OECD harmonised rate, per cent",
+    x = NULL, y = "Per cent",
     colour = "Country"
   ) +
   theme_minimal()
 ```
-
-### GDP by expenditure
-
-The OECD's Quarterly National Accounts provide GDP broken down by expenditure component — consumption, investment, government spending, and net exports — on a comparable basis across countries. This is invaluable when you want to understand not just how fast an economy is growing, but what is driving that growth.
-
-```{r}
-gdp_exp <- oecd_get(
-  dataset = "QNA",
-  filter = list(
-    location = c("GBR", "USA", "DEU"),
-    subject = c("B1_GE", "P3", "P5", "P6", "P7"),
-    measure = "VPVOBARSA",
-    frequency = "Q"
-  ),
-  start_period = "2010-Q1"
-)
-
-head(gdp_exp)
-```
-
-The subject codes here are: `B1_GE` (GDP), `P3` (final consumption), `P5` (gross capital formation), `P6` (exports), and `P7` (imports). The measure `VPVOBARSA` gives volume estimates in national currency, seasonally adjusted and annualised.
 
 ### Inflation
 
 The OECD publishes CPI data using a consistent methodology, making it straightforward to compare inflation across countries that use different national indices. This is especially useful when comparing the UK (which uses CPI and CPIH) with the US (which uses CPI-U and PCE) and the euro area (which uses HICP).
 
 ```{r}
-cpi_oecd <- oecd_get(
-  dataset = "PRICES_CPI",
-  filter = list(
-    location = c("GBR", "USA", "DEU", "JPN"),
-    subject = "CPALTT01",
-    measure = "GY",
-    frequency = "M"
-  ),
-  start_period = "2015-01"
+cpi_oecd <- get_oecd_cpi(
+  countries = c("GBR", "USA", "DEU", "JPN"),
+  start_year = 2015
 )
 
 head(cpi_oecd)
 ```
 
-The measure `GY` gives the year-on-year growth rate directly, saving you from having to compute it yourself. The subject `CPALTT01` is CPI for all items.
-
 ```{r}
-ggplot(cpi_oecd, aes(x = date, y = value, colour = location)) +
+ggplot(cpi_oecd, aes(x = year, y = value, colour = country_name)) +
   geom_line() +
   labs(
     title = "CPI inflation: cross-country comparison",
@@ -226,16 +207,12 @@ ggplot(cpi_oecd, aes(x = date, y = value, colour = location)) +
   theme_minimal()
 ```
 
-### Discovering OECD datasets
+### Discovering OECD countries
 
-The OECD publishes hundreds of datasets. To explore what is available, use `list_oecd_dataflows()`, which returns a searchable catalogue.
+To see which countries are available in the `readoecd` package, use `list_oecd_countries()`:
 
 ```{r}
-flows <- list_oecd_dataflows()
-
-# Search for datasets related to labour
-flows |>
-  filter(grepl("labour|employment", name, ignore.case = TRUE))
+list_oecd_countries()
 ```
 
 ## The World Bank
@@ -304,9 +281,9 @@ life_exp <- WDI(
   end = 2024
 )
 
-# CO2 emissions per capita (metric tonnes)
+# CO2 emissions per capita (tonnes CO2 equivalent)
 co2 <- WDI(
-  indicator = "EN.ATM.CO2E.PC",
+  indicator = "EN.GHG.CO2.PC.CE.AR5",
   country = c("GB", "US", "DE", "CN", "IN"),
   start = 1990,
   end = 2024

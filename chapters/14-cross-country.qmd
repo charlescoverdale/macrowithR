@@ -1,3 +1,8 @@
+---
+execute:
+  eval: true
+---
+
 # Cross-Country Comparisons {#sec-cross-country}
 
 Why are some countries richer than others? This is arguably the most important question in economics. A child born in Norway can expect an income roughly 50 times higher than one born in the Democratic Republic of Congo. Understanding what drives these differences — and whether they are converging or diverging — is the domain of growth economics.
@@ -112,8 +117,7 @@ We can perform a simple growth accounting exercise for the UK using ONS producti
 ```{r}
 library(ons)
 
-# ONS publishes multi-factor productivity data
-# which includes output, capital services, labour input, and MFP
+# ONS publishes output per hour and per worker indices
 productivity <- ons_productivity()
 
 head(productivity)
@@ -123,11 +127,9 @@ head(productivity)
 # Alternatively, construct a manual growth accounting exercise
 # using GDP, capital stock, and employment data
 
-# GDP growth
+# GDP growth (ons_gdp() returns quarterly growth rates by default)
 gdp <- ons_gdp() |>
-  filter(freq == "q") |>
-  arrange(date) |>
-  mutate(gdp_growth = (value / lag(value, 4) - 1) * 100)
+  arrange(date)
 
 # Employment
 employment <- ons_employment()
@@ -280,8 +282,7 @@ panel_raw <- WDI(
     investment = "NE.GDI.TOTL.ZS",        # Gross capital formation (% GDP)
     trade = "NE.TRD.GNFS.ZS",            # Trade (% GDP)
     govt_effectiveness = "GE.EST",         # Government effectiveness
-    population_growth = "SP.POP.GROW",     # Population growth
-    secondary_enrol = "SE.SEC.ENRR"        # Secondary school enrolment
+    population_growth = "SP.POP.GROW"      # Population growth
   ),
   start = 2000, end = 2020,
   extra = TRUE

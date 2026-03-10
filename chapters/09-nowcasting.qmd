@@ -1,3 +1,8 @@
+---
+execute:
+  eval: true
+---
+
 # GDP Nowcasting {#sec-nowcasting}
 
 GDP is published with a lag — typically 6 to 8 weeks after the quarter ends. Nowcasting uses higher-frequency data to estimate GDP in real time, before the official number arrives.
@@ -28,11 +33,9 @@ The approach works well when a small number of monthly series capture the main d
 The practical workflow has three steps. First, pull monthly indicators and quarterly GDP from the ONS. Second, aggregate the monthly series to quarterly frequency by taking the within-quarter mean. Third, estimate the bridge equation by OLS and use it to forecast the current quarter.
 
 ```{r}
-# Pull quarterly GDP
+# Pull quarterly GDP growth (ons_gdp() returns quarter-on-quarter growth by default)
 gdp <- ons_gdp() |>
-  filter(frequency == "quarterly") |>
-  mutate(gdp_growth = (value / lag(value) - 1) * 100) |>
-  select(date, gdp_growth)
+  rename(gdp_growth = value)
 
 # Pull monthly indicators
 retail <- ons_retail_sales() |>
@@ -100,15 +103,42 @@ The `midasr` package in R implements MIDAS regressions with several weighting sp
 library(midasr)
 
 # Prepare data in the format midasr expects
-# Quarterly GDP growth as the dependent variable
-y_q <- bridge_data$gdp_growth
-
-# Monthly retail sales growth (need the raw monthly series, not aggregated)
+# We need monthly and quarterly series that are properly aligned.
+# Monthly retail sales growth
 retail_monthly <- ons_retail_sales() |>
+  arrange(date) |>
   mutate(retail_growth = (value / lag(value) - 1) * 100) |>
   filter(!is.na(retail_growth))
 
-x_m <- retail_monthly$retail_growth
+# Align: find date range where both quarterly GDP and monthly retail exist
+q_dates <- bridge_data$date
+min_date <- max(min(q_dates), floor_date(min(retail_monthly$date), "quarter"))
+max_date <- min(max(q_dates), floor_date(max(retail_monthly$date), "quarter"))
+
+y_q <- bridge_data |>
+  filter(date >= min_date, date <= max_date) |>
+  pull(gdp_growth)
+
+# Extract monthly retail growth for the same quarter range
+# midasr needs exactly 3 * length(y_q) monthly obs aligned to the quarters
+x_m_df <- retail_monthly |>
+  mutate(quarter_date = floor_date(date, "quarter")) |>
+  filter(quarter_date >= min_date, quarter_date <= max_date)
+
+# Ensure we have complete quarters only
+complete_q <- x_m_df |>
+  count(quarter_date) |>
+  filter(n == 3) |>
+  pull(quarter_date)
+
+y_q <- bridge_data |>
+  filter(date %in% complete_q) |>
+  pull(gdp_growth)
+
+x_m <- x_m_df |>
+  filter(quarter_date %in% complete_q) |>
+  arrange(date) |>
+  pull(retail_growth)
 ```
 
 ```{r}
@@ -207,8 +237,11 @@ The estimated common factor is an index of broad economic conditions. When it is
 
 ```{r}
 # Extract the common factor
+# F_pca may have fewer rows if leading NAs were dropped during estimation
+n_factor <- nrow(dfm_model$F_pca)
+dates_factor <- tail(as.Date(rownames(panel_growth)), n_factor)
 factor_ts <- data.frame(
-  date = as.Date(rownames(panel_growth)),
+  date = dates_factor,
   factor = dfm_model$F_pca[, 1]
 ) |>
   filter(!is.na(factor))
@@ -225,10 +258,10 @@ ggplot(factor_ts, aes(x = date, y = factor)) +
 The factor loadings in $\Lambda$ reveal which indicators are most closely associated with the common cycle. A large positive loading on retail sales, for instance, means that retail sales move strongly with the aggregate factor. The loadings matrix is also useful for diagnosing whether the factor captures a genuine common component or is dominated by a single noisy series.
 
 ```{r}
-# Examine factor loadings
+# Examine factor loadings (stored in C matrix)
 loadings_df <- data.frame(
   variable = colnames(panel_growth),
-  loading = dfm_model$Lambda[, 1]
+  loading = dfm_model$C[, 1]
 )
 
 ggplot(loadings_df, aes(x = reorder(variable, loading), y = loading)) +
@@ -249,8 +282,8 @@ The workflow has four steps. First, pull all available data and note which serie
 ```{r}
 # Step 1: Define the information set
 cat("Data availability:\n")
-cat("Retail sales through:", max(retail_monthly$date), "\n")
-cat("Monthly GDP through:", max(monthly_gdp$date), "\n")
+cat("Retail sales through:", format(max(retail_monthly$date)), "\n")
+cat("Monthly GDP through:", format(max(monthly_gdp$date)), "\n")
 
 # Step 2: Generate nowcasts from each model
 nowcast_bridge <- predict(bridge_model,
@@ -258,7 +291,7 @@ nowcast_bridge <- predict(bridge_model,
                             retail_growth = latest_retail_growth,
                             monthly_growth = latest_monthly_growth))
 
-nowcast_midas <- forecast(midas_model, newdata = list(x_m = tail(x_m, 9)))
+nowcast_midas <- forecast(midas_model, newdata = list(x_m = tail(x_m, 3)))
 
 # DFM nowcast: the last value of the factor, mapped to GDP growth
 # via a simple regression of GDP growth on the factor
@@ -349,7 +382,7 @@ results_naive <- eval_data |>
   filter(date >= eval_start) |>
   mutate(naive_forecast = lag(gdp_growth))
 
-e2 <- results_naive$actual - results_naive$naive_forecast
+e2 <- results_naive$gdp_growth - results_naive$naive_forecast
 e2 <- e2[!is.na(e2)]
 
 # Diebold-Mariano test

@@ -1,3 +1,8 @@
+---
+execute:
+  eval: true
+---
+
 # Exchange Rates and Trade {#sec-trade}
 
 Exchange rates transmit monetary policy, reflect relative economic prospects, and reshape trade flows. This chapter covers purchasing power parity, real effective exchange rates, the Big Mac Index, and gravity models of trade. Along the way, we will pull data from the World Bank, BIS, OECD, and the Economist's open dataset.
@@ -24,8 +29,8 @@ library(ggplot2)
 library(dplyr)
 
 # PPP conversion factor (GDP) and official exchange rate
-# PA.NUS.PPCD.D = PPP conversion factor, GDP (LCU per international $)
-# PA.NUS.FCRF   = Official exchange rate (LCU per US$, period average)
+# PA.NUS.PPP  = PPP conversion factor, GDP (LCU per international $)
+# PA.NUS.FCRF = Official exchange rate (LCU per US$, period average)
 
 g20_codes <- c("US", "GB", "DE", "FR", "JP", "CA", "AU", "KR",
                "BR", "IN", "CN", "MX", "ID", "TR", "ZA", "SA",
@@ -33,12 +38,12 @@ g20_codes <- c("US", "GB", "DE", "FR", "JP", "CA", "AU", "KR",
 
 ppp_data <- WDI(
   country = g20_codes,
-  indicator = c("PA.NUS.PPCD.D", "PA.NUS.FCRF"),
+  indicator = c("PA.NUS.PPP", "PA.NUS.FCRF"),
   start = 2022, end = 2022
 )
 
 ppp_data <- ppp_data |>
-  rename(ppp_rate = PA.NUS.PPCD.D,
+  rename(ppp_rate = PA.NUS.PPP,
          market_rate = PA.NUS.FCRF) |>
   mutate(ppp_ratio = ppp_rate / market_rate) |>
   filter(!is.na(ppp_ratio))
@@ -79,23 +84,23 @@ A rising REER means a country is becoming less price-competitive — its goods a
 The Bank for International Settlements (BIS) and the OECD both publish REER indices. We can use the `readoecd` package to pull the OECD's version.
 
 ```{r}
+#| eval: false
+
 library(readoecd)
 
 # OECD publishes REER data in the MEI database
-# The indicator code may vary; check available datasets
-reer <- oecd_get(
-  dataset = "MEI",
-  filter = list(
-    LOCATION = "GBR",
-    SUBJECT = "CCRETT01",
-    FREQUENCY = "M"
-  )
-)
-
-head(reer)
+# The readoecd package provides high-level functions for common datasets.
+# For REER data, you can use the OECD Data Explorer directly:
+# https://data-explorer.oecd.org/
+# Download as CSV and read into R, or use the OECD API directly.
+#
+# reer <- read.csv("data/oecd-reer-gbr.csv")
+# head(reer)
 ```
 
 ```{r}
+#| eval: false
+
 # Plot the UK REER over time
 reer_uk <- reer |>
   filter(date >= as.Date("2000-01-01"))
@@ -119,25 +124,21 @@ The chart typically shows a sharp depreciation after the Brexit referendum in Ju
 It is instructive to compare the UK REER to those of other economies. Countries that run persistent current account surpluses (Germany, Japan) tend to have REERs that are low relative to fundamentals, while deficit countries tend to have overvalued REERs.
 
 ```{r}
-# Compare REERs across major economies
-reer_multi <- oecd_get(
-  dataset = "MEI",
-  filter = list(
-    LOCATION = c("GBR", "USA", "DEU", "JPN", "FRA"),
-    SUBJECT = "CCRETT01",
-    FREQUENCY = "M"
-  )
-) |>
-  filter(date >= as.Date("2000-01-01"))
+#| eval: false
 
-ggplot(reer_multi, aes(x = date, y = value, colour = country)) +
-  geom_line(linewidth = 0.6) +
-  labs(title = "Real Effective Exchange Rates",
-       subtitle = "CPI-based, index (2015 = 100)",
-       x = NULL, y = NULL, colour = NULL,
-       caption = "Source: OECD MEI") +
-  theme_minimal() +
-  theme(legend.position = "bottom")
+# Compare REERs across major economies
+# Download REER data from the OECD Data Explorer for multiple countries
+# reer_multi <- read.csv("data/oecd-reer-multi.csv") |>
+#   filter(date >= as.Date("2000-01-01"))
+#
+# ggplot(reer_multi, aes(x = date, y = value, colour = country)) +
+#   geom_line(linewidth = 0.6) +
+#   labs(title = "Real Effective Exchange Rates",
+#        subtitle = "CPI-based, index (2015 = 100)",
+#        x = NULL, y = NULL, colour = NULL,
+#        caption = "Source: OECD MEI") +
+#   theme_minimal() +
+#   theme(legend.position = "bottom")
 ```
 
 ## The Big Mac Index
@@ -229,6 +230,8 @@ The gravity model is one of the most empirically successful models in economics.
 For estimation, we use the CEPII gravity dataset, which provides bilateral trade flows along with geographic and cultural variables for nearly all country pairs. The `fixest` package provides fast fixed-effects estimation, which is essential given the large number of observations.
 
 ```{r}
+#| eval: false
+
 library(fixest)
 library(dplyr)
 
@@ -241,6 +244,8 @@ head(gravity)
 ```
 
 ```{r}
+#| eval: false
+
 # Basic gravity model
 # Trade is typically measured as exports from i to j
 # Filter for a single year and non-zero trade flows
@@ -269,6 +274,8 @@ The coefficient on log distance is typically around $-1.1$ to $-1.3$, meaning a 
 A more sophisticated specification includes exporter and importer fixed effects, which control for all country-specific factors (GDP, institutions, remoteness) and isolate the effect of bilateral variables like distance.
 
 ```{r}
+#| eval: false
+
 # Gravity model with exporter and importer fixed effects
 gravity_fe <- feols(
   ln_trade ~ ln_dist + contig + comlang_off + colony + rta |
@@ -280,6 +287,8 @@ summary(gravity_fe)
 ```
 
 ```{r}
+#| eval: false
+
 # Compare the two specifications
 etable(gravity_ols, gravity_fe,
        headers = c("OLS", "Fixed Effects"),
@@ -291,6 +300,8 @@ The fixed-effects specification is the modern standard. Once you include country
 For the UK specifically, the gravity model provides a framework for quantifying the trade effects of Brexit. Before the referendum, studies using gravity models estimated that EU membership boosted UK trade with EU partners by 40-100%. Leaving the single market and customs union would be expected to reduce this premium, with the magnitude depending on the depth of the future trading relationship. Early post-Brexit data suggest a significant decline in UK-EU trade relative to the gravity model's predictions, though disentangling Brexit from COVID-19 effects remains an active area of research.
 
 ```{r}
+#| eval: false
+
 # Illustrate the gravity relationship visually
 # Plot log trade against log distance
 

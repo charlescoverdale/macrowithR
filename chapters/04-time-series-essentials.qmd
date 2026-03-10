@@ -1,3 +1,8 @@
+---
+execute:
+  eval: true
+---
+
 # Working with Macro Time Series {#sec-time-series}
 
 Macroeconomic data is time series data, and it comes with its own set of practical challenges: mixed frequencies, seasonal patterns, real versus nominal values, data revisions, and rebasing. Before you can estimate a Phillips curve or build a VAR model, you need to get these fundamentals right.
@@ -71,7 +76,7 @@ cpi_quarterly <- cpi |>
   rename(date = quarter_date)
 
 # Quarterly GDP
-gdp <- ons_gdp()
+gdp <- ons_gdp(measure = "level")
 
 # Now both are quarterly — merge on date
 combined <- inner_join(gdp, cpi_quarterly, by = "date")
@@ -102,7 +107,7 @@ library(seasonal)
 library(ons)
 
 # Pull monthly CPI index (not the annual rate, but the index level)
-cpi <- ons_cpi()
+cpi <- ons_cpi(type = "index")
 ```
 
 The `seasonal` package expects a `ts` object (R's classic time series class), not a data frame. You need to convert your data before passing it to the `seas()` function.
@@ -172,27 +177,24 @@ $$
 where the price index is set to 100 in the base period. This expresses the real value in base-period prices.
 
 ```{r}
-# Pull nominal wages and CPI
-wages <- ons_wages()
-cpi <- ons_cpi()
+# Pull nominal wages (level, in GBP) and CPI index
+wages <- ons_wages(measure = "level")
+cpi <- ons_cpi(type = "index")
 
 head(wages)
 head(cpi)
 ```
 
 ```{r}
-# Use inflateR to deflate nominal wages
-# The adjust_for_inflation() function takes a nominal series,
-# a price index, and a base year
-real_wages <- adjust_for_inflation(
-  price = wages$value,
-  from_date = wages$date,
-  to_date = "2019-01-01",
-  country = "UK"
-)
+# Use inflateR to adjust a single value for inflation
+# For example: what is GBP 300 from 2000 worth in today's prices?
+adjust_inflation(amount = 300, from_year = 2000, currency = "GBP")
+
+# For deflating an entire time series, manual deflation
+# using a price index (shown below) gives you full control.
 ```
 
-The result tells you what past (or present) nominal wages are worth in January 2019 prices. If real wages in 2024 are lower than in 2019, workers have lost purchasing power despite nominal pay rises.
+The `adjust_inflation()` function is useful for quick comparisons of single values across time. For deflating an entire time series, you can merge with a price index and divide, as shown next.
 
 ```{r}
 # Manual deflation for full control
@@ -238,7 +240,7 @@ In R:
 library(ons)
 library(dplyr)
 
-cpi <- ons_cpi()
+cpi <- ons_cpi(type = "index")
 
 # Rebase CPI to January 2020 = 100
 base_value <- cpi$value[cpi$date == as.Date("2020-01-01")]
@@ -252,37 +254,28 @@ head(cpi_rebased)
 This works for any index. You can rebase to any date that exists in your series. A common application is comparing the recovery of different countries' GDP from a common shock, with all indices set to 100 at the pre-shock peak.
 
 ```{r}
-library(readecb)
+library(readoecd)
 library(dplyr)
 library(ggplot2)
 
-# Compare GDP recovery across euro area economies
-# Rebase to Q4 2019 = 100
-gdp_de <- ecb_gdp(geo = "DE", from = "2018-01")
-gdp_fr <- ecb_gdp(geo = "FR", from = "2018-01")
-gdp_it <- ecb_gdp(geo = "IT", from = "2018-01")
-
-rebase <- function(df, country_name, base_date = "2019-10-01") {
-  base_val <- df$value[df$date == as.Date(base_date)]
-  df |>
-    mutate(
-      rebased = value / base_val * 100,
-      country = country_name
-    )
-}
-
-gdp_compared <- bind_rows(
-  rebase(gdp_de, "Germany"),
-  rebase(gdp_fr, "France"),
-  rebase(gdp_it, "Italy")
+# Compare GDP across major economies using OECD data
+# OECD GDP is annual, so we rebase to 2019 = 100
+gdp_oecd <- get_oecd_gdp(
+  countries = c("DEU", "FRA", "ITA"),
+  start_year = 2015
 )
 
-ggplot(gdp_compared, aes(x = date, y = rebased, colour = country)) +
+gdp_compared <- gdp_oecd |>
+  group_by(country_name) |>
+  mutate(rebased = value / value[year == 2019] * 100) |>
+  ungroup()
+
+ggplot(gdp_compared, aes(x = year, y = rebased, colour = country_name)) +
   geom_line() +
   geom_hline(yintercept = 100, linetype = "dashed") +
   labs(
     title = "GDP recovery from Covid-19",
-    subtitle = "Index, Q4 2019 = 100",
+    subtitle = "Index, 2019 = 100",
     x = NULL, y = "Index",
     colour = NULL
   ) +
@@ -313,7 +306,7 @@ $$
 library(dplyr)
 library(ons)
 
-gdp <- ons_gdp()
+gdp <- ons_gdp(measure = "level")
 
 gdp_growth <- gdp |>
   arrange(date) |>
@@ -391,7 +384,7 @@ The first term penalises deviations of the actual series from the trend; the sec
 library(mFilter)
 library(ons)
 
-gdp <- ons_gdp()
+gdp <- ons_gdp(measure = "level")
 
 # Convert to ts object
 gdp_ts <- ts(gdp$value, start = c(
@@ -457,7 +450,7 @@ library(ons)
 library(dplyr)
 
 # The latest vintage of GDP data
-gdp <- ons_gdp()
+gdp <- ons_gdp(measure = "level")
 
 # Unfortunately, most data APIs only serve the latest vintage.
 # For real-time analysis, you need a real-time database.
@@ -484,7 +477,7 @@ vintage_date <- Sys.Date()
 message("Data vintage: ", vintage_date)
 
 # When saving results, include the vintage
-gdp <- ons_gdp()
+gdp <- ons_gdp(measure = "level")
 gdp$vintage <- vintage_date
 ```
 
