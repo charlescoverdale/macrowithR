@@ -71,6 +71,7 @@ Here is a complete workflow — from data to chart — in under 10 lines:
 ```{r}
 library(readecb)
 library(ggplot2)
+source("../R/theme_macro.R")
 
 rates <- ecb_policy_rates(from = "2000-01")
 dfr <- rates[rates$rate == "Deposit facility rate", ]
@@ -81,7 +82,7 @@ ggplot(dfr, aes(x = date, y = value)) +
        subtitle = "Percent per annum, daily",
        x = NULL, y = NULL,
        caption = "Source: European Central Bank") +
-  theme_minimal()
+  theme_macro()
 ```
 
 This example pulls the ECB's deposit facility rate — the rate at which banks can deposit money overnight with the ECB — from 2000 to the present, and plots it. The negative rates from 2014 to 2022 and the rapid tightening cycle that followed are immediately visible. No manual downloads, no data cleaning, no date parsing. Just a function call and a chart.

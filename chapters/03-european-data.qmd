@@ -13,6 +13,7 @@ This chapter covers three major sources: the ECB Data Portal for euro area data,
 
 ```{r}
 library(readecb)
+source("../R/theme_macro.R")
 ```
 
 The European Central Bank publishes a vast statistical warehouse covering monetary policy, financial markets, and macroeconomic aggregates for the euro area and its member states. The `readecb` package provides access to the ECB Data Portal API, with dedicated functions for the most commonly used series and a flexible `ecb_get()` function for everything else.
@@ -36,12 +37,13 @@ library(ggplot2)
 
 ggplot(rates, aes(x = date, y = value, colour = rate)) +
   geom_step() +
+  scale_colour_macro() +
   labs(
     title = "ECB policy rates",
     x = NULL, y = "Per cent",
     colour = NULL
   ) +
-  theme_minimal()
+  theme_macro()
 ```
 
 ### Inflation across the euro area
@@ -68,7 +70,7 @@ ggplot(hicp_ea, aes(x = date, y = value)) +
     subtitle = "Year-on-year percentage change",
     x = NULL, y = "Per cent"
   ) +
-  theme_minimal()
+  theme_macro()
 ```
 
 ### Exchange rates
@@ -119,7 +121,7 @@ ggplot(spread, aes(x = date, y = spread)) +
     title = "Euro area 10Y-2Y yield spread",
     x = NULL, y = "Percentage points"
   ) +
-  theme_minimal()
+  theme_macro()
 ```
 
 ### Other ECB series
@@ -173,13 +175,14 @@ head(unemp_oecd)
 ```{r}
 ggplot(unemp_oecd, aes(x = period, y = value, colour = country_name)) +
   geom_line() +
+  scale_colour_macro() +
   labs(
     title = "Unemployment rate: cross-country comparison",
     subtitle = "OECD harmonised rate, per cent",
     x = NULL, y = "Per cent",
     colour = "Country"
   ) +
-  theme_minimal()
+  theme_macro()
 ```
 
 ### Inflation
@@ -198,13 +201,14 @@ head(cpi_oecd)
 ```{r}
 ggplot(cpi_oecd, aes(x = year, y = value, colour = country_name)) +
   geom_line() +
+  scale_colour_macro() +
   labs(
     title = "CPI inflation: cross-country comparison",
     subtitle = "Year-on-year percentage change, OECD harmonised",
     x = NULL, y = "Per cent",
     colour = "Country"
   ) +
-  theme_minimal()
+  theme_macro()
 ```
 
 ### Discovering OECD countries
@@ -260,12 +264,13 @@ pop <- WDI(
 
 ggplot(pop, aes(x = year, y = SP.POP.TOTL / 1e6, colour = country)) +
   geom_line() +
+  scale_colour_macro() +
   labs(
     title = "Population (millions)",
     x = NULL, y = "Millions",
     colour = "Country"
   ) +
-  theme_minimal()
+  theme_macro()
 ```
 
 ### Development indicators

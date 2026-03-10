@@ -22,6 +22,7 @@ library(WDI)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
+source("../R/theme_macro.R")
 
 # Download GDP per capita (constant 2015 US$)
 gdp_pc <- WDI(
@@ -59,7 +60,7 @@ ggplot(convergence, aes(x = log_initial, y = avg_growth)) +
     x = "Log GDP per capita in 1990 (constant 2015 US$)",
     y = "Average annual growth (%)"
   ) +
-  theme_minimal()
+  theme_macro()
 ```
 
 ```{r}
@@ -92,7 +93,7 @@ ggplot(convergence_oecd, aes(x = log_initial, y = avg_growth)) +
     x = "Log GDP per capita in 1990",
     y = "Average annual growth (%)"
   ) +
-  theme_minimal()
+  theme_macro()
 ```
 
 This is the core insight of Mankiw, Romer, and Weil (1992): convergence is conditional. Countries converge, but only towards their own steady states. To explain cross-country income differences, we need to understand what determines those steady states — which brings us to growth accounting and institutions.
@@ -163,12 +164,13 @@ uk_growth |>
   filter(component != "gdp_growth") |>
   ggplot(aes(x = period, y = pct, fill = component)) +
   geom_col(position = "stack") +
+  scale_fill_macro() +
   labs(
     title = "UK growth accounting by decade",
     x = NULL, y = "Contribution to GDP growth (pp)",
     fill = NULL
   ) +
-  theme_minimal()
+  theme_macro()
 ```
 
 The pattern reveals the UK's "productivity puzzle." Before the financial crisis, TFP growth was the dominant source of output growth — averaging over 1 per cent per year. After 2007, TFP growth collapsed to near zero. Labour input remained positive (employment rose strongly after 2012), and capital deepening continued, but without TFP growth, overall GDP growth was anaemic. This productivity slowdown is the single most important macroeconomic development in the UK since the financial crisis, and explaining it remains an open question. Leading candidates include weak business investment, reduced labour mobility, the long tail of banking sector damage, slower technology diffusion, and measurement issues in the digital economy.
@@ -224,7 +226,7 @@ ggplot(institutions, aes(x = rule_of_law, y = log(gdp_pc))) +
     x = "Rule of Law index (WGI)",
     y = "Log GDP per capita (constant 2015 US$)"
   ) +
-  theme_minimal()
+  theme_macro()
 ```
 
 ```{r}
@@ -255,7 +257,7 @@ institutions |>
     title = "Governance indicators and GDP per capita",
     x = "Governance score (WGI)", y = "Log GDP per capita"
   ) +
-  theme_minimal()
+  theme_macro()
 ```
 
 ## Panel data techniques for macro

@@ -11,7 +11,7 @@ The Phillips curve — the relationship between unemployment and inflation — i
 
 ### The original Phillips curve
 
-In 1958, A.W. Phillips published a paper in *Economica* documenting a striking negative relationship between wage inflation and unemployment in the United Kingdom from 1861 to 1957. When unemployment was low, wages rose quickly; when unemployment was high, wages stagnated. The mechanism was intuitive — a tight labour market gives workers bargaining power, so employers must raise wages to attract and retain staff.
+In 1958, A.W. Phillips published [a paper in *Economica*](https://doi.org/10.1111/j.1468-0335.1958.tb00003.x) documenting a striking negative relationship between wage inflation and unemployment in the United Kingdom from 1861 to 1957. When unemployment was low, wages rose quickly; when unemployment was high, wages stagnated. The mechanism was intuitive — a tight labour market gives workers bargaining power, so employers must raise wages to attract and retain staff.
 
 Phillips plotted a scatter diagram and fitted a curve through it. He was careful to note that the relationship was non-linear: wage inflation rose sharply as unemployment fell below about 2.5%, but changed little at higher unemployment rates. The paper was empirical, not theoretical — Phillips offered no formal model, just a remarkably stable pattern across nearly a century of data.
 
@@ -49,6 +49,7 @@ library(ons)
 library(dplyr)
 library(lubridate)
 library(ggplot2)
+source("../R/theme_macro.R")
 
 cpi <- ons_cpi()
 unemp <- ons_unemployment()
@@ -91,12 +92,13 @@ The simplest Phillips curve is a scatter plot of inflation against unemployment.
 ggplot(phillips_data, aes(x = unemployment, y = inflation, colour = decade)) +
   geom_point(alpha = 0.6, size = 2) +
   geom_smooth(method = "lm", se = FALSE, colour = "black", linetype = "dashed") +
+  scale_colour_macro() +
   labs(
     x = "Unemployment rate (%)",
     y = "CPI inflation (%)",
     colour = "Decade"
   ) +
-  theme_minimal()
+  theme_macro()
 ```
 
 The colouring by decade reveals something important: the points do not sit on a single stable curve. The relationship appears to shift across decades, exactly as the expectations-augmented theory predicts. Each decade has its own cluster, reflecting different inflation expectations regimes.
@@ -196,7 +198,7 @@ ggplot(slope_df, aes(x = date, y = slope)) +
     x = NULL,
     y = "Coefficient on unemployment"
   ) +
-  theme_minimal()
+  theme_macro()
 ```
 
 The chart tells a story in three acts. During the early part of the sample, the slope is meaningfully negative — a 1 percentage point rise in unemployment is associated with a substantial fall in inflation. Through the 2000s and 2010s, the slope drifts towards zero: the Great Moderation and inflation targeting anchored expectations so firmly that unemployment had little impact on inflation. This is the "flattening" that exercised so many economists.

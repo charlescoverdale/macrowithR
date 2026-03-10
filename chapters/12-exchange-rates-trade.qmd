@@ -27,6 +27,7 @@ The World Bank publishes PPP conversion factors through its World Development In
 library(WDI)
 library(ggplot2)
 library(dplyr)
+source("../R/theme_macro.R")
 
 # PPP conversion factor (GDP) and official exchange rate
 # PA.NUS.PPP  = PPP conversion factor, GDP (LCU per international $)
@@ -62,7 +63,7 @@ ggplot(ppp_data, aes(x = reorder(country, ppp_ratio), y = ppp_ratio)) +
        subtitle = "Ratio of PPP conversion factor to market rate, 2022.\nBelow 1 = currency undervalued relative to PPP.",
        x = NULL, y = "PPP / Market rate",
        caption = "Source: World Bank WDI") +
-  theme_minimal()
+  theme_macro()
 ```
 
 The pattern is striking. Currencies in emerging markets — India, Indonesia, South Africa, Turkey — are well below PPP, with ratios of 0.2 to 0.5. This means that a dollar buys two to five times as many goods in these countries as the market exchange rate alone would suggest. Advanced economy currencies cluster near 1, with some (Switzerland, the Nordics) typically above. The United States is the benchmark, so its ratio is 1 by construction.
@@ -116,7 +117,7 @@ ggplot(reer_uk, aes(x = date, y = value)) +
        subtitle = "CPI-based, index (2015 = 100)",
        x = NULL, y = NULL,
        caption = "Source: OECD MEI") +
-  theme_minimal()
+  theme_macro()
 ```
 
 The chart typically shows a sharp depreciation after the Brexit referendum in June 2016. Sterling fell roughly 10% on a trade-weighted basis almost overnight — one of the largest peacetime currency moves for a major economy. The REER has remained below its pre-referendum level since, reflecting a structural repricing of the UK's economic prospects. This depreciation boosted the competitiveness of UK exports in principle, but the trade balance did not improve materially, partly because imports became more expensive (the UK is a net importer of food and energy) and partly because non-price factors — supply chain disruption, regulatory uncertainty — offset the price advantage.
@@ -137,7 +138,7 @@ It is instructive to compare the UK REER to those of other economies. Countries 
 #        subtitle = "CPI-based, index (2015 = 100)",
 #        x = NULL, y = NULL, colour = NULL,
 #        caption = "Source: OECD MEI") +
-#   theme_minimal() +
+#   theme_macro() +
 #   theme(legend.position = "bottom")
 ```
 
@@ -190,7 +191,7 @@ ggplot(top_bottom,
        subtitle = "% over/undervaluation against the US dollar",
        x = NULL, y = "Over/undervaluation (%)",
        caption = "Source: The Economist") +
-  theme_minimal()
+  theme_macro()
 ```
 
 The chart reveals a familiar pattern. Swiss francs and Norwegian kroner are typically the most overvalued — Big Macs in Zurich cost nearly twice the US price. At the other end, currencies in South-East Asia and parts of Latin America are heavily undervalued. A Big Mac in India or Egypt costs a fraction of the US price even after converting at market exchange rates.
@@ -313,7 +314,7 @@ ggplot(gravity_2019 |> sample_n(5000),
        subtitle = "Bilateral trade flows vs distance, 2019",
        x = "Log distance (km)", y = "Log trade (US$)",
        caption = "Source: CEPII Gravity Database") +
-  theme_minimal()
+  theme_macro()
 ```
 
 ## Exercises

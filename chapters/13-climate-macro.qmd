@@ -17,6 +17,7 @@ The dataset contains dozens of variables: total CO2, per-capita CO2, emissions b
 
 ```{r}
 library(tidyverse)
+source("../R/theme_macro.R")
 
 # Download CO2 data from Our World in Data (GitHub-hosted CSV)
 owid_url <- "https://raw.githubusercontent.com/owid/co2-data/master/owid-co2-data.csv"
@@ -44,7 +45,7 @@ ggplot(co2_g7, aes(x = year, y = co2, colour = country)) +
     x = NULL, y = "CO2 (million tonnes)",
     colour = NULL
   ) +
-  theme_minimal() +
+  theme_macro() +
   theme(legend.position = "bottom")
 ```
 
@@ -60,7 +61,7 @@ ggplot(co2_g7, aes(x = year, y = co2_per_capita, colour = country)) +
     x = NULL, y = "CO2 per capita (tonnes)",
     colour = NULL
   ) +
-  theme_minimal() +
+  theme_macro() +
   theme(legend.position = "bottom")
 ```
 
@@ -142,7 +143,7 @@ ip <- ecb_get("STS", "M.I8.Y.PROD.NS0020.4.000")
 #     x = NULL, y = "Standard deviations from mean",
 #     colour = NULL
 #   ) +
-#   theme_minimal()
+#   theme_macro()
 ```
 
 This co-movement has important policy implications. A carbon price that collapses during recessions provides less incentive to decarbonise precisely when investment decisions are being deferred. The Market Stability Reserve was designed to address this by withdrawing permits from the market when the surplus exceeds a threshold, putting a soft floor under the price. Whether this mechanism is sufficient to maintain a credible long-term price signal remains an active debate.
@@ -211,12 +212,13 @@ scenarios <- tibble(
 
 ggplot(scenarios, aes(x = year, y = carbon_price, colour = scenario)) +
   geom_line(linewidth = 1) +
+  scale_colour_macro() +
   labs(
     title = "Stylised NGFS carbon price paths",
     x = NULL, y = "Carbon price ($/tCO2)",
     colour = "Scenario"
   ) +
-  theme_minimal()
+  theme_macro()
 ```
 
 The disorderly scenario is the one that keeps central bankers awake. A carbon price that jumps from $30 to $600 per tonne in a decade would be the largest relative price shock since the 1970s oil crisis — but sustained over a longer period and affecting a broader set of industries.
@@ -282,7 +284,7 @@ ggplot(country_avg, aes(x = abs_latitude, y = mean_growth)) +
     x = "Absolute latitude (degrees from equator)",
     y = "Mean GDP growth (%)"
   ) +
-  theme_minimal()
+  theme_macro()
 ```
 
 This simple cross-section is suggestive but far from conclusive — latitude correlates with many things besides temperature (colonial history, institutional quality, disease burden). A more rigorous approach uses panel data with country and year fixed effects, regressing GDP growth on temperature deviations from the country's own historical mean. This within-country variation is more plausibly exogenous.
@@ -369,7 +371,7 @@ library(ggplot2)
 #     x = NULL, y = "Carbon cost (% of revenue)",
 #     fill = "Scenario"
 #   ) +
-#   theme_minimal()
+#   theme_macro()
 ```
 
 ## Exercises

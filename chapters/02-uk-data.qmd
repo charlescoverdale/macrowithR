@@ -13,6 +13,7 @@ This chapter walks through pulling, cleaning, and combining data from the ONS, B
 
 ```{r}
 library(ons)
+source("../R/theme_macro.R")
 ```
 
 The ONS is the UK's national statistical institute, established in 1996 but tracing its lineage back to the General Register Office of 1837. It is responsible for producing the UK's official measures of economic activity, prices, and the labour market. If you have ever seen a GDP growth figure, an inflation number, or an unemployment rate quoted for the UK, it almost certainly originated at the ONS.
@@ -387,7 +388,7 @@ ggplot(uk_plot, aes(x = date, y = value)) +
   labs(title = "UK macroeconomic indicators",
        x = NULL, y = NULL,
        caption = "Sources: ONS, Bank of England") +
-  theme_minimal(base_size = 11) +
+  theme_macro(base_size = 11) +
   theme(strip.text = element_text(face = "bold"))
 ```
 

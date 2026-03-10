@@ -22,6 +22,7 @@ library(dplyr)
 library(tidyr)
 library(ggplot2)
 library(lubridate)
+source("../R/theme_macro.R")
 ```
 
 ## Bridge equations
@@ -165,7 +166,7 @@ ggplot(plot_midas_weights, aes(x = lag, y = weight)) +
   geom_col(fill = "steelblue") +
   labs(title = "MIDAS weight function",
        x = "Monthly lag", y = "Weight") +
-  theme_minimal()
+  theme_macro()
 ```
 
 MIDAS models are particularly useful in the ragged-edge setting. When only one or two months of the current quarter are available, the weighting function automatically adjusts. The model can also be extended to include multiple monthly indicators, each with its own weighting function, giving it the flexibility to handle the mixed-frequency data environment that characterises real-time nowcasting.
@@ -254,7 +255,7 @@ ggplot(factor_ts, aes(x = date, y = factor)) +
   geom_hline(yintercept = 0, linetype = "dashed", colour = "grey50") +
   labs(title = "Estimated common factor from UK monthly indicators",
        x = NULL, y = "Factor value (standardised)") +
-  theme_minimal()
+  theme_macro()
 ```
 
 The factor loadings in $\Lambda$ reveal which indicators are most closely associated with the common cycle. A large positive loading on retail sales, for instance, means that retail sales move strongly with the aggregate factor. The loadings matrix is also useful for diagnosing whether the factor captures a genuine common component or is dominated by a single noisy series.
@@ -270,7 +271,7 @@ ggplot(loadings_df, aes(x = reorder(variable, loading), y = loading)) +
   geom_col(fill = "steelblue") +
   coord_flip() +
   labs(title = "Factor loadings", x = NULL, y = "Loading on first factor") +
-  theme_minimal()
+  theme_macro()
 ```
 
 The Kalman smoother within the DFM automatically handles the ragged edge. If retail sales data are available through February but employment data only through January, the model uses whatever information is available to update the factor estimate. This makes DFMs the natural workhorse for institutional nowcasting — the Federal Reserve Bank of New York's nowcast, for instance, is built on a DFM.
@@ -404,7 +405,7 @@ ggplot(results, aes(x = date)) +
        x = NULL, y = "Quarter-on-quarter growth (%)",
        colour = NULL) +
   scale_colour_manual(values = c("Actual" = "black", "Nowcast" = "steelblue")) +
-  theme_minimal()
+  theme_macro()
 ```
 
 The chart above reveals where the nowcaster succeeds and fails. Systematic over- or under-prediction suggests model misspecification. Large errors clustered around specific episodes (recessions, pandemics) suggest that the model struggles with structural breaks — a common limitation of linear nowcasting methods that motivates the more flexible approaches covered in advanced treatments.

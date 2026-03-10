@@ -4,7 +4,7 @@ project:
 
 book:
   title: "Macro with R"
-  subtitle: "A Practical Guide to Macroeconomic Data and Policy Analysis"
+  subtitle: "Applied Macroeconomics with R"
   author: "Charles Coverdale"
   date: today
   site-url: https://macrowithr.com
@@ -52,6 +52,8 @@ format:
 execute:
   eval: false
   echo: true
+  message: false
+  warning: false
   freeze: auto
 
 bibliography: references.bib

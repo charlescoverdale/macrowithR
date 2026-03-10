@@ -17,6 +17,7 @@ R's built-in `as.Date()` function handles most date parsing, but macroeconomic d
 
 ```{r}
 library(lubridate)
+source("../R/theme_macro.R")
 
 # Standard date strings
 as.Date("2024-03-15")
@@ -142,12 +143,13 @@ sa_comparison <- tibble(
 
 ggplot(sa_comparison, aes(x = date, y = value, colour = series)) +
   geom_line() +
+  scale_colour_macro() +
   labs(
     title = "CPI index: raw vs seasonally adjusted",
     x = NULL, y = "Index",
     colour = NULL
   ) +
-  theme_minimal()
+  theme_macro()
 ```
 
 Most official data sources publish both raw and seasonally adjusted series. When the adjusted version is available, use it directly rather than adjusting the raw data yourself — the statistical office will have applied more sophisticated calendar and trading-day corrections than a simple `seas()` call can achieve. Do your own seasonal adjustment only when working with series that are not published in adjusted form, such as certain tax receipt series from HMRC.
@@ -214,12 +216,13 @@ wages_real <- inner_join(
 ggplot(wages_real, aes(x = date)) +
   geom_line(aes(y = nominal, colour = "Nominal")) +
   geom_line(aes(y = real, colour = "Real (2019 prices)")) +
+  scale_colour_macro() +
   labs(
     title = "Average weekly earnings: nominal vs real",
     x = NULL, y = "GBP per week",
     colour = NULL
   ) +
-  theme_minimal()
+  theme_macro()
 ```
 
 The gap between the nominal and real series shows the cumulative effect of inflation. During periods of high inflation (such as 2022--2023), the gap widens rapidly — nominal wages may be rising, but real wages are falling.
@@ -273,13 +276,14 @@ gdp_compared <- gdp_oecd |>
 ggplot(gdp_compared, aes(x = year, y = rebased, colour = country_name)) +
   geom_line() +
   geom_hline(yintercept = 100, linetype = "dashed") +
+  scale_colour_macro() +
   labs(
     title = "GDP recovery from Covid-19",
     subtitle = "Index, 2019 = 100",
     x = NULL, y = "Index",
     colour = NULL
   ) +
-  theme_minimal()
+  theme_macro()
 ```
 
 ## Calculating growth rates
@@ -413,12 +417,13 @@ hp_df <- tibble(
 ggplot(hp_df, aes(x = date)) +
   geom_line(aes(y = actual, colour = "Actual")) +
   geom_line(aes(y = trend, colour = "Trend"), linetype = "dashed") +
+  scale_colour_macro() +
   labs(
     title = "UK GDP: actual vs HP trend",
     x = NULL, y = "GDP (index)",
     colour = NULL
   ) +
-  theme_minimal()
+  theme_macro()
 
 # Plot the output gap
 ggplot(hp_df, aes(x = date, y = cycle)) +
@@ -430,7 +435,7 @@ ggplot(hp_df, aes(x = date, y = cycle)) +
     title = "UK output gap (HP filter)",
     x = NULL, y = "Per cent of trend"
   ) +
-  theme_minimal()
+  theme_macro()
 ```
 
 A word of caution: the HP filter has well-known limitations. It suffers from severe end-point bias — the trend estimate at the end of the sample is heavily influenced by the last few observations and is frequently revised as new data arrives. This means the output gap estimate that matters most for policy (the current one) is also the least reliable. The filter can also produce spurious cycles in data that has no true cyclical component. Despite these issues, it remains ubiquitous in policy institutions and academic work because it is simple, transparent, and provides a useful benchmark.

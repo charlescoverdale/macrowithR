@@ -38,6 +38,7 @@ library(dplyr)
 library(lubridate)
 library(vars)
 library(ggplot2)
+source("../R/theme_macro.R")
 
 # vars loads MASS which masks dplyr::select; ensure dplyr wins
 select <- dplyr::select
@@ -163,7 +164,7 @@ ggplot(irf_data, aes(x = horizon)) +
   labs(title = "Response of GDP growth to a Bank Rate shock",
        subtitle = "68% confidence bands from bootstrapped IRFs",
        x = "Quarters ahead", y = "Percentage points") +
-  theme_minimal()
+  theme_macro()
 ```
 
 The economic interpretation is central. A contractionary monetary policy shock (a rise in Bank Rate) should, according to standard theory, reduce GDP growth with a lag of roughly 4 to 8 quarters — the "long and variable lags" that Milton Friedman described. Inflation should fall as well, though typically with a longer delay. If the IRF shows GDP rising after a rate increase, or inflation increasing persistently, the model may be misspecified or the identification scheme inappropriate.
@@ -193,12 +194,11 @@ fevd_long <- fevd_gdp |>
 
 ggplot(fevd_long, aes(x = horizon, y = share, fill = shock)) +
   geom_area() +
-  scale_fill_brewer(palette = "Set2",
-                    labels = c("Bank Rate", "GDP growth", "Inflation")) +
+  scale_fill_macro(labels = c("Bank Rate", "GDP growth", "Inflation")) +
   labs(title = "Forecast error variance decomposition: GDP growth",
        x = "Quarters ahead", y = "Share of forecast error variance",
        fill = "Shock") +
-  theme_minimal()
+  theme_macro()
 ```
 
 The FEVD is sensitive to the identification scheme (the variable ordering), just like the IRFs. Re-ordering the variables will change the decomposition, particularly at short horizons where the Cholesky ordering has the most bite. This sensitivity motivates the structural identification approaches discussed next.
@@ -352,7 +352,7 @@ ggplot(lp_results, aes(x = horizon)) +
   labs(title = "Local projection: response of GDP growth to Bank Rate",
        subtitle = "90% confidence bands based on Newey-West standard errors",
        x = "Quarters ahead", y = "Percentage points") +
-  theme_minimal()
+  theme_macro()
 ```
 
 Local projections typically produce noisier IRFs than VARs, with wider confidence bands, particularly at longer horizons. This is the price of robustness: the local projection makes fewer assumptions and therefore admits more uncertainty. In practice, many applied papers now report both VAR and local projection IRFs as a robustness check. If they agree, the dynamic structure imposed by the VAR is not driving the results.
@@ -424,7 +424,7 @@ ggplot(irf_combined, aes(x = horizon)) +
   labs(title = "Effects of a monetary policy tightening (25bp Bank Rate shock)",
        subtitle = "Cholesky identification, 68% bootstrapped confidence bands",
        x = "Quarters ahead", y = "Percentage points") +
-  theme_minimal()
+  theme_macro()
 ```
 
 The results should be read as follows. A 25 basis point increase in Bank Rate — an unexpected tightening — typically reduces GDP growth with a lag of 4 to 6 quarters, with the maximum impact around 6 to 8 quarters. The effect on inflation is more delayed, peaking at roughly 8 to 12 quarters. Bank Rate itself returns toward baseline as the central bank unwinds the tightening once the economy slows. These dynamics are consistent with the Bank of England's own estimates, which suggest that the full effect of a rate change takes 18 to 24 months to pass through to output and somewhat longer for inflation.

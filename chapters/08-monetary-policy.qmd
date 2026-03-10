@@ -32,6 +32,7 @@ library(ons)
 library(dplyr)
 library(lubridate)
 library(ggplot2)
+source("../R/theme_macro.R")
 
 # Pull the data
 bank_rate <- boe_bank_rate()
@@ -116,7 +117,7 @@ ggplot(taylor_data, aes(x = quarter_date)) +
     y = "Interest rate (%)",
     colour = NULL
   ) +
-  theme_minimal() +
+  theme_macro() +
   theme(legend.position = "bottom")
 ```
 
@@ -190,7 +191,7 @@ ggplot(ea_taylor, aes(x = quarter_date)) +
     y = "Interest rate (%)",
     colour = NULL
   ) +
-  theme_minimal() +
+  theme_macro() +
   theme(legend.position = "bottom")
 ```
 
@@ -233,7 +234,7 @@ ggplot(spread, aes(x = date, y = spread_2s10s)) +
     x = NULL,
     y = "Spread (percentage points)"
   ) +
-  theme_minimal()
+  theme_macro()
 ```
 
 The grey shaded areas mark UK recessions. Note how the spread tends to turn negative or approach zero before each recession. The financial crisis of 2008--09 and the pandemic recession of 2020 were both preceded by a flattening or inversion of the curve.
@@ -282,7 +283,7 @@ ggplot(probit_data, aes(x = quarter_date)) +
     x = NULL,
     y = "Predicted recession probability"
   ) +
-  theme_minimal()
+  theme_macro()
 ```
 
 The chart shows the model's implied recession probability over time. Spikes above 50% correspond to periods when the model was signalling elevated recession risk. The yield curve is not a perfect predictor — it can produce false positives, and the timing varies — but it is one of the most reliable leading indicators available.
@@ -357,7 +358,7 @@ ggplot() +
     x = "Maturity (years)",
     y = "Yield (%)"
   ) +
-  theme_minimal()
+  theme_macro()
 ```
 
 The Nelson-Siegel model fits the yield curve remarkably well with only three parameters (plus $\lambda$). This is why it is widely used by central banks and fixed-income practitioners for yield curve interpolation, forecasting, and risk analysis. The Bank of England, ECB, and Bank for International Settlements all publish Nelson-Siegel or Svensson (an extended version with additional curvature terms) decompositions.
@@ -447,7 +448,7 @@ ggplot(event_windows, aes(x = days_from_event, y = yield_pct,
     y = "Yield (%)",
     colour = "Maturity"
   ) +
-  theme_minimal() +
+  theme_macro() +
   theme(legend.position = "bottom")
 ```
 
