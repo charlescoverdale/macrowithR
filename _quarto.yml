@@ -41,6 +41,7 @@ format:
   html:
     theme:
       light: cosmo
+    css: style.css
     code-link: true
     code-tools: true
     toc: true
