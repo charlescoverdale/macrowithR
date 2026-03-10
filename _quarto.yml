@@ -52,5 +52,6 @@ format:
 execute:
   eval: false
   echo: true
+  freeze: auto
 
 bibliography: references.bib
