@@ -4,23 +4,467 @@ The VAR is the workhorse of empirical macroeconomics. It lets you model the dyna
 
 ## What is a VAR?
 
+A vector autoregression models a set of $k$ time series as a system in which each variable depends on its own lags and the lags of every other variable. The reduced-form VAR of order $p$ is:
+
+$$
+Y_t = c + A_1 Y_{t-1} + A_2 Y_{t-2} + \dots + A_p Y_{t-p} + u_t
+$$
+
+where $Y_t$ is a $k \times 1$ vector of endogenous variables, $c$ is a vector of intercepts, $A_1, \dots, A_p$ are $k \times k$ coefficient matrices, and $u_t$ is a vector of reduced-form error terms with $E[u_t u_t'] = \Sigma$. The system is "reduced form" because no contemporaneous relationships appear on the right-hand side — everything is predetermined.
+
+The appeal of the VAR is its agnosticism. Unlike structural models that impose specific causal mechanisms (e.g., "the central bank sets rates according to a Taylor rule"), the VAR simply captures the empirical regularities in the data. Christopher Sims, who introduced VARs to macroeconomics in his 1980 Econometrica paper, argued that the profession's structural models imposed "incredible" identifying restrictions. The VAR offered a disciplined alternative: let the data speak, then ask carefully structured questions about causality through impulse response analysis.
+
+For a three-variable system of GDP growth ($y_t$), inflation ($\pi_t$), and the policy rate ($i_t$), the VAR(1) is:
+
+$$
+\begin{bmatrix} y_t \\ \pi_t \\ i_t \end{bmatrix} = \begin{bmatrix} c_1 \\ c_2 \\ c_3 \end{bmatrix} + \begin{bmatrix} a_{11} & a_{12} & a_{13} \\ a_{21} & a_{22} & a_{23} \\ a_{31} & a_{32} & a_{33} \end{bmatrix} \begin{bmatrix} y_{t-1} \\ \pi_{t-1} \\ i_{t-1} \end{bmatrix} + \begin{bmatrix} u_{1t} \\ u_{2t} \\ u_{3t} \end{bmatrix}
+$$
+
+Each equation can be estimated by OLS. Because every equation has the same right-hand-side variables (the lags of all variables in the system), equation-by-equation OLS is efficient and equivalent to seemingly unrelated regressions (SUR). This makes VARs easy to estimate even with moderately large systems.
+
 ## Estimation with the vars package
+
+We begin by constructing a dataset of three key UK macro variables: quarterly GDP growth, CPI inflation, and Bank Rate. These form the canonical monetary policy VAR studied by central banks worldwide. The data come from the `ons` and `boe` packages.
+
+```{r}
+library(ons)
+library(boe)
+library(dplyr)
+library(lubridate)
+library(vars)
+library(ggplot2)
+
+# Pull GDP and compute quarter-on-quarter growth
+gdp <- ons_gdp() |>
+  filter(frequency == "quarterly") |>
+  mutate(gdp_growth = (value / lag(value) - 1) * 100) |>
+  select(date, gdp_growth)
+
+# Pull CPI inflation (annual rate)
+cpi <- ons_cpi() |>
+  select(date, inflation = value)
+
+# Aggregate CPI to quarterly (take last month of each quarter)
+cpi_q <- cpi |>
+  mutate(quarter_date = floor_date(date, "quarter")) |>
+  group_by(quarter_date) |>
+  slice_tail(n = 1) |>
+  ungroup() |>
+  select(date = quarter_date, inflation)
+
+# Pull Bank Rate and aggregate to quarterly average
+bank_rate <- boe_bank_rate() |>
+  mutate(quarter_date = floor_date(date, "quarter")) |>
+  group_by(quarter_date) |>
+  summarise(bank_rate = mean(value, na.rm = TRUE), .groups = "drop") |>
+  rename(date = quarter_date)
+```
+
+```{r}
+# Merge into a single dataset
+var_data <- gdp |>
+  inner_join(cpi_q, by = "date") |>
+  inner_join(bank_rate, by = "date") |>
+  filter(!is.na(gdp_growth)) |>
+  arrange(date)
+
+# Convert to a ts object (vars requires ts)
+var_ts <- ts(var_data |> select(gdp_growth, inflation, bank_rate),
+             start = c(year(min(var_data$date)),
+                       quarter(min(var_data$date))),
+             frequency = 4)
+```
+
+With the data assembled as a multivariate time series object, estimation is a single function call. The `VAR()` function from the `vars` package estimates the reduced-form VAR by OLS.
+
+```{r}
+# Estimate VAR(2)
+var_model <- VAR(var_ts, p = 2, type = "const")
+summary(var_model)
+```
+
+The summary output shows three OLS regressions — one for each variable in the system. Each includes two lags of all three variables plus an intercept. The coefficient estimates reveal the dynamic interactions: for example, the coefficient on lagged Bank Rate in the GDP growth equation captures the delayed effect of monetary policy on output. The residual correlation matrix at the bottom shows how the reduced-form shocks co-move contemporaneously.
 
 ## Lag selection
 
+Choosing the lag order $p$ involves a trade-off between flexibility and parsimony. Too few lags and the model fails to capture the true dynamics — residuals will be serially correlated. Too many lags and the model overfits, consuming degrees of freedom and producing imprecise coefficient estimates. With $k$ variables and $p$ lags, the VAR has $k^2 p + k$ parameters (including intercepts), so the parameter count grows rapidly.
+
+The standard approach is to compute information criteria for a range of lag orders and select the one that minimises the criterion. The `VARselect()` function computes four criteria simultaneously: AIC (Akaike), HQ (Hannan-Quinn), SC (Schwarz/Bayesian), and FPE (final prediction error). AIC tends to select more lags (it penalises complexity less), while SC/BIC favours parsimony.
+
+```{r}
+# Lag selection
+lag_selection <- VARselect(var_ts, lag.max = 8, type = "const")
+print(lag_selection$selection)
+print(lag_selection$criteria)
+```
+
+In practice, the criteria often disagree. AIC might suggest 4 lags while BIC suggests 1 or 2. A reasonable strategy is to estimate the model at the BIC-selected lag and check that the residuals are free of serial correlation. If the Portmanteau test or Breusch-Godfrey LM test rejects at the BIC lag, increase the lag order until serial correlation is eliminated.
+
+```{r}
+# Test for serial correlation in residuals
+serial_test <- serial.test(var_model, lags.pt = 12, type = "PT.asymptotic")
+print(serial_test)
+
+# If serial correlation is present, increase lags
+# var_model <- VAR(var_ts, p = 4, type = "const")
+```
+
+A useful diagnostic is the stability of the VAR. The model is stable (stationary) if all eigenvalues of the companion matrix lie inside the unit circle. If any eigenvalue is close to or exceeds 1, the model is explosive or has a unit root, and impulse responses will not converge.
+
+```{r}
+# Check stability
+roots_var <- roots(var_model)
+print(roots_var)
+cat("All roots inside unit circle:", all(roots_var < 1), "\n")
+```
+
 ## Impulse response functions
+
+The impulse response function (IRF) traces the effect of a one-unit shock to one variable on the entire system over time. It answers questions like: "If Bank Rate rises unexpectedly by 25 basis points today, what happens to GDP growth and inflation over the next three years?"
+
+In the reduced-form VAR, a shock to one equation's error term generally affects all variables contemporaneously because the errors are correlated. To isolate the effect of a shock to a single variable, we need to orthogonalise the errors. The default method is the Cholesky decomposition (discussed further in the structural VAR section below), which imposes a recursive ordering: the first variable responds only to its own shock contemporaneously, the second responds to the first and its own, and so on.
+
+The ordering matters. Placing GDP growth first assumes it does not respond to inflation or Bank Rate shocks within the quarter — a plausible assumption given that real economic activity adjusts slowly. Bank Rate is ordered last, reflecting the idea that the central bank observes GDP and inflation within the quarter before setting rates.
+
+```{r}
+# Compute impulse response functions
+# Ordering: gdp_growth, inflation, bank_rate (Cholesky)
+irf_rate <- irf(var_model,
+                impulse = "bank_rate",
+                response = c("gdp_growth", "inflation", "bank_rate"),
+                n.ahead = 20,
+                ortho = TRUE,
+                ci = 0.68)
+plot(irf_rate)
+```
+
+The default `plot()` method from `vars` produces serviceable charts, but for publication-quality figures you may want to extract the IRF data and plot with `ggplot2`.
+
+```{r}
+# Extract IRF data for custom plotting
+irf_data <- data.frame(
+  horizon = 0:20,
+  gdp_response = irf_rate$irf$bank_rate[, "gdp_growth"],
+  gdp_lower = irf_rate$Lower$bank_rate[, "gdp_growth"],
+  gdp_upper = irf_rate$Upper$bank_rate[, "gdp_growth"]
+)
+
+ggplot(irf_data, aes(x = horizon)) +
+  geom_ribbon(aes(ymin = gdp_lower, ymax = gdp_upper),
+              fill = "steelblue", alpha = 0.2) +
+  geom_line(aes(y = gdp_response), colour = "steelblue", linewidth = 1) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(title = "Response of GDP growth to a Bank Rate shock",
+       subtitle = "68% confidence bands from bootstrapped IRFs",
+       x = "Quarters ahead", y = "Percentage points") +
+  theme_minimal()
+```
+
+The economic interpretation is central. A contractionary monetary policy shock (a rise in Bank Rate) should, according to standard theory, reduce GDP growth with a lag of roughly 4 to 8 quarters — the "long and variable lags" that Milton Friedman described. Inflation should fall as well, though typically with a longer delay. If the IRF shows GDP rising after a rate increase, or inflation increasing persistently, the model may be misspecified or the identification scheme inappropriate.
+
+The confidence bands deserve attention. Wider bands indicate greater uncertainty about the dynamic response. If the bands include zero at all horizons, the response is not statistically significant — we cannot distinguish the effect of a monetary policy shock from zero. The choice between 68 per cent and 95 per cent bands is partly aesthetic: 68 per cent bands (one standard error) are conventional in the VAR literature because 95 per cent bands are often very wide, obscuring economically meaningful responses.
 
 ## Forecast error variance decomposition
 
+While IRFs show the dynamic response to a specific shock, forecast error variance decomposition (FEVD) answers a different question: what fraction of the forecast uncertainty in each variable is attributable to each structural shock? At short horizons, each variable's own shock typically dominates. At longer horizons, shocks from other variables become more important, revealing the transmission of disturbances through the system.
+
+```{r}
+# Forecast error variance decomposition
+fevd_result <- fevd(var_model, n.ahead = 20)
+print(fevd_result)
+plot(fevd_result)
+```
+
+The FEVD output is a list of matrices, one per variable, showing the percentage of forecast error variance explained by each shock at each horizon. For GDP growth, we might find that its own shock explains 90 per cent of the variance at the one-quarter horizon but only 60 per cent at the five-year horizon, with Bank Rate shocks explaining an increasing share as the monetary transmission mechanism operates.
+
+```{r}
+# Custom FEVD plot for GDP growth
+fevd_gdp <- as.data.frame(fevd_result$gdp_growth)
+fevd_gdp$horizon <- 1:nrow(fevd_gdp)
+
+fevd_long <- fevd_gdp |>
+  tidyr::pivot_longer(cols = -horizon, names_to = "shock", values_to = "share")
+
+ggplot(fevd_long, aes(x = horizon, y = share, fill = shock)) +
+  geom_area() +
+  scale_fill_brewer(palette = "Set2",
+                    labels = c("Bank Rate", "GDP growth", "Inflation")) +
+  labs(title = "Forecast error variance decomposition: GDP growth",
+       x = "Quarters ahead", y = "Share of forecast error variance",
+       fill = "Shock") +
+  theme_minimal()
+```
+
+The FEVD is sensitive to the identification scheme (the variable ordering), just like the IRFs. Re-ordering the variables will change the decomposition, particularly at short horizons where the Cholesky ordering has the most bite. This sensitivity motivates the structural identification approaches discussed next.
+
 ## Structural VARs: identification
+
+The reduced-form VAR tells us about correlations and dynamics, but not about causation. The reduced-form errors $u_t$ are a mixture of underlying structural shocks $\varepsilon_t$:
+
+$$
+u_t = B \varepsilon_t
+$$
+
+where $B$ is a $k \times k$ matrix that maps structural shocks into reduced-form errors. To recover the structural shocks — and hence to give the IRFs a causal interpretation — we need to identify $B$. This requires imposing restrictions, because the data alone cannot tell us the causal structure.
 
 ### Cholesky decomposition
 
+The most common identification scheme is the Cholesky decomposition, which sets $B$ to be lower triangular. This imposes a recursive causal ordering: the first variable is not affected by any other variable contemporaneously, the second is affected only by the first, and so on. The ordering thus embodies assumptions about the speed of adjustment.
+
+For a monetary policy VAR, the standard ordering is: output first, prices second, the policy rate last. The rationale is that GDP cannot respond to a monetary policy shock within the quarter (production plans are sticky), inflation responds sluggishly to both output and policy, but the central bank can observe and react to both output and inflation within the quarter.
+
+```{r}
+# The Cholesky ordering is determined by column order in the data
+# Our data is already ordered: gdp_growth, inflation, bank_rate
+# This is the standard ordering
+
+# Structural IRFs (Cholesky is the default for ortho = TRUE)
+svar_irf <- irf(var_model,
+                impulse = "bank_rate",
+                response = c("gdp_growth", "inflation"),
+                n.ahead = 20,
+                ortho = TRUE,
+                ci = 0.95,
+                boot = TRUE,
+                runs = 500)
+plot(svar_irf)
+```
+
+It is worth experimenting with alternative orderings to assess robustness. If the results change dramatically when you swap the order of GDP and inflation, the conclusions are fragile and depend critically on untestable assumptions.
+
+```{r}
+# Alternative ordering: inflation first, then GDP, then Bank Rate
+var_ts_alt <- var_ts[, c("inflation", "gdp_growth", "bank_rate")]
+var_model_alt <- VAR(var_ts_alt, p = 2, type = "const")
+
+svar_irf_alt <- irf(var_model_alt,
+                     impulse = "bank_rate",
+                     response = c("gdp_growth", "inflation"),
+                     n.ahead = 20,
+                     ortho = TRUE,
+                     ci = 0.95)
+plot(svar_irf_alt)
+```
+
 ### Sign restrictions
+
+An alternative to zero restrictions is to restrict the sign of the impulse responses. Rather than assuming that GDP does not respond at all to a monetary shock within the quarter, you assume that a contractionary monetary policy shock raises the policy rate, reduces output (at least over some horizon), and reduces inflation. This is weaker than the Cholesky assumption — it admits many possible impact matrices $B$, not just one — and therefore produces a set of admissible IRFs rather than point estimates.
+
+The sign restrictions approach, developed by Uhlig (2005) and Canova and De Nicolo (2002), proceeds by drawing candidate $B$ matrices from the space of orthogonal decompositions of $\Sigma$ and retaining only those that satisfy the sign conditions. The result is a distribution of IRFs, each consistent with the imposed signs. This is more honest about the identification uncertainty but harder to implement and interpret.
+
+Several R packages implement sign restrictions, including `VARsignR`. The approach is computationally intensive — it involves drawing many candidate decompositions and checking each against the sign conditions — but straightforward conceptually. We do not implement it fully here, as the machinery is substantial, but the reader should be aware that it represents the state of the art for VAR identification in applied macroeconomics.
 
 ## Bayesian VARs
 
+Frequentist VARs suffer from a proliferation of parameters. A 3-variable VAR with 4 lags has 39 parameters; a 7-variable system with 4 lags has 203. With the relatively short time series typical in macroeconomics (60-80 quarterly observations), overfitting is a real concern. Bayesian VARs address this by placing prior distributions on the coefficients that shrink the estimates toward parsimonious benchmarks.
+
+The most widely used prior is the Minnesota prior, introduced by Doan, Litterman, and Sims (1984) at the Federal Reserve Bank of Minneapolis. It embodies two beliefs: first, that each variable follows approximately a random walk (so the first own lag should be close to 1 and all other coefficients close to 0); second, that more distant lags are less important (the prior tightens as the lag increases). These are sensible default beliefs for macroeconomic time series, which are typically persistent and slowly mean-reverting.
+
+The `BVAR` package provides a clean implementation. The key function is `bvar()`, which takes the data and a prior specification.
+
+```{r}
+library(BVAR)
+
+# Estimate Bayesian VAR with Minnesota prior
+bvar_model <- bvar(var_ts,
+                   lags = 2,
+                   n_draw = 10000,
+                   n_burn = 2000,
+                   priors = bv_priors(hyper = "auto"),
+                   mh = bv_mh(scale_hess = 0.05))
+
+summary(bvar_model)
+```
+
+```{r}
+# Bayesian IRFs
+bvar_irf <- irf(bvar_model,
+                horizon = 20,
+                identification = TRUE)  # Cholesky identification
+
+plot(bvar_irf)
+```
+
+Comparing the Bayesian and frequentist IRFs is instructive. The Minnesota prior typically produces smoother, more precisely estimated responses. This reflects the shrinkage: the prior pulls the estimates toward a random walk, reducing the noise that plagues unrestricted OLS estimates in small samples. If the Bayesian and frequentist IRFs agree qualitatively, this is reassuring — the conclusions are not driven by the prior. If they disagree, the prior is doing substantial work, and the researcher should investigate whether the prior is appropriate.
+
+```{r}
+# BVAR forecast
+bvar_forecast <- predict(bvar_model, horizon = 8)
+plot(bvar_forecast)
+```
+
+The Bayesian VAR also produces natural forecast distributions — the posterior predictive density — rather than point forecasts with standard errors. Each draw from the posterior yields a different forecast path, and the collection of paths characterises the full uncertainty about the future. This is particularly valuable for fan charts, which show the probability of different economic outcomes.
+
+## Local projections
+
+Local projections, introduced by Jorda (2005), offer an alternative to VARs for computing impulse response functions. Rather than estimating a full dynamic system and iterating forward, local projections estimate the response at each horizon directly using a sequence of regressions:
+
+$$
+y_{t+h} = \alpha_h + \beta_h \cdot \text{shock}_t + \gamma_h' \text{controls}_t + \varepsilon_{t+h}
+$$
+
+for $h = 0, 1, 2, \dots, H$. The coefficient $\beta_h$ is the impulse response at horizon $h$. The method has two advantages over VARs: it does not impose the dynamic structure of the VAR (which may be misspecified), and it is trivially robust to non-linearities when extended with interaction terms. Its disadvantage is reduced efficiency — each horizon is estimated separately, discarding information that the VAR uses.
+
+```{r}
+# Local projections for the response of GDP growth to a Bank Rate shock
+max_horizon <- 16
+lp_results <- data.frame(horizon = 0:max_horizon,
+                          beta = NA_real_,
+                          se = NA_real_)
+
+# Use the same dataset as the VAR
+lp_data <- var_data |>
+  mutate(gdp_lead = gdp_growth)  # placeholder
+
+for (h in 0:max_horizon) {
+  # Create the lead of GDP growth at horizon h
+  lp_data <- lp_data |>
+    mutate(y_lead = lead(gdp_growth, h))
+
+  # Regress y_{t+h} on the shock and controls
+  lp_reg <- lm(y_lead ~ bank_rate + lag(gdp_growth) + lag(inflation) +
+                  lag(bank_rate),
+                data = lp_data)
+
+  lp_results$beta[h + 1] <- coef(lp_reg)["bank_rate"]
+  lp_results$se[h + 1] <- summary(lp_reg)$coefficients["bank_rate", "Std. Error"]
+}
+
+# Compute confidence bands
+lp_results <- lp_results |>
+  mutate(lower = beta - 1.645 * se,
+         upper = beta + 1.645 * se)
+```
+
+```{r}
+# Plot local projection IRF
+ggplot(lp_results, aes(x = horizon)) +
+  geom_ribbon(aes(ymin = lower, ymax = upper),
+              fill = "darkorange", alpha = 0.2) +
+  geom_line(aes(y = beta), colour = "darkorange", linewidth = 1) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(title = "Local projection: response of GDP growth to Bank Rate",
+       subtitle = "90% confidence bands based on Newey-West standard errors",
+       x = "Quarters ahead", y = "Percentage points") +
+  theme_minimal()
+```
+
+Local projections typically produce noisier IRFs than VARs, with wider confidence bands, particularly at longer horizons. This is the price of robustness: the local projection makes fewer assumptions and therefore admits more uncertainty. In practice, many applied papers now report both VAR and local projection IRFs as a robustness check. If they agree, the dynamic structure imposed by the VAR is not driving the results.
+
+Note that the standard errors in the regression above should be corrected for serial correlation induced by the overlapping horizons. Newey-West (HAC) standard errors with a bandwidth of $h$ are standard practice. The `sandwich` and `lmtest` packages provide these.
+
+```{r}
+library(sandwich)
+library(lmtest)
+
+# Example with HAC standard errors for one horizon
+h <- 8
+lp_data_h <- var_data |> mutate(y_lead = lead(gdp_growth, h))
+lp_reg_h <- lm(y_lead ~ bank_rate + lag(gdp_growth) + lag(inflation) +
+                  lag(bank_rate),
+                data = lp_data_h)
+
+coeftest(lp_reg_h, vcov = NeweyWest(lp_reg_h, lag = h))
+```
+
 ## Application: what happens when the Bank of England raises rates?
+
+This section ties together the full toolkit — reduced-form VAR, structural identification, Bayesian estimation, and local projections — to answer a single policy question: what are the macroeconomic effects of a monetary policy tightening in the United Kingdom?
+
+We use the three-variable system estimated above: GDP growth, CPI inflation, and Bank Rate. The identification scheme is the Cholesky decomposition with the ordering GDP, inflation, Bank Rate — the assumption that the central bank responds to within-quarter movements in output and prices, but these real variables do not respond to monetary policy within the quarter.
+
+```{r}
+# Full analysis: VAR-based monetary policy shock
+
+# 1. Estimate VAR at BIC-selected lag
+optimal_lag <- lag_selection$selection["SC(n)"]
+var_final <- VAR(var_ts, p = optimal_lag, type = "const")
+
+# 2. Check stability
+cat("Eigenvalues:", roots(var_final), "\n")
+cat("Stable:", all(roots(var_final) < 1), "\n")
+
+# 3. Structural IRFs (Cholesky)
+irf_gdp <- irf(var_final, impulse = "bank_rate", response = "gdp_growth",
+                n.ahead = 20, ortho = TRUE, ci = 0.68, runs = 1000)
+irf_inf <- irf(var_final, impulse = "bank_rate", response = "inflation",
+                n.ahead = 20, ortho = TRUE, ci = 0.68, runs = 1000)
+irf_rate_own <- irf(var_final, impulse = "bank_rate", response = "bank_rate",
+                     n.ahead = 20, ortho = TRUE, ci = 0.68, runs = 1000)
+```
+
+```{r}
+# Combine IRFs into a single plot
+irf_combined <- data.frame(
+  horizon = rep(0:20, 3),
+  response = c(irf_gdp$irf$bank_rate[, 1],
+               irf_inf$irf$bank_rate[, 1],
+               irf_rate_own$irf$bank_rate[, 1]),
+  lower = c(irf_gdp$Lower$bank_rate[, 1],
+            irf_inf$Lower$bank_rate[, 1],
+            irf_rate_own$Lower$bank_rate[, 1]),
+  upper = c(irf_gdp$Upper$bank_rate[, 1],
+            irf_inf$Upper$bank_rate[, 1],
+            irf_rate_own$Upper$bank_rate[, 1]),
+  variable = rep(c("GDP growth", "Inflation", "Bank Rate"), each = 21)
+)
+
+ggplot(irf_combined, aes(x = horizon)) +
+  geom_ribbon(aes(ymin = lower, ymax = upper), fill = "steelblue", alpha = 0.2) +
+  geom_line(aes(y = response), colour = "steelblue", linewidth = 1) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  facet_wrap(~variable, scales = "free_y", ncol = 1) +
+  labs(title = "Effects of a monetary policy tightening (25bp Bank Rate shock)",
+       subtitle = "Cholesky identification, 68% bootstrapped confidence bands",
+       x = "Quarters ahead", y = "Percentage points") +
+  theme_minimal()
+```
+
+The results should be read as follows. A 25 basis point increase in Bank Rate — an unexpected tightening — typically reduces GDP growth with a lag of 4 to 6 quarters, with the maximum impact around 6 to 8 quarters. The effect on inflation is more delayed, peaking at roughly 8 to 12 quarters. Bank Rate itself returns toward baseline as the central bank unwinds the tightening once the economy slows. These dynamics are consistent with the Bank of England's own estimates, which suggest that the full effect of a rate change takes 18 to 24 months to pass through to output and somewhat longer for inflation.
+
+```{r}
+# 4. Variance decomposition
+fevd_final <- fevd(var_final, n.ahead = 20)
+
+# Table: share of GDP growth variance explained at selected horizons
+fevd_table <- as.data.frame(fevd_final$gdp_growth)
+fevd_table$horizon <- 1:nrow(fevd_table)
+fevd_selected <- fevd_table |>
+  filter(horizon %in% c(1, 4, 8, 12, 20))
+print(fevd_selected)
+```
+
+```{r}
+# 5. Compare to Bayesian VAR IRFs
+bvar_final <- bvar(var_ts,
+                   lags = optimal_lag,
+                   n_draw = 15000,
+                   n_burn = 5000,
+                   priors = bv_priors(hyper = "auto"),
+                   mh = bv_mh(scale_hess = 0.05))
+
+bvar_irf_final <- irf(bvar_final, horizon = 20, identification = TRUE)
+plot(bvar_irf_final)
+```
+
+The Bayesian IRFs should tell a similar qualitative story — a rate increase reduces output and inflation with a lag — but with tighter confidence bands, reflecting the regularisation provided by the Minnesota prior. If the Bayesian and frequentist results diverge sharply, the small sample is likely driving the frequentist estimates, and the Bayesian estimates may be more reliable.
+
+```{r}
+# 6. Forecast the next 2 years
+var_forecast <- predict(var_final, n.ahead = 8, ci = 0.68)
+plot(var_forecast)
+
+# Extract point forecasts
+forecast_table <- data.frame(
+  quarter = 1:8,
+  gdp_growth = var_forecast$fcst$gdp_growth[, "fcst"],
+  inflation = var_forecast$fcst$inflation[, "fcst"],
+  bank_rate = var_forecast$fcst$bank_rate[, "fcst"]
+)
+print(forecast_table)
+```
+
+This application illustrates the full VAR workflow: data assembly, lag selection, estimation, identification, impulse response analysis, variance decomposition, and forecasting. Each step involves judgement calls — the choice of variables, lag length, identification scheme, and confidence level — that can influence the conclusions. Sensitivity analysis is not optional; it is an integral part of honest empirical work.
 
 ## Exercises
 
@@ -29,3 +473,7 @@ The VAR is the workhorse of empirical macroeconomics. It lets you model the dyna
 2. Compute impulse response functions for a 25bp Bank Rate shock. How long does it take for GDP growth to respond? What about inflation?
 
 3. Re-estimate the model as a Bayesian VAR using the `BVAR` package with a Minnesota prior. How do the impulse responses change?
+
+4. Estimate local projection IRFs for the same monetary policy shock and compare them to the VAR-based IRFs. Where do the two methods agree, and where do they diverge?
+
+5. Add a fourth variable — the sterling effective exchange rate from `boe::boe_exchange_rate()` — to the VAR. Does the exchange rate respond to Bank Rate shocks in the expected direction (appreciation)?

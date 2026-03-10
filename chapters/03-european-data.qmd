@@ -2,60 +2,338 @@
 
 Macroeconomics rarely stops at national borders. Comparing inflation across the euro area, tracking ECB policy alongside the Fed, or benchmarking UK growth against the G7 — all of these require international data.
 
-This chapter covers the ECB Data Portal, the OECD, and the World Bank.
+This chapter covers three major sources: the ECB Data Portal for euro area data, the OECD for harmonised cross-country statistics, and the World Bank for global development indicators. Each serves a different purpose, and knowing when to reach for which source is a skill in itself.
 
 ## The European Central Bank
 
 ```{r}
-#| eval: false
 library(readecb)
 ```
 
+The European Central Bank publishes a vast statistical warehouse covering monetary policy, financial markets, and macroeconomic aggregates for the euro area and its member states. The `readecb` package provides access to the ECB Data Portal API, with dedicated functions for the most commonly used series and a flexible `ecb_get()` function for everything else.
+
+The ECB's data is particularly strong on high-frequency financial and monetary series — policy rates updated in real time, daily exchange rates, and monthly monetary aggregates. For macroeconomic variables like GDP and unemployment, the ECB also publishes Eurostat data, though for cross-country comparisons the OECD is often more convenient (more on this below).
+
 ### Policy rates
 
+The ECB sets three key interest rates: the main refinancing rate (the rate at which banks can borrow from the ECB for one week), the marginal lending facility rate (overnight borrowing), and the deposit facility rate (overnight deposits). Since September 2024, the deposit facility rate has been the primary instrument for steering monetary policy.
+
 ```{r}
-#| eval: false
 rates <- ecb_policy_rates(from = "1999-01")
+
+head(rates)
+```
+
+The resulting data frame contains one row per date on which rates changed, with columns for each of the three rates. To plot the full history of ECB rates since the euro's introduction, you can pass this directly to `ggplot2`.
+
+```{r}
+library(ggplot2)
+
+ggplot(rates, aes(x = date, y = value, colour = series)) +
+  geom_step() +
+  labs(
+    title = "ECB policy rates",
+    x = NULL, y = "Per cent",
+    colour = NULL
+  ) +
+  theme_minimal()
 ```
 
 ### Inflation across the euro area
 
+The Harmonised Index of Consumer Prices (HICP) is the ECB's target measure of inflation. Unlike national CPI measures, HICP uses a common methodology across all EU member states, making it the right choice for cross-country inflation comparisons within Europe.
+
 ```{r}
-#| eval: false
 hicp <- ecb_hicp(c("DE", "FR", "IT", "ES"), from = "2020-01")
+
+head(hicp)
+```
+
+You can pass ISO 2-letter country codes to `ecb_hicp()` to pull HICP for individual member states. Omitting the country code returns the aggregate euro area HICP. This is the series that the ECB targets at 2 per cent over the medium term.
+
+```{r}
+# Euro area aggregate
+hicp_ea <- ecb_hicp(from = "2020-01")
+
+ggplot(hicp_ea, aes(x = date, y = value)) +
+  geom_line() +
+  geom_hline(yintercept = 2, linetype = "dashed", colour = "red") +
+  labs(
+    title = "Euro area HICP inflation",
+    subtitle = "Year-on-year percentage change",
+    x = NULL, y = "Per cent"
+  ) +
+  theme_minimal()
 ```
 
 ### Exchange rates
 
+The ECB publishes daily reference exchange rates for approximately 30 currencies against the euro. These are mid-market rates set at 14:15 CET each business day and are widely used as a benchmark.
+
 ```{r}
-#| eval: false
 fx <- ecb_exchange_rate(c("USD", "GBP"), from = "2020-01")
+
+head(fx)
+```
+
+To see all available currency pairs, use `list_exchange_rates()`, which returns a data frame of currency codes and names.
+
+```{r}
+list_exchange_rates()
 ```
 
 ### Yield curves
 
+Government bond yields are essential for understanding financial conditions and market expectations. The ECB publishes estimated yield curves for euro area sovereign bonds at various maturities.
+
 ```{r}
-#| eval: false
 yields <- ecb_yield_curve("10Y", from = "2005-01")
+
+head(yields)
+```
+
+A particularly useful exercise is to compare short- and long-term yields to construct a yield curve slope measure. An inverted yield curve — where short-term rates exceed long-term rates — has historically been a recession predictor.
+
+```{r}
+short <- ecb_yield_curve("2Y", from = "2005-01")
+long <- ecb_yield_curve("10Y", from = "2005-01")
+
+library(dplyr)
+
+spread <- inner_join(
+  short |> select(date, short = value),
+  long |> select(date, long = value),
+  by = "date"
+) |>
+  mutate(spread = long - short)
+
+ggplot(spread, aes(x = date, y = spread)) +
+  geom_line() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(
+    title = "Euro area 10Y-2Y yield spread",
+    x = NULL, y = "Percentage points"
+  ) +
+  theme_minimal()
+```
+
+### Other ECB series
+
+The `readecb` package also provides functions for EURIBOR (`ecb_euribor()`), the euro short-term rate (`ecb_estr()`), money supply (`ecb_money_supply()`), GDP (`ecb_gdp()`), unemployment (`ecb_unemployment()`), and government debt (`ecb_government_debt()`). The general-purpose `ecb_get()` function can retrieve any series from the ECB Data Portal if you know the dataflow and series key.
+
+```{r}
+# Euro area M3 money supply
+m3 <- ecb_money_supply("M3", from = "2000-01")
+
+# Euro area GDP growth
+gdp_ea <- ecb_gdp(from = "2000-01")
 ```
 
 ## The OECD
 
 ```{r}
-#| eval: false
 library(readoecd)
 ```
 
-The OECD publishes harmonised data across its 38 member countries — making it the natural choice for cross-country comparisons.
+The Organisation for Economic Co-operation and Development publishes harmonised data across its 38 member countries, plus key partner economies. The OECD's great strength is comparability: its statisticians take national data and apply consistent definitions and methodologies, making it the natural choice for cross-country analysis.
+
+The `readoecd` package wraps the OECD's SDMX REST API, providing both dedicated functions for popular datasets and a flexible `oecd_get()` function for direct access to any OECD dataflow.
+
+### Composite leading indicators
+
+The OECD's Composite Leading Indicators (CLI) are designed to provide early signals of turning points in business cycles. They combine a variety of forward-looking indicators — order books, building permits, share prices, interest rate spreads — into a single index calibrated so that 100 represents trend growth. Values above 100 suggest expansion; below 100, contraction.
+
+```{r}
+cli <- oecd_get(
+  dataset = "MEI_CLI",
+  filter = list(
+    location = c("GBR", "USA", "DEU", "JPN"),
+    subject = "LOLITOAA",
+    measure = "STSA",
+    frequency = "M"
+  ),
+  start_period = "2015-01"
+)
+
+head(cli)
+```
+
+The CLI is particularly useful for identifying where different economies are in the cycle. If the UK CLI is falling while the US CLI is rising, that divergence has implications for exchange rates, relative monetary policy, and trade.
+
+```{r}
+ggplot(cli, aes(x = date, y = value, colour = location)) +
+  geom_line() +
+  geom_hline(yintercept = 100, linetype = "dashed") +
+  labs(
+    title = "OECD Composite Leading Indicators",
+    x = NULL, y = "Index (100 = trend)",
+    colour = "Country"
+  ) +
+  theme_minimal()
+```
+
+### GDP by expenditure
+
+The OECD's Quarterly National Accounts provide GDP broken down by expenditure component — consumption, investment, government spending, and net exports — on a comparable basis across countries. This is invaluable when you want to understand not just how fast an economy is growing, but what is driving that growth.
+
+```{r}
+gdp_exp <- oecd_get(
+  dataset = "QNA",
+  filter = list(
+    location = c("GBR", "USA", "DEU"),
+    subject = c("B1_GE", "P3", "P5", "P6", "P7"),
+    measure = "VPVOBARSA",
+    frequency = "Q"
+  ),
+  start_period = "2010-Q1"
+)
+
+head(gdp_exp)
+```
+
+The subject codes here are: `B1_GE` (GDP), `P3` (final consumption), `P5` (gross capital formation), `P6` (exports), and `P7` (imports). The measure `VPVOBARSA` gives volume estimates in national currency, seasonally adjusted and annualised.
+
+### Inflation
+
+The OECD publishes CPI data using a consistent methodology, making it straightforward to compare inflation across countries that use different national indices. This is especially useful when comparing the UK (which uses CPI and CPIH) with the US (which uses CPI-U and PCE) and the euro area (which uses HICP).
+
+```{r}
+cpi_oecd <- oecd_get(
+  dataset = "PRICES_CPI",
+  filter = list(
+    location = c("GBR", "USA", "DEU", "JPN"),
+    subject = "CPALTT01",
+    measure = "GY",
+    frequency = "M"
+  ),
+  start_period = "2015-01"
+)
+
+head(cpi_oecd)
+```
+
+The measure `GY` gives the year-on-year growth rate directly, saving you from having to compute it yourself. The subject `CPALTT01` is CPI for all items.
+
+```{r}
+ggplot(cpi_oecd, aes(x = date, y = value, colour = location)) +
+  geom_line() +
+  labs(
+    title = "CPI inflation: cross-country comparison",
+    subtitle = "Year-on-year percentage change, OECD harmonised",
+    x = NULL, y = "Per cent",
+    colour = "Country"
+  ) +
+  theme_minimal()
+```
+
+### Discovering OECD datasets
+
+The OECD publishes hundreds of datasets. To explore what is available, use `list_oecd_dataflows()`, which returns a searchable catalogue.
+
+```{r}
+flows <- list_oecd_dataflows()
+
+# Search for datasets related to labour
+flows |>
+  filter(grepl("labour|employment", name, ignore.case = TRUE))
+```
 
 ## The World Bank
 
 ```{r}
-#| eval: false
 library(WDI)
 ```
 
-For broader international comparisons — especially involving emerging markets — the World Bank's World Development Indicators cover 200+ countries.
+For broader international comparisons — especially involving emerging and developing economies — the World Bank's World Development Indicators (WDI) are unmatched. The WDI covers over 200 countries and territories with more than 1,600 indicators spanning income, health, education, infrastructure, and the environment. The data often extends back to the 1960s, making it the best source for long historical series.
+
+The `WDI` package on CRAN provides a clean interface to the World Bank API. The key function is `WDI()`, which takes an indicator code, a list of countries, and a date range.
+
+### GDP per capita (PPP)
+
+Purchasing power parity (PPP) adjustments account for differences in price levels across countries, making GDP per capita figures more meaningful for comparing living standards. The World Bank publishes GDP per capita in constant 2021 international dollars, which controls for both inflation and price-level differences.
+
+```{r}
+gdp_pc <- WDI(
+  indicator = "NY.GDP.PCAP.PP.KD",
+  country = c("GB", "US", "DE", "FR", "JP", "CA", "IT"),
+  start = 2000,
+  end = 2024
+)
+
+head(gdp_pc)
+```
+
+The indicator code `NY.GDP.PCAP.PP.KD` stands for GDP per capita, PPP, in constant 2021 international dollars. These codes are not intuitive, but you can search for them using `WDIsearch()`.
+
+```{r}
+WDIsearch("gdp per capita.*ppp")
+```
+
+### Population
+
+Population data is essential for computing per-capita measures and for understanding the demographic context of economic performance. The World Bank's population series is one of the most comprehensive available.
+
+```{r}
+pop <- WDI(
+  indicator = "SP.POP.TOTL",
+  country = c("GB", "US", "CN", "IN", "DE"),
+  start = 1960,
+  end = 2024
+)
+
+ggplot(pop, aes(x = year, y = SP.POP.TOTL / 1e6, colour = country)) +
+  geom_line() +
+  labs(
+    title = "Population (millions)",
+    x = NULL, y = "Millions",
+    colour = "Country"
+  ) +
+  theme_minimal()
+```
+
+### Development indicators
+
+The WDI's greatest strength is its breadth. Beyond GDP and population, you can pull indicators on poverty rates, educational attainment, life expectancy, CO~2~ emissions, internet penetration, and hundreds more. This makes it the natural source for the cross-country analysis in @sec-cross-country.
+
+```{r}
+# Life expectancy at birth
+life_exp <- WDI(
+  indicator = "SP.DYN.LE00.IN",
+  country = c("GB", "US", "DE", "JP", "CN", "IN", "BR"),
+  start = 1990,
+  end = 2024
+)
+
+# CO2 emissions per capita (metric tonnes)
+co2 <- WDI(
+  indicator = "EN.ATM.CO2E.PC",
+  country = c("GB", "US", "DE", "CN", "IN"),
+  start = 1990,
+  end = 2024
+)
+```
+
+## Choosing the right source {#sec-choosing-source}
+
+For many macroeconomic variables — GDP, inflation, unemployment — the same data is published by multiple organisations. Choosing the right source depends on what you are trying to do.
+
+**The ECB** is the best source for euro area financial and monetary data. It publishes daily exchange rates, real-time policy rate changes, and high-frequency money and credit aggregates. If you need euro area HICP inflation, government bond yields, or bank lending rates, the ECB is the primary source. Its data is timely and granular but covers only the euro area and EU member states.
+
+**The OECD** excels at cross-country comparisons among advanced economies. Because OECD statisticians harmonise national data to common definitions, you can meaningfully compare UK CPI with US CPI or German GDP growth with Japanese GDP growth. The OECD also publishes useful composite indicators (like the CLI) that are not available elsewhere. The trade-off is that OECD data is often published with a longer lag than national sources, and it covers only OECD member countries plus a handful of partners.
+
+**The World Bank** is the right choice for global coverage and long time series. It covers over 200 countries, including emerging and developing economies that neither the ECB nor the OECD cover well. Its development indicators span topics well beyond traditional macro. The drawback is lower frequency (mostly annual) and longer publication lags.
+
+The table below summarises when to use each source:
+
+| Variable | ECB | OECD | World Bank |
+|:---|:---|:---|:---|
+| Euro area GDP | High-frequency, quarterly | Cross-country comparison with G7 | Long historical series, annual |
+| Inflation | HICP for euro area members | Harmonised CPI for 38+ countries | CPI for 200+ countries, annual |
+| Interest rates | Daily policy rates, yields | Policy rates (monthly) | Lending rates (annual) |
+| Exchange rates | Daily ECB reference rates | Monthly averages | Annual averages |
+| Development indicators | Not available | Limited | Comprehensive (1,600+ indicators) |
+
+As a rule of thumb: use the **national source** (ONS, ECB) for the highest-frequency, most timely data on a single country or area; use the **OECD** for comparing a handful of advanced economies on a like-for-like basis; and use the **World Bank** for global coverage or development-oriented analysis.
 
 ## Exercises
 
@@ -63,4 +341,10 @@ For broader international comparisons — especially involving emerging markets 
 
 2. Pull the EUR/USD exchange rate with `ecb_exchange_rate("USD")` and plot it alongside ECB policy rate changes. Do you see a relationship?
 
-3. Using `WDI`, download GDP per capita (PPP) for the G7 countries. Which country has the highest GDP per capita? Has the ranking changed since 2000?
+3. Using `readoecd`, download the OECD Composite Leading Indicator for the G7 countries from 2018 onwards. Plot all seven on the same chart. Which country's CLI fell furthest during the Covid-19 pandemic?
+
+4. Using `WDI`, download GDP per capita (PPP) for the G7 countries from 2000 to the latest available year. Which country has the highest GDP per capita? Has the ranking changed over the period?
+
+5. Download euro area CPI inflation from both the ECB (`ecb_hicp()`) and the OECD. Compare the two series. Are there differences? Why might they arise?
+
+6. Using the World Bank, download life expectancy at birth for ten countries of your choice over the period 1990--2024. How did the Covid-19 pandemic show up in the data?

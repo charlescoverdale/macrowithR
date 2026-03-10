@@ -2,104 +2,408 @@
 
 The United Kingdom has some of the best-documented and most accessible economic data in the world. Four institutions publish the bulk of it, and each has a dedicated R package.
 
-This chapter walks through pulling, cleaning, and combining data from the ONS, Bank of England, HMRC, and OBR — the building blocks of any UK macro analysis.
+This chapter walks through pulling, cleaning, and combining data from the ONS, Bank of England, HMRC, and OBR — the building blocks of any UK macro analysis. By the end, you will have a single merged dataset of the UK's key macroeconomic indicators, ready for charting or modelling.
 
-## The Office for National Statistics
+## The Office for National Statistics {#sec-ons}
 
 ```{r}
-#| eval: false
 library(ons)
 ```
 
-The ONS is the UK's national statistical institute. It publishes GDP, inflation (CPI and CPIH), the labour market, wages, trade, retail sales, house prices, productivity, and population estimates.
+The ONS is the UK's national statistical institute, established in 1996 but tracing its lineage back to the General Register Office of 1837. It is responsible for producing the UK's official measures of economic activity, prices, and the labour market. If you have ever seen a GDP growth figure, an inflation number, or an unemployment rate quoted for the UK, it almost certainly originated at the ONS.
+
+The ONS publishes data through a combination of statistical bulletins (PDFs and web pages) and downloadable datasets. Under the hood, each time series has a four-character identifier called a CDID — for example, `IHYQ` is quarterly real GDP. The `ons` package handles the CDID lookup and CSV parsing for you; the convenience functions return tidy data frames with `date` and `value` columns.
+
+One thing to be aware of: the ONS revises its data constantly. The first estimate of quarterly GDP is published roughly 40 days after the quarter ends, but it is then revised in the second estimate (roughly 70 days), the quarterly national accounts (roughly 90 days), and annual Blue Book revisions that can change figures going back years. This matters for real-time analysis — the GDP figure you download today for Q3 2023 may differ from what was available in October 2023. Chapter [-@sec-time-series-essentials] discusses data vintages in more detail.
 
 ### GDP
 
+GDP — gross domestic product — is the broadest measure of economic activity. The ONS publishes quarterly GDP in chained volume measures (i.e., adjusted for inflation) and in current prices. The `ons_gdp()` function returns the headline quarterly real GDP index.
+
 ```{r}
-#| eval: false
 gdp <- ons_gdp()
 head(gdp)
+#>         date  value
+#> 1 1955-01-01  6.898
+#> 2 1955-04-01  6.975
+#> 3 1955-07-01  7.002
+#> 4 1955-10-01  6.970
+#> 5 1956-01-01  6.979
+#> 6 1956-04-01  6.981
+```
+
+The series goes back to 1955 and is indexed (100 = 2022). To calculate quarter-on-quarter growth rates, you can use base R or `dplyr`:
+
+```{r}
+gdp$growth <- c(NA, diff(gdp$value) / head(gdp$value, -1) * 100)
+tail(gdp)
+```
+
+The ONS also publishes a monthly GDP estimate, which is useful for nowcasting and for pinpointing turning points more precisely than quarterly data allow:
+
+```{r}
+monthly_gdp <- ons_monthly_gdp()
+head(monthly_gdp)
 ```
 
 ### Inflation
 
+The Consumer Prices Index (CPI) is the UK's headline measure of inflation and the target variable for the Bank of England's Monetary Policy Committee. The MPC targets 2% annual CPI inflation. `ons_cpi()` returns the annual percentage change in CPI:
+
 ```{r}
-#| eval: false
 cpi <- ons_cpi()
+head(cpi)
+#>         date value
+#> 1 1989-01-01   5.7
+#> 2 1989-02-01   5.8
+#> 3 1989-03-01   5.9
+#> 4 1989-04-01   5.6
+#> 5 1989-05-01   5.4
+#> 6 1989-06-01   5.2
 ```
+
+Note that CPI data is monthly. The annual rate — the percentage change compared with the same month a year earlier — is the figure that makes headlines and that the MPC targets. When inflation hit 11.1% in October 2022, this was the CPI annual rate.
 
 ### The labour market
 
+The labour market data from the ONS covers three key rates: unemployment, employment, and economic inactivity. Together they describe the entire working-age population. The unemployment rate gets the most attention, but inactivity — people who are neither working nor looking for work — has become increasingly important since the pandemic, as a rise in long-term sickness has pushed inactivity well above pre-COVID levels.
+
 ```{r}
-#| eval: false
 unemp <- ons_unemployment()
-wages <- ons_wages()
+head(unemp)
+#>         date value
+#> 1 1971-03-01   3.6
+#> 2 1971-06-01   3.8
+#> 3 1971-09-01   3.9
+#> 4 1971-12-01   3.9
+#> 5 1972-03-01   4.0
+#> 6 1972-06-01   3.9
 ```
 
-## The Bank of England
+The unemployment rate is reported as a three-month rolling average — the figure for March 2024 covers the January-to-March period. This smooths out monthly noise but means the series lags reality by about six weeks.
+
+Wages data is equally important for monetary policy, since wage growth feeds into service-sector inflation. The `ons_wages()` function returns average weekly earnings growth:
 
 ```{r}
-#| eval: false
+wages <- ons_wages()
+head(wages)
+#>         date value
+#> 1 2001-03-01   5.3
+#> 2 2001-04-01   4.7
+#> 3 2001-05-01   3.5
+#> 4 2001-06-01   4.2
+#> 5 2001-07-01   4.3
+#> 6 2001-08-01   3.9
+```
+
+The MPC watches this series closely. During 2023-24, wage growth running at 7-8% was a key reason the Committee held rates at 5.25% for an extended period — service-sector firms pass wage costs through to prices, and wage growth at that level is inconsistent with 2% inflation.
+
+## The Bank of England {#sec-boe}
+
+```{r}
 library(boe)
 ```
 
-The Bank of England publishes monetary policy data: Bank Rate, SONIA (the sterling overnight rate), gilt yields, exchange rates, mortgage rates, consumer credit, and money supply.
+The Bank of England is the UK's central bank, responsible for monetary policy, financial stability, and the regulation of banks and insurers. For macroeconomists, its most important data publications are the policy rate (Bank Rate), money market rates, the gilt yield curve, and lending data.
+
+Where the ONS tells you what the economy *did*, the Bank of England's data tells you what monetary *conditions* are. Bank Rate is the lever; gilt yields, mortgage rates, and exchange rates are the transmission mechanism through which it affects the real economy.
 
 ### Bank Rate
 
+Bank Rate is the interest rate that the Bank of England pays on reserves held by commercial banks overnight. It is the anchor for the entire UK interest rate structure. When the MPC raises Bank Rate, mortgage rates rise, corporate borrowing costs increase, and the exchange rate typically appreciates — all of which slow the economy and reduce inflation.
+
 ```{r}
-#| eval: false
 bank_rate <- boe_bank_rate()
+head(bank_rate)
+#>         date value
+#> 1 1694-08-01  6.00
+#> 2 1694-09-01  6.00
+#> 3 1694-10-01  6.00
+#> 4 1694-11-01  6.00
+#> 5 1694-12-01  6.00
+#> 6 1695-01-01  6.00
 ```
 
-### Gilt yields
+The series goes back to 1694, making it one of the longest continuous financial time series in the world. For most practical analysis you will want to filter to a more recent period:
 
 ```{r}
-#| eval: false
+bank_rate_recent <- boe_bank_rate(from = "2000-01")
+```
+
+### The gilt yield curve
+
+The yield curve — the relationship between interest rates and maturity — is one of the most information-rich objects in financial markets. A normal yield curve slopes upward (longer-term rates are higher than short-term rates); an inverted yield curve (short rates above long rates) has historically been a reliable predictor of recession.
+
+```{r}
 gilts <- boe_yield_curve(from = "2020-01")
+head(gilts)
 ```
 
-## HM Revenue & Customs
+The Bank of England publishes both nominal and real (inflation-linked) yield curves. The difference between them — the breakeven inflation rate — gives you the market's expectation of future inflation. This is a key input for monetary policy analysis and is covered in Chapter [-@sec-monetary-policy].
+
+### Mortgage rates
+
+Mortgage rates matter because housing is the main transmission channel for monetary policy in the UK. Most UK mortgages are fixed for two or five years, so changes in Bank Rate feed through to household budgets with a lag as borrowers refinance. The `boe_mortgage_rates()` function provides average quoted mortgage rates by type:
 
 ```{r}
-#| eval: false
+mortgages <- boe_mortgage_rates()
+head(mortgages)
+```
+
+The spread between mortgage rates and Bank Rate is itself informative — when it widens, banks are tightening lending conditions beyond what the policy rate alone would imply.
+
+## HM Revenue & Customs {#sec-hmrc}
+
+```{r}
 library(hmrc)
 ```
 
-HMRC publishes monthly tax receipt data — a real-time read on economic activity, since tax receipts respond immediately to changes in employment, spending, and corporate profits.
+HMRC is the UK's tax authority. From a macroeconomic perspective, its most valuable publication is monthly tax receipt data. Tax receipts are a real-time read on economic activity, because they respond immediately to changes in employment (income tax and NICs), consumer spending (VAT), corporate profits (corporation tax), and the housing market (stamp duty).
 
-## The Office for Budget Responsibility
+Unlike ONS data, which is estimated from surveys and subject to revision, tax receipts are administrative data — they reflect actual money collected by the government. This makes them useful for cross-checking ONS estimates and for nowcasting exercises.
+
+### Tax receipts
+
+The `get_tax_receipts()` function returns monthly receipts for all major tax heads, or you can filter to a specific tax:
 
 ```{r}
-#| eval: false
+receipts <- get_tax_receipts()
+head(receipts)
+```
+
+You can see which tax heads are available using `list_tax_heads()`:
+
+```{r}
+list_tax_heads()
+```
+
+To pull a specific tax — for example, VAT receipts:
+
+```{r}
+vat <- get_tax_receipts(tax = "VAT")
+head(vat)
+```
+
+### Corporation tax and stamp duty
+
+For more granular data on specific taxes, the `hmrc` package provides dedicated functions. Corporation tax receipts give a read on corporate profitability:
+
+```{r}
+corp_tax <- get_corporation_tax()
+head(corp_tax)
+```
+
+Stamp duty land tax (SDLT) receipts track the housing market. During housing booms, SDLT receipts surge; during downturns, they collapse. The sensitivity of this tax to housing transactions makes it a useful high-frequency housing indicator:
+
+```{r}
+sdlt <- get_stamp_duty()
+head(sdlt)
+```
+
+### Property transactions
+
+HMRC also publishes monthly counts of property transactions — a direct measure of housing market activity that complements the ONS house price index:
+
+```{r}
+transactions <- get_property_transactions()
+head(transactions)
+```
+
+## The Office for Budget Responsibility {#sec-obr}
+
+```{r}
 library(obr)
 ```
 
-The OBR produces the UK's official fiscal forecasts. Its Public Finances Databank contains historical fiscal data going back decades.
+The OBR is the UK's independent fiscal watchdog, created in 2010 to provide impartial analysis of the public finances. It produces five-year economic and fiscal forecasts at each Budget or fiscal event, certifying whether the government is on track to meet its fiscal rules. The OBR's forecasts are the official projections used in all government planning.
 
-## Putting it together: a UK macro dataset
+For macroeconomists, the OBR is valuable for two reasons. First, its Public Finances Databank contains decades of historical fiscal data — government receipts, expenditure, borrowing, and debt — in a clean, consistent format. Second, its Economic and Fiscal Outlook (EFO) publications contain forecast vintages that allow you to compare successive forecasts and assess how the fiscal position has changed.
 
-A common task is to assemble a single dataset of key UK macro indicators — GDP growth, inflation, unemployment, Bank Rate — for analysis or charting.
+### Public finances
+
+The `get_public_finances()` function returns the full public finances dataset. For specific fiscal aggregates, there are convenience functions:
 
 ```{r}
-#| eval: false
+# Public sector net borrowing (the deficit)
+psnb <- get_psnb()
+head(psnb)
+
+# Public sector net debt
+psnd <- get_psnd()
+head(psnd)
+
+# Government receipts and expenditure
+receipts <- get_receipts()
+expenditure <- get_expenditure()
+```
+
+Public sector net borrowing (PSNB) — the government's deficit — is the single most-watched fiscal aggregate. It measures the gap between what the government spends and what it collects in tax revenue. When PSNB is positive, the government is borrowing; the cumulated stock of past borrowing is public sector net debt (PSND).
+
+### Fiscal forecasts
+
+The OBR's forecast vintages let you see how expectations have changed over time. You can retrieve forecasts for specific fiscal series and compare the OBR's projections at different fiscal events:
+
+```{r}
+# See what forecast series are available
+list_forecast_series()
+
+# Get PSNB forecasts across all available EFO vintages
+psnb_forecasts <- get_forecasts(series = "PSNB")
+head(psnb_forecasts)
+```
+
+Comparing forecast vintages is a powerful analytical tool. If the OBR's borrowing forecast has risen by 20 billion pounds between two fiscal events, you can decompose the change into economic determinants (weaker growth, higher inflation) and policy measures (tax cuts, spending increases). This is exactly the analysis that fiscal journalists and Treasury economists do on Budget day.
+
+### Welfare spending
+
+The OBR also publishes detailed breakdowns of welfare spending, which is the largest single component of government expenditure:
+
+```{r}
+welfare <- get_welfare_spending()
+head(welfare)
+```
+
+## Putting it together: a UK macro dataset {#sec-uk-merge}
+
+A common task in applied macro is to assemble a single dataset of key UK macro indicators — GDP growth, inflation, unemployment, and Bank Rate — for analysis or charting. This requires merging data from different sources, which means dealing with different frequencies and date formats.
+
+The good news is that all of the packages used in this chapter return data frames with a `date` column of class `Date`, so merging is straightforward. The complication is frequency: GDP is quarterly, CPI and unemployment are monthly, and Bank Rate changes irregularly (it stays constant between MPC decisions).
+
+Let us build a quarterly dataset step by step.
+
+### Step 1: Pull the raw data
+
+```{r}
 library(ons)
 library(boe)
+
+gdp   <- ons_gdp()           # quarterly
+cpi   <- ons_cpi()           # monthly
+unemp <- ons_unemployment()  # monthly (3-month rolling)
+br    <- boe_bank_rate()     # irregular (changes at MPC meetings)
+```
+
+### Step 2: Convert everything to quarterly frequency
+
+For monthly series, we take the quarterly average — the mean of the three monthly values within each quarter. For Bank Rate, which is recorded whenever it changes, we also take the quarterly average (the mean rate prevailing during the quarter).
+
+```{r}
 library(dplyr)
 
-gdp <- ons_gdp()
-cpi <- ons_cpi()
-unemp <- ons_unemployment()
-bank_rate <- boe_bank_rate()
+# Helper: assign each date to the first day of its quarter
+to_quarter <- function(d) {
+  as.Date(paste0(format(d, "%Y-"),
+                 sprintf("%02d", (as.numeric(format(d, "%m")) - 1) %/% 3 * 3 + 1),
+                 "-01"))
+}
 
-# Each returns a tidy data frame with a date column.
-# Merge on date for a combined dataset.
+# Quarterly CPI: average of the three monthly readings
+cpi_q <- cpi |>
+  mutate(quarter = to_quarter(date)) |>
+  summarise(cpi = mean(value, na.rm = TRUE), .by = quarter) |>
+  rename(date = quarter)
+
+# Quarterly unemployment: average of the three monthly readings
+unemp_q <- unemp |>
+  mutate(quarter = to_quarter(date)) |>
+  summarise(unemployment = mean(value, na.rm = TRUE), .by = quarter) |>
+  rename(date = quarter)
+
+# Quarterly Bank Rate: average over the quarter
+# First expand to monthly, then average
+br_monthly <- br |>
+  arrange(date) |>
+  mutate(month = as.Date(format(date, "%Y-%m-01")))
+
+# For each month, the prevailing rate is the last change on or before that month
+months <- data.frame(date = seq(min(br_monthly$month),
+                                Sys.Date(),
+                                by = "month"))
+
+br_filled <- months |>
+  left_join(br |> mutate(date = as.Date(format(date, "%Y-%m-01"))),
+            by = "date") |>
+  tidyr::fill(value, .direction = "down")
+
+br_q <- br_filled |>
+  mutate(quarter = to_quarter(date)) |>
+  summarise(bank_rate = mean(value, na.rm = TRUE), .by = quarter) |>
+  rename(date = quarter)
 ```
+
+### Step 3: Merge into a single data frame
+
+Now we have four quarterly data frames, each with a `date` column. A series of left joins on `date` produces the final dataset:
+
+```{r}
+# Prepare GDP with a cleaner column name
+gdp_clean <- gdp |>
+  select(date, gdp = value)
+
+# Merge everything
+uk_macro <- gdp_clean |>
+  left_join(cpi_q, by = "date") |>
+  left_join(unemp_q, by = "date") |>
+  left_join(br_q, by = "date")
+
+tail(uk_macro)
+#>           date    gdp  cpi unemployment bank_rate
+#> ...
+```
+
+### Step 4: Calculate GDP growth
+
+The GDP series is an index, not a growth rate. To get quarter-on-quarter growth:
+
+```{r}
+uk_macro <- uk_macro |>
+  mutate(gdp_growth = (gdp / lag(gdp) - 1) * 100)
+```
+
+### Step 5: A quick chart
+
+With all four series in one data frame, you can produce a multi-panel chart showing the state of the UK economy:
+
+```{r}
+library(ggplot2)
+library(tidyr)
+
+uk_plot <- uk_macro |>
+  filter(date >= as.Date("2000-01-01")) |>
+  select(date, `GDP growth (%)` = gdp_growth,
+         `CPI inflation (%)` = cpi,
+         `Unemployment (%)` = unemployment,
+         `Bank Rate (%)` = bank_rate) |>
+  pivot_longer(-date, names_to = "series", values_to = "value")
+
+ggplot(uk_plot, aes(x = date, y = value)) +
+  geom_line(colour = "#1f77b4", linewidth = 0.6) +
+  facet_wrap(~series, scales = "free_y", ncol = 2) +
+  labs(title = "UK macroeconomic indicators",
+       x = NULL, y = NULL,
+       caption = "Sources: ONS, Bank of England") +
+  theme_minimal(base_size = 11) +
+  theme(strip.text = element_text(face = "bold"))
+```
+
+This gives you a dashboard-style view of the UK economy in about 40 lines of code. The same dataset serves as the starting point for the Phillips curve estimation in Chapter [-@sec-inflation-phillips-curve] and the VAR model in Chapter [-@sec-var-models].
+
+## A note on data revisions {#sec-revisions}
+
+If you download GDP data today and again in three months, the numbers may differ — even for quarters that are years in the past. The ONS revises GDP in three stages: the first estimate (published about 40 days after the quarter ends), the second estimate (about 70 days), and the quarterly national accounts (about 90 days). Annual Blue Book revisions can change the entire historical series.
+
+This is not a flaw in the data; it reflects genuine improvements in measurement as more information becomes available. But it matters for practitioners. If you are evaluating a forecast made in October 2023, you need to compare it against the GDP estimate that was available in October 2023, not today's revised figure. The difference can be substantial — early GDP estimates have been revised by as much as a full percentage point.
+
+For academic research and rigorous forecast evaluation, you need real-time data vintages. The ONS does not provide a convenient vintage database (unlike the Federal Reserve Bank of Philadelphia, which maintains a famous real-time dataset for the US). In practice, UK economists either save snapshots of data at regular intervals or use the OECD's real-time database for cross-country comparisons. This is an area where careful data management — saving your downloaded data with timestamps — pays off.
 
 ## Exercises
 
-1. Pull UK GDP data with `ons_gdp()` and calculate the quarter-on-quarter growth rate. In which quarter was growth weakest since 2010?
+1. Pull UK GDP data with `ons_gdp()` and calculate the quarter-on-quarter growth rate. In which quarter was growth weakest since 2010? (Hint: the answer involves the COVID pandemic, but check the data to be sure.)
 
-2. Download Bank Rate with `boe_bank_rate()` and CPI inflation with `ons_cpi()`. Plot both on the same chart (hint: you will need to merge on date and use dual axes or facets).
+2. Download Bank Rate with `boe_bank_rate()` and CPI inflation with `ons_cpi()`. Merge them into a monthly dataset and plot both on the same chart using facets. What do you notice about the relationship between the two during 2021-23?
 
-3. Using `hmrc`, pull the latest tax receipts data. Which tax head generates the most revenue?
+3. Using `hmrc::get_tax_receipts()`, pull the latest tax receipts data. Which tax head generates the most annual revenue? Plot the monthly time series for the three largest tax heads on a single chart.
+
+4. Build the quarterly UK macro dataset described in @sec-uk-merge. Extend it by adding wage growth from `ons_wages()`. Calculate the real wage growth rate (nominal wage growth minus CPI inflation). Plot real wage growth since 2008. When was the longest period of falling real wages?
+
+5. Pull PSNB forecasts from the OBR using `obr::get_forecasts(series = "PSNB")`. Plot the forecast paths from the three most recent fiscal events on a single chart. How has the borrowing outlook changed?

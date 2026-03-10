@@ -1,21 +1,365 @@
 # Fiscal Policy and Public Finances {#sec-fiscal}
 
-Fiscal policy — government spending and taxation — shapes the macroeconomy alongside monetary policy. This chapter analyses UK public finances using data from the OBR and HMRC.
+Fiscal policy — government spending and taxation — shapes the macroeconomy alongside monetary policy. This chapter analyses UK public finances using data from the OBR and HMRC. We will plot the debt-to-GDP ratio, decompose its dynamics using a key identity, estimate fiscal multipliers, evaluate OBR forecast accuracy, and explore tax receipts as a real-time indicator.
 
 ## UK public finances
 
+The Office for Budget Responsibility was established in 2010 as the UK's independent fiscal watchdog. Its core mandate is to produce five-year forecasts for the economy and the public finances at each fiscal event — typically a Budget or Autumn Statement. By placing these forecasts outside the Treasury, the OBR removed the temptation for chancellors to mark their own homework. The OBR does not make policy recommendations; it simply tells Parliament what the numbers are likely to be, given the government's stated plans.
+
+The OBR's Public Finances Databank is the single best source for long-run UK fiscal data. It contains time series for government revenue, spending, borrowing, and debt stretching back decades, all on a consistent basis. The `obr` package provides direct access.
+
+```{r}
+library(obr)
+library(ggplot2)
+library(dplyr)
+
+# Download the Public Finances Databank
+pf <- obr_public_finances()
+head(pf)
+```
+
+The debt-to-GDP ratio is the headline measure of the UK's fiscal position. It captures the stock of accumulated government borrowing relative to the size of the economy. A ratio of 100% means the government owes as much as the country produces in a year — a useful benchmark, though there is no magic threshold above which disaster strikes.
+
+Let us plot the ratio from 1990 onwards, marking the two episodes that caused it to surge: the 2008 financial crisis and the 2020 pandemic.
+
+```{r}
+# Filter for the debt-to-GDP ratio series
+debt_gdp <- pf |>
+  filter(variable == "Public sector net debt (% of GDP)") |>
+  filter(date >= as.Date("1990-01-01"))
+
+ggplot(debt_gdp, aes(x = date, y = value)) +
+  geom_line(colour = "#1b5e20", linewidth = 0.8) +
+  geom_vline(xintercept = as.Date("2008-09-15"),
+             linetype = "dashed", colour = "grey40") +
+  geom_vline(xintercept = as.Date("2020-03-23"),
+             linetype = "dashed", colour = "grey40") +
+  annotate("text", x = as.Date("2008-09-15"), y = 90,
+           label = "Financial\ncrisis", hjust = -0.1,
+           size = 3, colour = "grey40") +
+  annotate("text", x = as.Date("2020-03-23"), y = 90,
+           label = "COVID-19\npandemic", hjust = -0.1,
+           size = 3, colour = "grey40") +
+  labs(title = "UK Public Sector Net Debt",
+       subtitle = "Percent of GDP",
+       x = NULL, y = NULL,
+       caption = "Source: OBR Public Finances Databank") +
+  theme_minimal()
+```
+
+Two things stand out. First, debt-to-GDP roughly doubled after each crisis — from around 35% to 65% after the financial crisis, and from around 80% to over 100% after the pandemic. Second, between crises, the ratio barely fell. The UK ran persistent deficits even during the 2010s austerity years, so debt kept accumulating relative to GDP. This ratchet effect — debt jumps in bad times and does not come back down in good times — is a defining feature of modern fiscal dynamics in advanced economies.
+
 ## The debt-to-GDP identity
+
+Why does the debt-to-GDP ratio change from year to year? There is an accounting identity that decomposes the change into two components:
+
+$$
+\Delta\left(\frac{D}{Y}\right) \approx (r - g)\frac{D}{Y} + \text{primary deficit}
+$$
+
+where $D$ is debt, $Y$ is nominal GDP, $r$ is the average interest rate paid on government debt, and $g$ is the nominal GDP growth rate. The primary deficit is government spending minus revenue, excluding interest payments.
+
+The first term, $(r - g)(D/Y)$, is the interest-growth differential. When the interest rate on debt exceeds the growth rate of the economy, the debt ratio rises automatically — the government is paying more in interest than the economy is growing, so debt compounds faster than income. When $g > r$, the opposite holds: the economy "grows out of" its debt. For most of the post-2008 period, low interest rates meant $r < g$, which helped contain the debt ratio despite large deficits. As rates rose in 2022–23, this dynamic reversed.
+
+The second term is the primary deficit. This is what the government directly controls through its spending and tax decisions. Running a primary surplus (revenue exceeding non-interest spending) pushes the debt ratio down; running a primary deficit pushes it up.
+
+This identity is fundamental. Every fiscal sustainability analysis — whether by the OBR, the IMF, or the European Commission — ultimately reduces to asking whether a government can plausibly generate primary surpluses large enough to offset an unfavourable interest-growth differential.
+
+We can decompose actual UK debt changes into these two components using data from the OBR.
+
+```{r}
+# Illustrative decomposition of debt-to-GDP changes
+# You will need to extract interest payments, primary balance,
+# debt, GDP, and effective interest rate from the databank
+
+# Suppose we have annual data:
+# debt_gdp_ratio: D/Y each year
+# interest_rate: effective interest rate on government debt
+# gdp_growth: nominal GDP growth rate
+# primary_balance: primary balance as % of GDP (positive = surplus)
+
+decomposition <- pf |>
+  filter(variable %in% c(
+    "Public sector net debt (% of GDP)",
+    "Central government net interest payments (% of GDP)",
+    "Public sector net borrowing (% of GDP)"
+  )) |>
+  select(date, variable, value) |>
+  tidyr::pivot_wider(names_from = variable, values_from = value)
+
+head(decomposition)
+```
+
+```{r}
+# A simplified decomposition
+# Change in debt ratio = interest-growth differential effect + primary deficit
+# We can approximate the interest-growth differential using the
+# effective interest rate and nominal GDP growth
+
+# In practice:
+# - The effective interest rate r = interest payments / debt stock
+# - Nominal GDP growth g = year-on-year change in nominal GDP
+# - The primary deficit = total deficit - interest payments
+
+# Plot the decomposition
+# ggplot(decomposition_long, aes(x = year, y = value, fill = component)) +
+#   geom_col() +
+#   labs(title = "Decomposition of Changes in UK Debt-to-GDP",
+#        subtitle = "Percentage points of GDP",
+#        x = NULL, y = NULL, fill = NULL) +
+#   theme_minimal()
+```
+
+The key insight from this decomposition is that debt dynamics are not purely a matter of fiscal discipline. A government can run modest primary deficits and still see its debt ratio fall — if growth is strong enough. Conversely, a government can implement painful austerity and still see debt rising — if interest rates are high and growth is weak. The interplay between $r$ and $g$ often matters more than the deficit itself.
 
 ## Fiscal multipliers
 
+The fiscal multiplier measures how much GDP changes when government spending changes by one unit. If the government spends an additional £1 billion and GDP rises by £1.5 billion, the multiplier is 1.5. This is one of the most contested numbers in macroeconomics, because it determines whether fiscal stimulus "works" and whether austerity is self-defeating.
+
+The multiplier depends on the state of the economy. When the economy is at full capacity, extra government spending may simply crowd out private spending — firms cannot hire workers who are already employed, so the multiplier is small (perhaps 0.5). When the economy is in a deep recession with idle resources, the multiplier can be much larger (1.5 to 2.0 or more), because the extra spending puts unemployed workers back to work without displacing private activity. This state-dependence is why the debate over austerity after 2010 was so fierce: critics argued that cutting spending during a recession, when multipliers were large, was particularly costly.
+
+We can estimate a simple fiscal multiplier using a VAR model. The idea is to identify government spending shocks — unexpected changes in spending — and trace their effect on GDP over time using impulse response functions.
+
+```{r}
+library(vars)
+
+# Pull quarterly GDP and construct a simple fiscal dataset
+gdp <- ons::ons_gdp()
+
+# We need government spending and tax revenue
+# These can be obtained from the OBR databank or ONS
+# For illustration, assume we have quarterly data:
+# gov_spending: real government consumption
+# gdp_real: real GDP
+# tax_revenue: total tax receipts
+
+# Combine into a single data frame
+# fiscal_data <- data.frame(
+#   date = ...,
+#   gov_spending = ...,
+#   gdp = ...,
+#   tax_revenue = ...
+# )
+```
+
+```{r}
+# Estimate a VAR with government spending ordered first
+# (Blanchard-Perotti identification: government spending does not
+# respond to GDP within the quarter)
+
+# Convert to growth rates
+fiscal_ts <- fiscal_data |>
+  mutate(
+    dg = 100 * (log(gov_spending) - lag(log(gov_spending))),
+    dy = 100 * (log(gdp) - lag(log(gdp))),
+    dt = 100 * (log(tax_revenue) - lag(log(tax_revenue)))
+  ) |>
+  filter(!is.na(dg)) |>
+  select(dg, dy, dt)
+
+# Estimate VAR
+var_model <- VAR(fiscal_ts, p = 4, type = "const")
+
+# Impulse response: effect of a spending shock on GDP
+irf_result <- irf(var_model, impulse = "dg", response = "dy",
+                  n.ahead = 20, boot = TRUE, ci = 0.68)
+
+plot(irf_result)
+```
+
+```{r}
+# Compute the cumulative multiplier
+# The cumulative multiplier at horizon h is:
+# sum of GDP responses from 0 to h / sum of spending responses from 0 to h
+
+irf_gdp <- irf(var_model, impulse = "dg", response = "dy",
+                n.ahead = 20, boot = FALSE)
+irf_gov <- irf(var_model, impulse = "dg", response = "dg",
+                n.ahead = 20, boot = FALSE)
+
+cumulative_gdp <- cumsum(irf_gdp$irf$dg)
+cumulative_gov <- cumsum(irf_gov$irf$dg)
+
+cumulative_multiplier <- cumulative_gdp / cumulative_gov
+
+# Plot the cumulative multiplier over horizons
+plot(0:20, cumulative_multiplier, type = "l",
+     xlab = "Quarters", ylab = "Cumulative multiplier",
+     main = "Cumulative Fiscal Multiplier")
+abline(h = 1, lty = 2, col = "grey50")
+```
+
+The cumulative multiplier typically starts near 1 on impact and may rise or fall over subsequent quarters. A multiplier above 1 means fiscal expansion is self-reinforcing to some degree: the extra income generated by government spending boosts private consumption and investment through second-round effects. A multiplier below 1 means some crowding out is occurring.
+
+Estimates in the literature range widely. Ramey (2019) surveys the evidence and finds most estimates between 0.6 and 1.5, with the central tendency around 0.8 in normal times. During recessions or at the zero lower bound for interest rates, estimates tend to be higher — Christiano, Eichenbaum, and Rebelo (2011) find multipliers above 2 when monetary policy is constrained. The IMF's retrospective analysis of the eurozone austerity programmes found that fiscal multipliers in 2010–12 were substantially larger than the 0.5 assumed in real time, which partly explains why austerity produced deeper recessions than expected.
+
 ## OBR forecasts versus outcomes
 
+The OBR publishes GDP growth forecasts at each fiscal event. How accurate are they? This is not merely an academic question — the credibility of fiscal plans depends on the reliability of the growth forecasts underpinning them. If the OBR systematically over-predicts growth, projected revenues will not materialise, and the public finances will deteriorate relative to plan.
+
+We can evaluate this by comparing successive OBR forecasts to actual outcomes. The OBR itself publishes a "Forecast evaluation report" each year, but it is instructive to replicate the exercise.
+
+```{r}
+# Download OBR forecasts from successive fiscal events
+obr_forecasts <- obr_forecasts()
+
+head(obr_forecasts)
+```
+
+```{r}
+# Filter for GDP growth forecasts
+gdp_forecasts <- obr_forecasts |>
+  filter(variable == "Real GDP growth (%)") |>
+  select(forecast_date, target_year, value)
+
+# Get actual GDP growth outcomes
+gdp_actual <- ons::ons_gdp() |>
+  mutate(year = as.numeric(format(date, "%Y"))) |>
+  group_by(year) |>
+  summarise(actual_growth = mean(value, na.rm = TRUE))
+
+# Merge forecasts with actuals
+forecast_eval <- gdp_forecasts |>
+  left_join(gdp_actual, by = c("target_year" = "year")) |>
+  mutate(
+    forecast_error = value - actual_growth,
+    horizon = target_year - as.numeric(format(forecast_date, "%Y"))
+  )
+```
+
+```{r}
+# Plot forecast errors by horizon
+ggplot(forecast_eval, aes(x = target_year, y = forecast_error)) +
+  geom_col(fill = "#2196F3", alpha = 0.7) +
+  geom_hline(yintercept = 0, linewidth = 0.5) +
+  facet_wrap(~paste0(horizon, "-year ahead")) +
+  labs(title = "OBR GDP Growth Forecast Errors",
+       subtitle = "Forecast minus actual (pp). Positive = over-prediction.",
+       x = NULL, y = "Forecast error (pp)",
+       caption = "Source: OBR, ONS") +
+  theme_minimal()
+```
+
+```{r}
+# Test for bias: is the mean forecast error significantly different from zero?
+forecast_eval |>
+  group_by(horizon) |>
+  summarise(
+    mean_error = mean(forecast_error, na.rm = TRUE),
+    sd_error = sd(forecast_error, na.rm = TRUE),
+    n = n(),
+    t_stat = mean_error / (sd_error / sqrt(n)),
+    p_value = 2 * pt(-abs(t_stat), df = n - 1)
+  )
+```
+
+Several patterns typically emerge. First, forecast errors are large — GDP growth is genuinely hard to predict. The standard deviation of one-year-ahead errors is typically around 1 percentage point, which is enormous relative to trend growth of about 1.5%. Second, two-year-ahead forecasts are substantially less accurate than one-year-ahead, as you would expect. Third, the OBR's forecasts are approximately unbiased on average — they over-predict as often as they under-predict, which is what you want from an independent institution. The largest errors cluster around crises (2008, 2020) that no forecaster anticipated.
+
+The OBR itself is admirably transparent about its track record. Its annual Forecast Evaluation Report dissects errors by source: was the growth surprise due to unexpected consumption, investment, or trade? This kind of post-mortem is essential for improving forecasting methodology, and the OBR's willingness to publish it openly sets it apart from many fiscal institutions internationally.
+
 ## Tax receipts as a real-time indicator
+
+HMRC publishes monthly tax receipt data — income tax, VAT, corporation tax, and other revenue streams — typically with a lag of only a few weeks. This makes tax data one of the timeliest indicators of economic activity. When the economy slows, income tax receipts fall (fewer people employed, lower bonuses), VAT receipts fall (less consumer spending), and corporation tax receipts fall (lower profits). The reverse holds in expansions.
+
+Because tax receipts respond to economic activity almost in real time, they are valuable for two purposes. First, they help nowcast the fiscal position — the Treasury and OBR use monthly receipt data to track whether borrowing is on plan. Second, they can supplement GDP nowcasts, providing a cross-check on other high-frequency indicators like PMI surveys and retail sales.
+
+```{r}
+library(hmrc)
+
+# Pull monthly tax receipts
+receipts <- hmrc_tax_receipts()
+head(receipts)
+```
+
+```{r}
+# Plot monthly receipts by tax type
+receipts_main <- receipts |>
+  filter(tax %in% c("Income Tax", "VAT", "Corporation Tax")) |>
+  filter(date >= as.Date("2010-01-01"))
+
+ggplot(receipts_main, aes(x = date, y = value, colour = tax)) +
+  geom_line(linewidth = 0.6) +
+  labs(title = "UK Monthly Tax Receipts",
+       subtitle = "£ millions, nominal",
+       x = NULL, y = NULL, colour = NULL,
+       caption = "Source: HMRC") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+Tax receipts are strongly seasonal — income tax peaks in January (self-assessment deadline) and corporation tax peaks in quarterly payment months. To see the underlying trend, it helps to work with year-on-year growth rates, which strip out the seasonal pattern.
+
+```{r}
+# Year-on-year growth in total receipts
+total_receipts <- receipts |>
+  group_by(date) |>
+  summarise(total = sum(value, na.rm = TRUE)) |>
+  arrange(date) |>
+  mutate(yoy_growth = 100 * (total / lag(total, 12) - 1)) |>
+  filter(!is.na(yoy_growth))
+
+ggplot(total_receipts, aes(x = date, y = yoy_growth)) +
+  geom_line(colour = "#6a1b9a", linewidth = 0.6) +
+  geom_hline(yintercept = 0, linewidth = 0.5, colour = "grey50") +
+  labs(title = "UK Tax Receipts: Year-on-Year Growth",
+       subtitle = "Total HMRC receipts, % change",
+       x = NULL, y = NULL,
+       caption = "Source: HMRC") +
+  theme_minimal()
+```
+
+The year-on-year series reveals the major economic events clearly. The 2008–09 financial crisis shows as a sharp contraction in receipts; the 2020 pandemic produces an even deeper collapse, followed by a rapid recovery as the economy reopened. The recovery in receipts typically leads the recovery in GDP, because tax data arrives before the national accounts.
+
+For fiscal monitoring, the most useful exercise is to compare cumulative receipts in the current financial year to the OBR's forecast. If receipts are running ahead of plan, borrowing will likely undershoot the forecast; if behind, borrowing will overshoot. The OBR's monthly public finances commentary does exactly this.
+
+```{r}
+# Compare cumulative year-to-date receipts across years
+# This helps identify whether the current year is tracking
+# above or below the prior year
+
+total_receipts_monthly <- receipts |>
+  group_by(date) |>
+  summarise(total = sum(value, na.rm = TRUE)) |>
+  mutate(
+    fiscal_year = ifelse(
+      as.numeric(format(date, "%m")) >= 4,
+      as.numeric(format(date, "%Y")),
+      as.numeric(format(date, "%Y")) - 1
+    ),
+    fiscal_month = (as.numeric(format(date, "%m")) - 4) %% 12 + 1
+  ) |>
+  group_by(fiscal_year) |>
+  arrange(fiscal_month) |>
+  mutate(cumulative = cumsum(total))
+
+# Plot cumulative receipts for recent fiscal years
+recent_years <- total_receipts_monthly |>
+  filter(fiscal_year >= 2019)
+
+ggplot(recent_years,
+       aes(x = fiscal_month, y = cumulative / 1000,
+           colour = factor(fiscal_year))) +
+  geom_line(linewidth = 0.7) +
+  labs(title = "Cumulative Tax Receipts by Fiscal Year",
+       subtitle = "£ billions, April to March",
+       x = "Month of fiscal year", y = NULL, colour = "Fiscal year",
+       caption = "Source: HMRC") +
+  scale_x_continuous(breaks = 1:12,
+                     labels = c("Apr", "May", "Jun", "Jul", "Aug",
+                                "Sep", "Oct", "Nov", "Dec", "Jan",
+                                "Feb", "Mar")) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
 
 ## Exercises
 
 1. Using `obr`, download the Public Finances Databank. Plot the UK debt-to-GDP ratio since 1990. Mark the financial crisis and the pandemic.
 
-2. Compare the OBR's GDP growth forecasts at successive fiscal events. How accurate were they?
+2. Using the debt-to-GDP identity, calculate the interest-growth differential $(r - g)$ for the UK from 2000 to the present. In which years did it favour debt reduction (i.e., $g > r$)?
 
-3. Using `hmrc`, plot monthly income tax and VAT receipts. Do they lead or lag GDP growth?
+3. Compare the OBR's GDP growth forecasts at successive fiscal events. How accurate were they? Is there evidence of systematic bias?
+
+4. Using `hmrc`, plot monthly income tax and VAT receipts. Do they lead or lag GDP growth? Calculate the cross-correlation function to find the optimal lag.
+
+5. Estimate a fiscal multiplier using a three-variable VAR (government spending, GDP, tax revenue). How does your estimate compare to the range in the literature (0.5 to 2.0)?

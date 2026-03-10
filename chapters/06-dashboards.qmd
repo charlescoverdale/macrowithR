@@ -4,14 +4,237 @@ A Shiny dashboard turns your R analysis into a tool that non-technical colleague
 
 ## Why dashboards?
 
+Macroeconomic analysis is inherently ongoing. GDP releases arrive every quarter, inflation data lands monthly, and Bank Rate decisions come eight times a year. A static report written in January is out of date by February. Dashboards solve this problem by pulling live data each time they load, giving you an always-current view of the economy.
+
+The practical case for dashboards is strongest when your audience includes people who do not use R. A treasury analyst, a policy adviser, or a journalist can open a dashboard in their browser, explore the data, and draw their own conclusions — without ever seeing a line of code. This makes dashboards an effective way to share your work and amplify its impact.
+
+Shiny is R's native framework for building interactive web applications. If you can write a ggplot, you can build a Shiny dashboard — the learning curve is modest, and the result is a fully interactive application that runs in any web browser. This chapter focuses on building one complete, functional dashboard rather than surveying every Shiny feature. For comprehensive coverage of the framework, Hadley Wickham's *Mastering Shiny* (O'Reilly, 2021) is the definitive reference.
+
 ## Building a UK economy dashboard
+
+The dashboard we will build has four tabs: GDP growth, CPI inflation, unemployment, and Bank Rate. Each tab displays a time series chart with a date range selector, so the user can zoom in on any period. The data is pulled live from the ONS and Bank of England using the `ons` and `boe` packages.
+
+The code below is a complete, runnable Shiny application. You can save it as `app.R` in a new directory and run it with `shiny::runApp()`. The application uses `bslib` for modern Bootstrap 5 styling and organises the tabs with `navset_card_tab()`, which gives a clean, professional appearance without requiring CSS knowledge.
+
+```{r}
+library(shiny)
+library(bslib)
+library(ggplot2)
+library(dplyr)
+library(ons)
+library(boe)
+
+# --- Theme (reuse from Chapter 5) ---
+theme_macro <- function(base_size = 13, base_family = "Helvetica") {
+  theme_minimal(base_size = base_size, base_family = base_family) %+replace%
+    theme(
+      plot.background    = element_rect(fill = "white", colour = NA),
+      panel.background   = element_rect(fill = "white", colour = NA),
+      panel.grid.major.y = element_line(colour = "#D9D9D9", linewidth = 0.3),
+      panel.grid.major.x = element_blank(),
+      panel.grid.minor   = element_blank(),
+      axis.line.x  = element_line(colour = "#333333", linewidth = 0.4),
+      axis.ticks.x = element_line(colour = "#333333", linewidth = 0.3),
+      axis.ticks.y = element_blank(),
+      plot.title    = element_text(size = rel(1.15), face = "bold", hjust = 0),
+      plot.subtitle = element_text(size = rel(0.9), colour = "#555555", hjust = 0),
+      plot.caption  = element_text(size = rel(0.75), colour = "#999999", hjust = 1),
+      legend.position = "none",
+      plot.margin = margin(10, 14, 6, 10)
+    )
+}
+
+# --- UI ---
+ui <- page_sidebar(
+  title = "UK Economy Dashboard",
+  theme = bs_theme(bootswatch = "flatly"),
+
+  sidebar = sidebar(
+    title = "Settings",
+    dateRangeInput(
+      "date_range",
+      label = "Date range",
+      start = Sys.Date() - 365 * 10,
+      end   = Sys.Date(),
+      min   = as.Date("1990-01-01"),
+      max   = Sys.Date()
+    ),
+    hr(),
+    p(
+      class = "text-muted",
+      "Data pulled live from the ONS and Bank of England."
+    )
+  ),
+
+  navset_card_tab(
+    title = "Indicators",
+
+    nav_panel(
+      "GDP Growth",
+      card_body(
+        plotOutput("gdp_plot", height = "500px"),
+        p(class = "text-muted small mt-2", "Source: ONS")
+      )
+    ),
+
+    nav_panel(
+      "CPI Inflation",
+      card_body(
+        plotOutput("cpi_plot", height = "500px"),
+        p(class = "text-muted small mt-2", "Source: ONS")
+      )
+    ),
+
+    nav_panel(
+      "Unemployment",
+      card_body(
+        plotOutput("unemp_plot", height = "500px"),
+        p(class = "text-muted small mt-2", "Source: ONS")
+      )
+    ),
+
+    nav_panel(
+      "Bank Rate",
+      card_body(
+        plotOutput("bank_rate_plot", height = "500px"),
+        p(class = "text-muted small mt-2", "Source: Bank of England")
+      )
+    )
+  )
+)
+
+# --- Server ---
+server <- function(input, output, session) {
+
+  # Fetch data once on startup (cached by ons/boe packages)
+  gdp_data        <- reactive({ ons_gdp() })
+  cpi_data        <- reactive({ ons_cpi() })
+  unemp_data      <- reactive({ ons_unemployment() })
+  bank_rate_data  <- reactive({ boe_bank_rate() })
+
+  # Helper: filter by date range
+  filter_dates <- function(df) {
+    df |> filter(date >= input$date_range[1], date <= input$date_range[2])
+  }
+
+  output$gdp_plot <- renderPlot({
+    df <- filter_dates(gdp_data())
+
+    ggplot(df, aes(x = date, y = value)) +
+      geom_line(colour = "#1B5E7B", linewidth = 0.7) +
+      labs(
+        title    = "UK Gross Domestic Product",
+        subtitle = "Chained volume measure, seasonally adjusted",
+        x = NULL, y = NULL
+      ) +
+      theme_macro()
+  })
+
+  output$cpi_plot <- renderPlot({
+    df <- filter_dates(cpi_data())
+
+    ggplot(df, aes(x = date, y = value)) +
+      geom_line(colour = "#C0392B", linewidth = 0.7) +
+      geom_hline(yintercept = 2, colour = "#999999", linetype = "dashed",
+                 linewidth = 0.3) +
+      annotate("text", x = min(df$date), y = 2.3, label = "2% target",
+               hjust = 0, size = 3, colour = "#999999") +
+      labs(
+        title    = "UK Consumer Price Inflation",
+        subtitle = "CPI, annual rate (%)",
+        x = NULL, y = NULL
+      ) +
+      theme_macro()
+  })
+
+  output$unemp_plot <- renderPlot({
+    df <- filter_dates(unemp_data())
+
+    ggplot(df, aes(x = date, y = value)) +
+      geom_line(colour = "#27AE60", linewidth = 0.7) +
+      labs(
+        title    = "UK Unemployment Rate",
+        subtitle = "ILO definition, seasonally adjusted (%)",
+        x = NULL, y = NULL
+      ) +
+      theme_macro()
+  })
+
+  output$bank_rate_plot <- renderPlot({
+    df <- filter_dates(bank_rate_data())
+
+    ggplot(df, aes(x = date, y = value)) +
+      geom_step(colour = "#8E44AD", linewidth = 0.7) +
+      labs(
+        title    = "Bank of England Bank Rate",
+        subtitle = "Per cent",
+        x = NULL, y = NULL
+      ) +
+      theme_macro()
+  })
+}
+
+# --- Run ---
+shinyApp(ui, server)
+```
+
+A few things to note about the design. First, Bank Rate is plotted with `geom_step()` rather than `geom_line()`. This is because Bank Rate is a policy rate that changes in discrete jumps — a smooth line between rate decisions would imply a gradual transition that never happened. Second, the CPI chart includes a dashed line at 2%, marking the Bank of England's inflation target. This kind of reference line gives the viewer an immediate sense of whether inflation is above or below target without needing to read the axis. Third, all four data fetches are wrapped in `reactive()`, which means Shiny will only call the API once per session, not once per tab switch.
 
 ## Layout and design
 
+The dashboard above uses `bslib`, the modern interface to Bootstrap for Shiny applications. Compared to the older `shinydashboard` package, `bslib` offers cleaner defaults, better mobile responsiveness, and access to the full range of Bootstrap 5 components. For new projects, `bslib` is the better choice.
+
+The layout is built around three components. `page_sidebar()` creates the top-level structure with a sidebar and main panel. The `sidebar()` holds controls that apply across all tabs — in our case, a date range selector. The `navset_card_tab()` organises the main content into tabbed panels, each containing a chart.
+
+For more complex dashboards, you might add additional sidebar controls: a dropdown to select specific economic indicators, checkboxes to toggle reference lines, or a download button to export the data. Shiny's reactive programming model means that adding interactivity is straightforward — when a user changes an input, all outputs that depend on it are automatically recomputed.
+
+```{r}
+# Example: adding a download button to the sidebar
+sidebar(
+  title = "Settings",
+  dateRangeInput("date_range", "Date range",
+                 start = Sys.Date() - 365 * 10, end = Sys.Date()),
+  hr(),
+  downloadButton("download_data", "Download CSV")
+)
+
+# In the server:
+# output$download_data <- downloadHandler(
+#   filename = function() paste0("uk_macro_data_", Sys.Date(), ".csv"),
+#   content  = function(file) write.csv(combined_data(), file, row.names = FALSE)
+# )
+```
+
+When designing dashboards for a professional audience, restraint is more important than features. A dashboard with four clear charts and one date selector is more useful than one with twenty inputs and a dozen tabs. Every control you add is a question the user has to answer before they can see the data. Start minimal and add complexity only when users ask for it.
+
 ## Deploying to the web
+
+A Shiny dashboard running on your laptop is useful for your own analysis, but its real value emerges when others can access it. The simplest deployment option is [shinyapps.io](https://www.shinyapps.io/), Posit's hosted platform for Shiny applications. The free tier supports up to five applications with 25 active hours per month — enough for a personal dashboard or a small team.
+
+Deployment takes three steps. First, install the `rsconnect` package and configure your shinyapps.io account credentials. Second, ensure all packages your app uses are installed from CRAN (shinyapps.io installs dependencies automatically from CRAN, but cannot access packages installed locally from GitHub). Third, call `rsconnect::deployApp()` from the directory containing your `app.R` file.
+
+```{r}
+# One-time setup
+rsconnect::setAccountInfo(
+  name   = "your-account-name",
+  token  = "your-token",
+  secret = "your-secret"
+)
+
+# Deploy
+rsconnect::deployApp("path/to/your/app")
+```
+
+For larger organisations, Posit Connect (formerly RStudio Connect) offers a self-hosted server with authentication, scheduled updates, and support for multiple applications. This is the standard choice for central banks, government departments, and consultancies that need to share dashboards internally without exposing them to the public internet. The deployment workflow is identical — `rsconnect::deployApp()` — but the server is managed by your IT team rather than Posit's cloud infrastructure.
+
+One practical consideration: dashboards that pull live data on each load will make API calls every time a user opens the app. If your dashboard is popular, this can hit rate limits. A common solution is to pre-fetch the data on a schedule (hourly or daily) and save it to a file that the dashboard reads on startup. For the packages used in this book, the built-in caching layer handles this automatically — data is cached locally and only refreshed when the cache expires.
 
 ## Exercises
 
-1. Add a new tab to the dashboard showing the EUR/USD exchange rate using `readecb::ecb_exchange_rate()`.
+1. Add a new tab to the dashboard showing the GBP/USD exchange rate using `boe::boe_exchange_rate()`. Use `geom_line()` and match the styling of the existing tabs.
 
-2. Add a date range selector that filters all charts simultaneously.
+2. Add a date range selector that filters all charts simultaneously. (Hint: the dashboard above already does this — extend it by adding a "last 1 year / 5 years / 10 years / all" set of action buttons using `actionButton()` that update the date range input.)
+
+3. Add a download button that exports the currently visible data as a CSV file. Use `downloadHandler()` in the server and `downloadButton()` in the UI.
+
+4. Replace one of the static `plotOutput()` panels with an interactive `plotly` chart using `plotly::ggplotly()`. Compare the user experience — when is interactivity helpful, and when does it add unnecessary complexity?
